@@ -207,24 +207,28 @@ add_action('acf/init', function () {
 		acf_add_options_sub_page([
 			'page_title'  => 'Colors',
 			'menu_title'  => 'Colors',
+			'menu_slug'   => 'yak-options-colors', // ✅ this prevents the acf-options- prefix
 			'parent_slug' => 'theme-settings',
 		]);
 
 		acf_add_options_sub_page([
 			'page_title'  => 'Typography',
 			'menu_title'  => 'Typography',
+			'menu_slug'   => 'yak-options-typography', // ✅ this prevents the acf-options- prefix
 			'parent_slug' => 'theme-settings',
 		]);
 
 		acf_add_options_sub_page([
 			'page_title'  => 'Spacing & Layout',
 			'menu_title'  => 'Spacing & Layout',
+			'menu_slug'   => 'yak-options-layouts', // ✅ this prevents the acf-options- prefix
 			'parent_slug' => 'theme-settings',
 		]);
 
 		acf_add_options_sub_page([
 			'page_title'  => 'Login Screen',
 			'menu_title'  => 'Login Screen',
+			'menu_slug'   => 'yak-options-login', // ✅ this prevents the acf-options- prefix
 			'parent_slug' => 'theme-settings', // or your actual main slug
 		]);
 
@@ -331,7 +335,7 @@ if (function_exists('acf_add_local_field_group')) {
 				[
 					'param' => 'options_page',
 					'operator' => '==',
-					'value' => 'acf-options-login-screen',
+					'value' => 'yak-options-login',
 				],
 			],
 		],
@@ -350,6 +354,216 @@ if (function_exists('acf_add_local_field_group')) {
 /////////////////////////////////////////////////////////////////////////////////
 
 
+/////////////////////////////////////////////////////////////////////////////////
+// *** Theme Colors 
+/////////////////////////////////////////////////////////////////////////////////
+
+if (function_exists('acf_add_local_field_group')) {
+	acf_add_local_field_group([
+		'key' => 'group_yak_theme_colors',
+		'title' => 'Theme Colors',
+		'fields' => [
+			[
+				'key' => 'field_yak_base_color',
+				'label' => 'Base Color',
+				'name' => 'yak_base_color',
+				'type' => 'color_picker',
+				'instructions' => 'Primary brand color used to generate your theme palette.',
+				'default_value' => '#2F5E98',
+			],
+			[
+				'key' => 'field_yak_accent_color',
+				'label' => 'Accent Color',
+				'name' => 'yak_accent_color',
+				'type' => 'color_picker',
+				'instructions' => 'Optional secondary or highlight color.',
+				'default_value' => '',
+			],
+			[
+				'key' => 'field_yak_additional_colors',
+				'label' => 'Additional Colors',
+				'name' => 'yak_additional_colors',
+				'type' => 'repeater',
+				'instructions' => 'Manually add any other brand or UI colors.',
+				'collapsed' => 'field_yak_color_name',
+				'min' => 0,
+				'layout' => 'row',
+				'button_label' => 'Add Color',
+				'sub_fields' => [
+					[
+						'key' => 'field_yak_color_name',
+						'label' => 'Color Name',
+						'name' => 'name',
+						'type' => 'text',
+						'instructions' => 'A human-readable name for the color (e.g. "Sky Blue", "Error Red")',
+						'required' => 1,
+					],
+					[
+						'key' => 'field_yak_color_value',
+						'label' => 'Color Value',
+						'name' => 'hex',
+						'type' => 'color_picker',
+						'required' => 1,
+					],
+				],
+			],
+		],
+		'location' => [
+			[
+				[
+					'param' => 'options_page',
+					'operator' => '==',
+					'value' => 'yak-options-colors',
+				],
+			],
+		],
+		'menu_order' => 0,
+		'position' => 'normal',
+		'style' => 'default',
+		'label_placement' => 'top',
+		'instruction_placement' => 'label',
+		'hide_on_screen' => '',
+	]);
+}
+
+
+// output the new swatches on the options page
+add_action('admin_footer', 'yak_output_theme_palette_preview');
+function yak_output_theme_palette_preview() {
+	if (!isset($_GET['page']) || $_GET['page'] !== 'yak-options-colors') return;
+
+	$base    = get_field('yak_base_color', 'option');
+	$accent  = get_field('yak_accent_color', 'option');
+	$customs = get_field('yak_additional_colors', 'option') ?: [];
+
+	echo '<div class="yak-color-palette-preview" style="margin:40px auto 60px; max-width:1300px; padding:0 20px;">';
+
+	// --- Base color ---
+	if ($base && is_string($base)) {
+		list($palette, $highlight) = yak_generate_color_palette($base, 'yak-base');
+		echo '<h2 style="font-size:18px; margin-bottom:20px;">Base Color Palette Preview</h2>';
+		yak_render_palette_group('Light Grays', $palette, $highlight, range(1, 3));
+		yak_render_palette_group('Main Color Scale', $palette, $highlight, range(4, 9));
+		yak_render_palette_group('Dark Mode Neutrals', $palette, $highlight, range(10, 12));
+	}
+
+	// --- Accent color ---
+	if ($accent && is_string($accent)) {
+		list($palette, $highlight) = yak_generate_color_palette($accent, 'yak-accent');
+		echo '<h2 style="font-size:18px; margin:40px 0 16px;">Accent Color Palette</h2>';
+		yak_render_palette_group('Light Grays', $palette, $highlight, range(1, 3));
+		yak_render_palette_group('Accent Scale', $palette, $highlight, range(4, 9));
+		yak_render_palette_group('Dark Mode Neutrals', $palette, $highlight, range(10, 12));
+	}
+
+	// --- Additional custom colors ---
+	foreach ($customs as $item) {
+		if (empty($item['name']) || empty($item['hex']) || !is_string($item['hex'])) continue;
+
+		$slug  = 'yak-' . sanitize_title($item['name']);
+		$title = esc_html($item['name']);
+		list($palette, $highlight) = yak_generate_color_palette($item['hex'], $slug);
+
+		echo '<h2 style="font-size:18px; margin:40px 0 16px;">' . $title . ' Palette</h2>';
+		yak_render_palette_group('Light Grays', $palette, $highlight, range(1, 3));
+		yak_render_palette_group('Color Scale', $palette, $highlight, range(4, 9));
+		yak_render_palette_group('Dark Mode Neutrals', $palette, $highlight, range(10, 12));
+	}
+
+	echo '</div>';
+}
+
+
+
+
+
+
+// helpers for color work
+function yak_render_palette_group($label, $palette, $highlight_key, $indices) {
+	echo '<h3 style="margin:32px 0 12px; font-size:16px; color:#333;">' . esc_html($label) . '</h3>';
+	echo '<div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));gap:16px;">';
+
+	foreach ($indices as $i) {
+		// Match key dynamically (doesn't assume yak-base)
+		foreach ($palette as $key => $hex) {
+			if (preg_match("/-(\d+)$/", $key, $match) && (int)$match[1] === $i) {
+				$highlight = ($key === $highlight_key) ? 'Base' : null;
+				echo yak_render_color_card($key, $hex, $highlight);
+				break;
+			}
+		}
+	}
+
+	echo '</div>';
+}
+
+function yak_generate_color_palette($hex, $prefix = 'yak-base') {
+	if (!is_string($hex)) return [[], null];
+	if (!preg_match('/^#?[a-f0-9]{6}$/i', $hex)) return [[], null];
+
+	$hex = strtolower(ltrim($hex, '#'));
+	$r = hexdec(substr($hex, 0, 2));
+	$g = hexdec(substr($hex, 2, 2));
+	$b = hexdec(substr($hex, 4, 2));
+
+	list($h, $s, $l) = yak_rgb_to_hsl($r, $g, $b);
+	$palette = [];
+	$closest_key = null;
+	$closest_dist = PHP_INT_MAX;
+
+	// Swatches 1–3: light grays (base hue, desaturated, light)
+	$light_grays = [
+		['s' => 0.06, 'l' => 0.94], // 🔧 adjusted from 0.96
+		['s' => 0.08, 'l' => 0.91],
+		['s' => 0.12, 'l' => 0.87],
+	];
+	for ($i = 0; $i < 3; $i++) {
+		$index = $i + 1;
+		$rgb = yak_hsl_to_rgb($h, $light_grays[$i]['s'], $light_grays[$i]['l']);
+		$hex_out = yak_rgb_to_hex($rgb);
+		$palette["{$prefix}-{$index}"] = $hex_out;
+	}
+
+	// Swatches 4–9: base color ramp, consistent saturation, stepped lightness
+	$base_s = min(1.0, $s + 0.05); // slight bump to saturation, or just use $s
+	$lightness_values = [0.82, 0.68, 0.54, 0.40, 0.26, 0.14]; // clean descending steps
+
+	$color_steps = array_map(function ($l) use ($base_s) {
+		return ['s' => $base_s, 'l' => $l];
+	}, $lightness_values);
+
+	for ($i = 0; $i < 6; $i++) {
+		$index = $i + 4;
+		$rgb = yak_hsl_to_rgb($h, $color_steps[$i]['s'], $color_steps[$i]['l']);
+		$hex_out = yak_rgb_to_hex($rgb);
+		$palette["{$prefix}-{$index}"] = $hex_out;
+
+		// Track distance to original
+		$dist = yak_rgb_distance([$r, $g, $b], $rgb);
+		if ($dist < $closest_dist) {
+			$closest_dist = $dist;
+			$closest_key = "{$prefix}-{$index}";
+		}
+	}
+
+	// Swatches 10–12: dark mode neutrals (base hue, low sat, low light)
+	$dark_neutrals = [
+		['s' => 0.2, 'l' => 0.18],
+		['s' => 0.1, 'l' => 0.15],
+		['s' => 0.05, 'l' => 0.1],
+	];
+	for ($i = 0; $i < 3; $i++) {
+		$index = $i + 10;
+		$rgb = yak_hsl_to_rgb($h, $dark_neutrals[$i]['s'], $dark_neutrals[$i]['l']);
+		$hex_out = yak_rgb_to_hex($rgb);
+		$palette["{$prefix}-{$index}"] = $hex_out;
+	}
+
+	// Force exact original color into closest swatch
+	$palette[$closest_key] = '#' . $hex;
+
+	return [$palette, $closest_key];
+}
 
 
 
@@ -358,6 +572,124 @@ if (function_exists('acf_add_local_field_group')) {
 
 
 
+function yak_rgb_to_hsl($r, $g, $b) {
+	$r /= 255; $g /= 255; $b /= 255;
+	$max = max($r, $g, $b);
+	$min = min($r, $g, $b);
+	$h = $s = $l = ($max + $min) / 2;
+
+	if ($max === $min) {
+		$h = $s = 0;
+	} else {
+		$d = $max - $min;
+		$s = $l > 0.5 ? $d / (2 - $max - $min) : $d / ($max + $min);
+		switch ($max) {
+			case $r: $h = ($g - $b) / $d + ($g < $b ? 6 : 0); break;
+			case $g: $h = ($b - $r) / $d + 2; break;
+			case $b: $h = ($r - $g) / $d + 4; break;
+		}
+		$h /= 6;
+	}
+	return [$h, $s, $l];
+}
+
+function yak_hsl_to_rgb($h, $s, $l) {
+	$r = $g = $b = 0;
+
+	if ($s == 0) {
+		$r = $g = $b = $l;
+	} else {
+		$hue2rgb = function($p, $q, $t) {
+			if ($t < 0) $t += 1;
+			if ($t > 1) $t -= 1;
+			if ($t < 1/6) return $p + ($q - $p) * 6 * $t;
+			if ($t < 1/2) return $q;
+			if ($t < 2/3) return $p + ($q - $p) * (2/3 - $t) * 6;
+			return $p;
+		};
+
+		$q = $l < 0.5 ? $l * (1 + $s) : $l + $s - $l * $s;
+		$p = 2 * $l - $q;
+		$r = $hue2rgb($p, $q, $h + 1/3);
+		$g = $hue2rgb($p, $q, $h);
+		$b = $hue2rgb($p, $q, $h - 1/3);
+	}
+	return [round($r * 255), round($g * 255), round($b * 255)];
+}
+
+function yak_rgb_to_hex($rgb) {
+	return sprintf("#%02x%02x%02x", $rgb[0], $rgb[1], $rgb[2]);
+}
+
+function yak_calculate_contrast($hex1, $hex2) {
+	$rgb1 = yak_hex_to_rgb($hex1);
+	$rgb2 = yak_hex_to_rgb($hex2);
+
+	$l1 = yak_relative_luminance($rgb1);
+	$l2 = yak_relative_luminance($rgb2);
+
+	return ($l1 > $l2) ? (($l1 + 0.05) / ($l2 + 0.05)) : (($l2 + 0.05) / ($l1 + 0.05));
+}
+
+function yak_hex_to_rgb($hex) {
+	$hex = ltrim($hex, '#');
+	if (strlen($hex) === 3) {
+		$hex = $hex[0].$hex[0] . $hex[1].$hex[1] . $hex[2].$hex[2];
+	}
+	return [
+		hexdec(substr($hex, 0, 2)),
+		hexdec(substr($hex, 2, 2)),
+		hexdec(substr($hex, 4, 2))
+	];
+}
+
+function yak_relative_luminance($rgb) {
+	foreach ($rgb as &$val) {
+		$val /= 255;
+		$val = ($val <= 0.03928) ? $val / 12.92 : pow((($val + 0.055) / 1.055), 2.4);
+	}
+	return 0.2126 * $rgb[0] + 0.7152 * $rgb[1] + 0.0722 * $rgb[2];
+}
+
+function yak_render_color_card($slug, $hex, $highlight_label = null) {
+	$contrast_white = yak_calculate_contrast($hex, '#ffffff');
+	$contrast_black = yak_calculate_contrast($hex, '#000000');
+
+	$wcag = function ($ratio) {
+		if ($ratio >= 7) return 'AAA';
+		if ($ratio >= 4.5) return 'AA';
+		return '❌';
+	};
+
+	$style = $highlight_label
+		? 'border:2px solid #0073aa;'
+		: 'border:1px solid #ddd;';
+
+	$html  = '<div style="' . $style . 'border-radius:6px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);background:#fff;">';
+	$html .= '<div style="background:' . esc_attr($hex) . ';height:80px;"></div>';
+	$html .= '<div style="padding:10px;font-size:12px;text-align:center;line-height:1.4;">';
+	$html .= '<div style="font-weight:600;">' . esc_html($slug);
+	if ($highlight_label) {
+		$html .= ' <span style="color:#0073aa;">(' . esc_html($highlight_label) . ')</span>';
+	}
+	$html .= '</div>';
+	$html .= '<div style="color:#666;">' . esc_html($hex) . '</div>';
+	$html .= '<div style="margin-top:4px;font-size:11px;line-height:1.6;">';
+	$html .= '🤍 Contrast: ' . round($contrast_white, 2) . ' (' . $wcag($contrast_white) . ')<br>';
+	$html .= '🖤 Contrast: ' . round($contrast_black, 2) . ' (' . $wcag($contrast_black) . ')';
+	$html .= '</div></div></div>';
+
+	return $html;
+}
+
+
+function yak_rgb_distance($a, $b) {
+	return sqrt(
+		pow($a[0] - $b[0], 2) +
+		pow($a[1] - $b[1], 2) +
+		pow($a[2] - $b[2], 2)
+	);
+}
 
 
 
