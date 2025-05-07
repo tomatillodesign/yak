@@ -1,0 +1,67 @@
+
+
+body.login {
+    background: radial-gradient(#2F5E98, #1d3565);
+}
+
+/* Center the login form vertically with a top padding */
+#login {
+	padding: 4% 0 0;
+}
+
+/* Hide default WP logo and prevent background fallback or layout shift */
+body.login div#login h1 a {
+	background-image: none;     /* Remove WP logo image */
+	background-size: 0 0;       /* Prevent scaling of a removed image */
+	height: 0;                  /* Remove space taken up by default logo */
+	margin: 0 auto 0;           /* Center horizontally, no bottom margin */
+	width: 0;                   /* Collapse logo width */
+	/* Consider using display: none instead for cleaner removal */
+}
+
+/* Custom login heading (you'll need to insert an element with id="custom-login-title" in your PHP) */
+#custom-login-title {
+	font-size: 24px;
+	font-weight: 700;
+	color: #fff;
+	line-height: 2em;
+	margin-bottom: 20px;
+	text-shadow: 0px 0px 15px rgba(0,0,0,.6); /* Adds glow effect */
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+	/* ✅ Great font stack for system-based performance */
+}
+
+/* Style the footer links */
+.login #backtoblog a,
+.login #nav a {
+	color: #fff; /* White by default – works well on a dark or image background */
+	/* Consider adding a hover state for better interactivity */
+}
+
+/* Style the login form container */
+.login form {
+	background: rgba(255, 255, 255, 0.667);  /* Translucent white form */
+	backdrop-filter: blur(6px);           /* Frosted glass effect (modern look) */
+	border: none;
+	border-radius: 5px;                   /* Soft rounded corners */
+	/* Consider adding padding for better spacing inside form */
+}
+
+/* Optional: custom hover color for footer links */
+.login #backtoblog a,
+.login #nav a {
+	text-shadow: 0 0 4px rgba(0,0,0,.667);
+}
+
+/* Optional: custom hover color for footer links */
+.login #backtoblog a:hover,
+.login #nav a:hover {
+    color: #fff;
+	text-decoration: underline;
+}
+
+.yak-custom-login-message {
+    color: #fff;
+    font-size: 22px;
+    text-shadow: 0 0 4px rgba(0,0,0,.667);
+}
