@@ -169,3 +169,25 @@ body.wp-admin,
   max-width:1300px;
   margin-right:auto;
 }
+
+.yak-color-swatch {
+  padding: 8px;
+	position: relative;
+	cursor: pointer;
+	border: 3px solid transparent;
+	border-radius: 4px;
+	box-sizing: border-box;
+	transition: border-color 0.2s ease;
+}
+
+.yak-color-swatch.selected {
+	border-color: #111;
+}
+
+.yak-swatch-check {
+	display: none;
+}
+
+.yak-color-swatch.selected .yak-swatch-check {
+	display: block;
+}

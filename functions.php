@@ -414,7 +414,39 @@ if (function_exists('acf_add_local_field_group')) {
 				'instructions' => 'Prevent users from picking arbitrary colors in the editor. Only your theme palette will be available.',
 				'default_value' => 1,
 			],
-			
+			[
+				'key' => 'field_yak_selected_editor_colors',
+				'label' => 'Custom WP Editor Colors',
+				'name' => 'yak_selected_editor_colors',
+				'type' => 'repeater',
+				'instructions' => '',
+				'required' => 0,
+				'collapsed' => 'field_yak_selected_slug',
+				'min' => 0,
+				'layout' => 'table',
+				'button_label' => 'Add Color',
+				'sub_fields' => [
+					[
+						'key' => 'field_yak_selected_slug',
+						'label' => 'Slug',
+						'name' => 'slug',
+						'type' => 'text',
+						'required' => 1,
+					],
+					[
+						'key' => 'field_yak_selected_hex',
+						'label' => 'Color',
+						'name' => 'hex',
+						'type' => 'text',
+						'required' => 1,
+					],
+				],
+				'wrapper' => [
+					'width' => '',
+					'class' => 'yak-hidden-editor-color-selector',
+					'id' => '',
+				],
+			]			
 		],
 		'location' => [
 			[
@@ -524,6 +556,98 @@ function yak_output_admin_theme_css_vars() {
 }
 
 
+add_action('after_setup_theme', 'yak_register_editor_color_palette');
+function yak_register_editor_color_palette() {
+	if (!function_exists('get_field')) return;
+
+	$rows = get_field('yak_selected_editor_colors', 'option');
+	if (empty($rows) || !is_array($rows)) return;
+
+	$palette = [];
+
+	foreach ($rows as $row) {
+		if (empty($row['slug']) || empty($row['hex'])) continue;
+
+		$original_slug = $row['slug'];
+		$hex = $row['hex'];
+
+		// Remap special cases
+		if ($original_slug === 'yak-base-12') {
+			$slug = 'yak-black';
+			$name = 'Yak Black';
+		} else {
+			$slug = sanitize_title($original_slug);
+			$name = ucwords(str_replace(['-', '_'], ' ', $original_slug));
+		}
+
+		$palette[] = [
+			'name'  => $name,
+			'slug'  => $slug,
+			'color' => $hex,
+		];
+	}
+
+	add_theme_support('editor-color-palette', $palette);
+}
+
+
+
+
+function yak_get_editor_palette_colors() {
+	$rows = get_field('yak_selected_editor_colors', 'option');
+	if (empty($rows) || !is_array($rows)) return [];
+
+	$colors = [];
+
+	foreach ($rows as $row) {
+		if (empty($row['slug']) || empty($row['hex'])) continue;
+
+		$slug = sanitize_title($row['slug']);
+		$name = ($slug === 'yak-black') ? 'Yak Black' : ucwords(str_replace(['-', '_'], ' ', $slug));
+		$colors[] = [
+			'name'  => $name,
+			'slug'  => $slug,
+			'color' => $row['hex'],
+		];
+	}
+
+	return $colors;
+}
+
+
+
+function yak_output_editor_palette_css_vars() {
+	$colors = yak_get_editor_palette_colors(); // get selected ACF repeater
+	if (empty($colors)) return;
+
+	$css  = "<style id='yak-editor-colors'>\n";
+	$css .= ":root {\n";
+
+	foreach ($colors as $c) {
+		$slug = sanitize_title($c['slug']);
+		$hex  = esc_attr($c['color']);
+		$css .= "  --{$slug}: {$hex};\n";
+	}
+	$css .= "}\n";
+
+	foreach ($colors as $c) {
+		$slug = sanitize_title($c['slug']);
+		$css .= ".has-{$slug}-color { color: var(--{$slug}); }\n";
+		$css .= ".has-{$slug}-background-color { background-color: var(--{$slug}); }\n";
+	}
+	$css .= "</style>\n";
+
+	echo $css;
+}
+
+// Frontend
+add_action('wp_head', 'yak_output_editor_palette_css_vars');
+
+// Block editor (iframe-safe)
+add_action('enqueue_block_editor_assets', function () {
+	add_action('admin_print_footer_scripts', 'yak_output_editor_palette_css_vars');
+});
+
 
 
 
@@ -532,8 +656,23 @@ function yak_render_palette_group($label, $palette, $highlight_key, $indices) {
 	echo '<h3 style="margin:32px 0 12px; font-size:16px; color:#333;">' . esc_html($label) . '</h3>';
 	echo '<div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));gap:16px;">';
 
+	// Determine the prefix (e.g., yak-base, yak-accent, yak-brand-blue)
+	$prefix = null;
+	foreach ($palette as $key => $_) {
+		if (preg_match('/^(.*)-\d+$/', $key, $match)) {
+			$prefix = $match[1];
+			break;
+		}
+	}
+
+
+	// Optionally inject yak-white for base Light Grays only
+	if ($label === 'Light Grays' && $prefix === 'yak-base') {
+		echo yak_render_color_card('yak-white', '#ffffff', null);
+	}
+
+	// Output matching indexed swatches
 	foreach ($indices as $i) {
-		// Match key dynamically (doesn't assume yak-base)
 		foreach ($palette as $key => $hex) {
 			if (preg_match("/-(\d+)$/", $key, $match) && (int)$match[1] === $i) {
 				$highlight = ($key === $highlight_key) ? 'Base' : null;
@@ -543,8 +682,10 @@ function yak_render_palette_group($label, $palette, $highlight_key, $indices) {
 		}
 	}
 
+
 	echo '</div>';
 }
+
 
 function yak_generate_color_palette($hex, $prefix = 'yak-base') {
 	if (!is_string($hex)) return [[], null];
@@ -728,13 +869,14 @@ function yak_render_color_card($slug, $hex, $highlight_label = null) {
 		return '❌';
 	};
 
-	$style = $highlight_label
-		? 'border:2px solid #0073aa;'
-		: 'border:1px solid #ddd;';
+	// Outer wrapper, JS hooks via yak-color-swatch class
+	$html  = '<div class="yak-color-swatch" data-slug="' . esc_attr($slug) . '" data-hex="' . esc_attr($hex) . '">';
+	
+	// Fill box (color square)
+	$html .= '<div class="yak-color-swatch-fill" style="background:' . esc_attr($hex) . ';height:120px;border-radius:6px 6px 0 0;"></div>';
 
-	$html  = '<div style="' . $style . 'border-radius:6px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);background:#fff;">';
-	$html .= '<div style="background:' . esc_attr($hex) . ';height:80px;"></div>';
-	$html .= '<div style="padding:10px;font-size:12px;text-align:center;line-height:1.4;">';
+	// Swatch label + contrast info
+	$html .= '<div class="yak-color-swatch-label" style="padding:10px;font-size:12px;text-align:center;line-height:1.4;background:#fff;border-radius:0 0 6px 6px;box-shadow:0 1px 3px rgba(0,0,0,0.1);border:1px solid #ddd;border-top:none;">';
 	$html .= '<div style="font-weight:600;">' . esc_html($slug);
 	if ($highlight_label) {
 		$html .= ' <span style="color:#0073aa;">(' . esc_html($highlight_label) . ')</span>';
@@ -742,12 +884,19 @@ function yak_render_color_card($slug, $hex, $highlight_label = null) {
 	$html .= '</div>';
 	$html .= '<div style="color:#666;">' . esc_html($hex) . '</div>';
 	$html .= '<div style="margin-top:4px;font-size:11px;line-height:1.6;">';
-	$html .= '🤍 Contrast: ' . round($contrast_white, 2) . ' (' . $wcag($contrast_white) . ')<br>';
-	$html .= '🖤 Contrast: ' . round($contrast_black, 2) . ' (' . $wcag($contrast_black) . ')';
-	$html .= '</div></div></div>';
+	$html .= '🤍 ' . round($contrast_white, 2) . ' (' . $wcag($contrast_white) . ')<br>';
+	$html .= '🖤 ' . round($contrast_black, 2) . ' (' . $wcag($contrast_black) . ')';
+	$html .= '</div></div>';
+
+	// Checkmark overlay (hidden unless selected)
+	$html .= '<div class="yak-swatch-check" style="position:absolute;top:6px;right:6px;font-size:16px;color:#0073aa;display:none;">✔</div>';
+
+	// Close wrapper
+	$html .= '</div>';
 
 	return $html;
 }
+
 
 
 function yak_rgb_distance($a, $b) {
@@ -758,6 +907,18 @@ function yak_rgb_distance($a, $b) {
 	);
 }
 
+// enqueue js on colors page for interactive features
+add_action('acf/input/admin_enqueue_scripts', function() {
+	if (!isset($_GET['page']) || $_GET['page'] !== 'yak-options-colors') return;
+
+	wp_enqueue_script(
+		'yak-editor-swatch-js',
+		get_stylesheet_directory_uri() . '/js/yak-editor-swatch.js',
+		['acf-input', 'jquery'],
+		filemtime(get_stylesheet_directory() . '/js/yak-editor-swatch.js'),
+		true
+	);
+});
 
 
 
@@ -780,18 +941,18 @@ add_action('admin_enqueue_scripts', 'clb_custom_admin_styles');
 
 
 // Enqueue custom scripts & styles
-add_action( 'wp_enqueue_scripts', 'clb_enqueue_custom_scripts_styles', 100 );
-function clb_enqueue_custom_scripts_styles() {
+// add_action( 'wp_enqueue_scripts', 'clb_enqueue_custom_scripts_styles', 100 );
+// function clb_enqueue_custom_scripts_styles() {
 
-	// custom JS
-    wp_enqueue_script( 'clb-parallax', get_stylesheet_directory_uri() . '/js/parallax.min.js', array( 'jquery' ), '', true );
-	wp_enqueue_script( 'clb-custom-ironwood-scripts', get_stylesheet_directory_uri() . '/js/clb-custom-ironwood-scripts.js', array( 'jquery' ), '', true );
+// 	// custom JS
+//     wp_enqueue_script( 'clb-parallax', get_stylesheet_directory_uri() . '/js/parallax.min.js', array( 'jquery' ), '', true );
+// 	wp_enqueue_script( 'clb-custom-ironwood-scripts', get_stylesheet_directory_uri() . '/js/clb-custom-ironwood-scripts.js', array( 'jquery' ), '', true );
     
 
-	// custom front-end CSS
-	wp_enqueue_style( 'clb-custom-ironwood-styles', get_stylesheet_directory_uri() . '/css/clb-custom-ironwood-styles.css', array(), '1.0.0', 'all');
+// 	// custom front-end CSS
+// 	wp_enqueue_style( 'clb-custom-ironwood-styles', get_stylesheet_directory_uri() . '/css/clb-custom-ironwood-styles.css', array(), '1.0.0', 'all');
 
-}
+// }
 
 
 
@@ -1558,66 +1719,6 @@ function clb_add_bootstrap_5_2() {
 
 }
 
-
-
-
-
-// Add Custom Color Palette to Theme
-
-////////////////////////////////////////////////////////////////
-// Don't forget to add these colors to your CSS, or else they won't appear on the front end
-// Use: https://www.sassmeister.com/
-
-/*
-// Gutenberg color options
-// -- see editor-color-palette in functions.php
-     $colors: (
-     	'salmon' 		: #F96D48,
-     	'blue' 	: #009CFF,
-     	'light-gray' 	: #EEE,
-     	'black' 		: #333,
-          'white'        : #FFF,
-     );
-     @each $name, $color in $colors {
-     	.has-#{$name}-color {
-     		color: $color;
-     	}
-     	.has-#{$name}-background-color {
-     		background-color: $color;
-     	}
-     }
-*/
-////////////////////////////////////////////////////////////////
-add_action( 'after_setup_theme', 'clb_ironwood_setup_theme_supported_features' );
-function clb_ironwood_setup_theme_supported_features() {
-    add_theme_support( 'editor-color-palette', array(
-        array(
-            'name'  => 'Salmon',
-            'slug'  => 'salmon',
-            'color'	=> '#F96D48',
-        ),
-        array(
-            'name'  => 'Blue',
-            'slug'  => 'blue',
-            'color' => '#009CFF',
-        ),
-        array(
-            'name'  => 'Light Gray',
-            'slug'  => 'light-gray',
-            'color' => '#EEE',
-        ),
-        array(
-            'name'	=> 'Black',
-            'slug'	=> 'black',
-            'color'	=> '#333',
-        ),
-        array(
-            'name'	=> 'White',
-            'slug'	=> 'white',
-            'color'	=> '#FFF',
-        ),
-    ) );
-}
 
 
 
