@@ -436,7 +436,9 @@ function yak_output_theme_palette_preview() {
 	$accent  = get_field('yak_accent_color', 'option');
 	$customs = get_field('yak_additional_colors', 'option') ?: [];
 
-	echo '<div class="yak-color-palette-preview" style="margin:40px auto 60px; max-width:1300px; padding:0 20px;">';
+	echo '<div class="yak-color-palette-preview">
+		<div>';
+
 
 	// --- Base color ---
 	if ($base && is_string($base)) {
@@ -470,10 +472,9 @@ function yak_output_theme_palette_preview() {
 		yak_render_palette_group('Dark Mode Neutrals', $palette, $highlight, range(10, 12));
 	}
 
-	echo '</div>';
+	echo '</div></div>';
+	
 }
-
-
 
 
 
