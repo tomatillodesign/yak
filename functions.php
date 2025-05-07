@@ -245,6 +245,15 @@ require_once get_stylesheet_directory() . '/inc/yak-typography.php';
 // Load YAK layout settings
 require_once get_stylesheet_directory() . '/inc/yak-layouts.php';
 
+add_action('wp_enqueue_scripts', function () {
+	wp_enqueue_style(
+		'yak-gutenberg-overrides',
+		get_stylesheet_directory_uri() . '/css/yak-gutenberg-overrides.css',
+		[],
+		null
+	);
+}, 99); // Ensure it's dead last
+
 
 
 // Update CSS within in Admin

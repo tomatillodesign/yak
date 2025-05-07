@@ -39,20 +39,21 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 	--yak-type-ratio: 1.25;
 
 	/* Font sizes (relative, rem-based) */
-	--yak-font-xs: calc(var(--yak-font-base) / var(--yak-type-ratio));
-	--yak-font-sm: var(--yak-font-base);
-	--yak-font-md: calc(var(--yak-font-base) * var(--yak-type-ratio));
-	--yak-font-lg: calc(var(--yak-font-md) * var(--yak-type-ratio));
+	--yak-font-xs: calc(var(--yak-font-base) / (var(--yak-type-ratio) * var(--yak-type-ratio)));  /* smallest */
+	--yak-font-sm: calc(var(--yak-font-base) / var(--yak-type-ratio));                            /* smaller than base */
+	--yak-font-md: var(--yak-font-base);                                                          /* base */
+	--yak-font-lg: calc(var(--yak-font-md) * var(--yak-type-ratio));                              /* larger */
 	--yak-font-xl: calc(var(--yak-font-lg) * var(--yak-type-ratio));
 	--yak-font-2xl: calc(var(--yak-font-xl) * var(--yak-type-ratio));
 
-	/* Dynamic line-heights — relative to font size */
-	--yak-lh-xs: 1.6;
-	--yak-lh-sm: 1.65;
-	--yak-lh-md: 1.55;
-	--yak-lh-lg: 1.4;
-	--yak-lh-xl: 1.25;
-	--yak-lh-2xl: 1.15;
+
+	/* Dynamic line-heights — with ~15% more breathing room */
+	--yak-lh-xs: 1.84;     /* was 1.6 */
+	--yak-lh-sm: 1.90;     /* was 1.65 */
+	--yak-lh-md: 1.78;     /* was 1.55 */
+	--yak-lh-lg: 1.61;     /* was 1.4 */
+	--yak-lh-xl: 1.44;     /* was 1.25 */
+	--yak-lh-2xl: 1.32;    /* was 1.15 */
 
 	/* Colors */
 	--yak-color-black: #000;
@@ -73,8 +74,8 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 
   body {
 	font-family: var(--yak-primary-font);
-	font-size: var(--yak-font-sm);        /* based on ACF value */
-	line-height: var(--yak-lh-sm);        /* scales with it */
+	font-size: var(--yak-font-md);        /* based on ACF value */
+	line-height: var(--yak-lh-md);        /* scales with it */
 	font-weight: 400;
 	color: var(--yak-color-black);
 	background-color: var(--yak-color-white);
@@ -84,6 +85,12 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
   }
+
+  .entry-content {
+	position: relative;
+	z-index: 0;
+	}
+
 
   a {
     color: var(--yak-color-primary);
@@ -179,6 +186,20 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
     padding: 0.2em 0.4em;
     border-radius: 4px;
   }
+
+	.entry-content > p:last-child,
+	.yak-box > p:last-child,
+	.yak-card > p:last-child,
+	footer p:last-child,
+	.site-footer p:last-child {
+		margin-bottom: 0;
+	}
+
+	.entry-content > p:last-of-type:last-child {
+		margin-bottom: 0;
+	}
+
+
 }
 
 @layer yak-layout {
@@ -196,6 +217,19 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 
   .site-footer {
 	background: var(--yak-color-primary);
+	text-align: center;
+	font-size: var(--yak-font-sm);
+	color: var(--yak-color-white);
+
+	& a {
+		color: var(--yak-color-white);
+		text-decoration: none;
+	}
+
+	& a:hover {
+		text-decoration: underline;
+	}
+
   }
 
   .site-inner {
@@ -224,60 +258,53 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 }
 
 @layer yak-components {
-  .yak-button {
-    display: inline-block;
-    padding: 0.75rem 1.25rem;
-    font-size: 1rem;
-    font-weight: 600;
-    border: none;
-    border-radius: var(--yak-radius);
-    background: var(--yak-color-primary);
-    color: white;
-    text-align: center;
-    text-decoration: none;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
 
-  .yak-button:hover,
-  .yak-button:focus {
-    background: var(--yak-color-black);
-  }
+	
+	
 }
 
 @layer yak-blocks {
-  .wp-block-button__link {
-    border-radius: var(--yak-radius);
-    background: var(--yak-color-primary);
-    color: white;
-    padding: 0.75rem 1.25rem;
-    text-decoration: none;
-  }
 
-  .wp-block-button__link:hover {
-    background: var(--yak-color-black);
-  }
+	.entry-content .has-background,
+	.entry-content img {
+		border-radius: var(--yak-radius);
+	}
 
-  .alignwide,
-  .alignfull {
-    margin-left: calc(50% - 50vw);
-    margin-right: calc(50% - 50vw);
-    width: 100vw;
-  }
+	.alignwide,
+	.alignfull {
+		margin-left: calc(50% - 50vw);
+		margin-right: calc(50% - 50vw);
+		width: 100vw;
+	}
 
-  .alignwide {
-    max-width: 100vw;
-  }
+	.alignwide {
+		max-width: 100vw;
+	}
 
-  .has-yak-black-color {
-    color: var(--yak-color-black);
-  }
+	@media (min-width: 960px) {
+		.entry-content .alignwide {
+			display: block;
+			width: 100%;
+			max-width: 90rem; /* ~1440px */
+			margin-left: auto;
+			margin-right: auto;
+		}
+	}
+	
+	
+	
+	  
 
-  .has-accent-background-color {
-    background-color: var(--yak-color-primary);
-    color: white;
-  }
+	.has-yak-black-color {
+		color: var(--yak-color-black);
+	}
+
+	.has-accent-background-color {
+		background-color: var(--yak-color-primary);
+		color: var(--yak-color-white);
+	}
 }
+
 
 @layer yak-utilities {
   .visually-hidden {

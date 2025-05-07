@@ -50,6 +50,21 @@ if (function_exists('acf_add_local_field_group')) {
                 'ui' => 0,
                 'wrapper' => ['width' => '50%'],
             ],
+            [
+                'key' => 'field_yak_border_radius',
+                'label' => 'Border Radius',
+                'name' => 'yak_border_radius',
+                'type' => 'number',
+                'instructions' => 'Applies to buttons, inputs, containers, and card corners.',
+                'default_value' => 0,
+                'min' => 0,
+                'max' => 20,
+                'step' => 1,
+                'prepend' => '',
+                'append' => 'px',
+                'wrapper' => ['width' => '33%'],
+            ]
+            
         ],
         'location' => [
             [
@@ -67,22 +82,30 @@ if (function_exists('acf_add_local_field_group')) {
 
 
 
-add_action('wp_head', function () {
-    if (!function_exists('get_field')) return;
+add_action('wp_head', 'yak_output_layout_css_vars');
+add_action('admin_head', 'yak_output_layout_css_vars');
 
-    $width = get_field('yak_content_max_width', 'option');
-    $unit  = get_field('yak_content_max_width_unit', 'option');
+function yak_output_layout_css_vars() {
+	if (!function_exists('get_field')) return;
 
-    // Fallback to 75ch
-    if (!$width || !$unit) {
-        $css_value = '75ch';
-    } else {
-        $css_value = floatval($width) . $unit;
-    }
+	// Get max content width
+	$width = get_field('yak_content_max_width', 'option');
+	$unit  = get_field('yak_content_max_width_unit', 'option');
+	$css_width = ($width && $unit) ? floatval($width) . $unit : '75ch';
 
-    echo '<style id="yak-content-width-vars">' . PHP_EOL;
-    echo ":root {" . PHP_EOL;
-    echo "    --yak-content-max-width: {$css_value};" . PHP_EOL;
-    echo "}" . PHP_EOL;
-    echo '</style>' . PHP_EOL;
-}, 20);
+	// Get border radius
+	$radius = get_field('yak_border_radius', 'option');
+	$radius = ($radius !== '' && $radius !== null) ? intval($radius) : 0;
+	$radius = max(0, min(20, $radius)); // Enforce bounds
+
+	// Output CSS variables
+	echo '<style id="yak-layout-vars">' . PHP_EOL;
+	echo ':root {' . PHP_EOL;
+	echo "  --yak-content-max-width: {$css_width};" . PHP_EOL;
+	echo "  --yak-radius: {$radius}px;" . PHP_EOL;
+	echo '}' . PHP_EOL;
+	echo '</style>' . PHP_EOL;
+}
+
+
+

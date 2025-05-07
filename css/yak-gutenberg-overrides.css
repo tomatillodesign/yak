@@ -1,0 +1,24 @@
+
+
+
+.wp-block-button .wp-block-button__link {
+    font-family: var(--yak-secondary-font);
+	background-color: var(--yak-color-primary);
+	color: var(--yak-color-white);
+	border-radius: var(--yak-radius);
+	padding: 0.75rem 1.5rem;
+	font-size: 1rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	text-decoration: none;
+	border: none;
+	cursor: pointer;
+	box-shadow: none;
+	transition: background-color 0.2s ease;
+}
+
+.wp-block-button .wp-block-button__link:hover,
+.wp-block-button .wp-block-button__link:focus {
+	background-color: var(--yak-color-black);
+}
