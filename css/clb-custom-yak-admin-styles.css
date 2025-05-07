@@ -7,18 +7,13 @@
 /* =VARIABLES
    -------------------------------------------------------------------------- */
    :root {
-    /* Brand colors */
-    --yak-primary-color: #2F5E98;
-    --yak-primary-color-10: #2f4e8a;
-    --yak-primary-color-20: #264278;
-    --yak-primary-color-30: #1d3565;
-    --yak-primary-color-40: #142753;
-
-    --yak-white: #ffffff;
-    --yak-black: #000000;
-    --yak-light-gray: #f5f5f5;
-    --yak-medium-gray: #eeeeee;
-    --yak-dark-gray: #777777;
+    --yak-admin-white: #fff;
+    --yak-admin-black: #000;
+    --yak-admin-main: #2f2b58;
+    --yak-admin-hover: #3f3a6e;
+    --yak-admin-subtle-bg: #f1f2f5;
+    --yak-admin-border: #e0e2e7;
+    --yak-admin-text: #ffffff;
 
     /* Font family */
     --yak-font-primary: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
@@ -47,11 +42,11 @@ body.wp-admin,
 #adminmenu,
 #adminmenuback,
 #adminmenuwrap {
-    background-color: var(--yak-primary-color-30, #23282d);
+  background-color: var(--yak-admin-main);
 }
 
 #adminmenu .wp-submenu {
-    background-color: var(--yak-primary-color-40, #191e23);
+  background-color: var(--yak-admin-hover);
 }
 
 #adminmenu .wp-has-current-submenu .wp-submenu,
@@ -59,8 +54,8 @@ body.wp-admin,
 #adminmenu li.menu-top:hover,
 #adminmenu li.opensub > a.menu-top,
 #adminmenu li > a.menu-top:focus {
-    background-color: var(--yak-primary-color-10, #0073aa);
-    color: var(--yak-white, #fff);
+  background-color: var(--yak-admin-hover);
+	color: var(--yak-admin-text);
 }
 
 #adminmenu a:hover,
@@ -69,12 +64,15 @@ body.wp-admin,
     color: var(--yak-white, #fff);
 }
 
+#adminmenu .wp-has-current-submenu .wp-submenu .wp-submenu-head, #adminmenu li.current a.menu-top, #adminmenu li.wp-has-current-submenu a.wp-has-current-submenu {
+  background-color: var(--yak-admin-black);
+}
 
 /* =TOOLBAR (TOP BAR)
   -------------------------------------------------------------------------- */
 #wpadminbar {
-    background: var(--yak-primary-color-30, #23282d);
-    border-bottom: 1px solid var(--yak-primary-color-20, #1d1d1d);
+  background: var(--yak-admin-main);
+	border-bottom: none;
 }
 
 #wpadminbar a.ab-item,
@@ -87,12 +85,17 @@ body.wp-admin,
     color: var(--yak-light-gray, #f5f5f5);
 }
 
+#adminmenu div.wp-menu-image:before,
+#adminmenu li a:focus div.wp-menu-image:before, #adminmenu li.opensub div.wp-menu-image:before, #adminmenu li:hover div.wp-menu-image:before {
+  color: var(--yak-white, #fff);
+}
+
 
 /* =DASHBOARD WIDGETS
   -------------------------------------------------------------------------- */
 #dashboard-widgets-wrap .postbox {
-    border: 1px solid var(--yak-medium-gray, #ccc);
-    background: var(--yak-white, #fff);
+  border: none;
+	background: var(--yak-admin-white);
 }
 
 #dashboard-widgets-wrap .postbox h2 {
@@ -124,10 +127,7 @@ body.wp-admin,
 
 /* =ACF PANELS
   -------------------------------------------------------------------------- */
-/* Hide ACF group from all users except user ID 1 */
-body:not(.user-id-1) #acf-group_62a6319cdf400 {
-    display: none !important;
-}
+
 
 
 /* =GUTENBERG / BLOCK EDITOR (optional)
@@ -135,6 +135,15 @@ body:not(.user-id-1) #acf-group_62a6319cdf400 {
 .edit-post-visual-editor {
     font-family: var(--yak-font-primary, sans-serif);
     background-color: var(--yak-light-gray, #f9f9f9);
+}
+
+.components-button.is-primary:disabled, 
+.components-button.is-primary:disabled:active:enabled, 
+.components-button.is-primary[aria-disabled=true], 
+.components-button.is-primary[aria-disabled=true]:active:enabled, 
+.components-button.is-primary[aria-disabled=true]:enabled,
+.components-button.is-primary {
+  background: var(--yak-admin-main);
 }
 
 

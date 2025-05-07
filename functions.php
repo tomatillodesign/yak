@@ -109,8 +109,6 @@ function yak_theme_setup_features() {
 	add_theme_support( 'wp-block-styles' );              // Enables default WP block styles
 	add_theme_support( 'align-wide' );                   // Allows wide/full block alignments
 	add_theme_support( 'responsive-embeds' );            // Makes embeds (e.g., YouTube) mobile-friendly
-	add_theme_support( 'disable-custom-colors' );        // Prevents users from picking arbitrary colors
-	add_theme_support( 'disable-custom-font-sizes' );    // Prevents arbitrary font sizes
 
 	// Media & markup
 	add_theme_support( 'post-thumbnails' );              // Enables featured image support
@@ -407,6 +405,16 @@ if (function_exists('acf_add_local_field_group')) {
 					],
 				],
 			],
+			[
+				'key' => 'field_yak_disable_custom_colors',
+				'label' => 'Disable Custom Colors',
+				'name' => 'yak_disable_custom_colors',
+				'type' => 'true_false',
+				'ui' => 1,
+				'instructions' => 'Prevent users from picking arbitrary colors in the editor. Only your theme palette will be available.',
+				'default_value' => 1,
+			],
+			
 		],
 		'location' => [
 			[
@@ -427,6 +435,19 @@ if (function_exists('acf_add_local_field_group')) {
 }
 
 
+// controls whether to allow custom colors & gradients
+add_action('after_setup_theme', 'yak_maybe_disable_editor_customizations');
+function yak_maybe_disable_editor_customizations() {
+	if (!function_exists('get_field')) return;
+
+	$disable = get_field('yak_disable_custom_colors', 'option');
+	if ($disable) {
+		add_theme_support('disable-custom-colors');
+		add_theme_support('disable-custom-gradients');
+	}
+}
+
+
 // output the new swatches on the options page
 add_action('admin_footer', 'yak_output_theme_palette_preview');
 function yak_output_theme_palette_preview() {
@@ -437,7 +458,7 @@ function yak_output_theme_palette_preview() {
 	$customs = get_field('yak_additional_colors', 'option') ?: [];
 
 	echo '<div class="yak-color-palette-preview">
-		<div>';
+		<div class="wrap">';
 
 
 	// --- Base color ---
@@ -477,6 +498,33 @@ function yak_output_theme_palette_preview() {
 }
 
 
+// update WP admin colors
+add_action('admin_head', 'yak_output_admin_theme_css_vars');
+function yak_output_admin_theme_css_vars() {
+	if (!is_admin()) return;
+
+	$base = get_field('yak_base_color', 'option');
+	if (!$base) return;
+
+	list($palette) = yak_generate_color_palette($base, 'yak-admin');
+
+	$vars = [
+		'--yak-admin-main'       => $palette['yak-admin-main'] ?? '#23282d',
+		'--yak-admin-hover'      => $palette['yak-admin-hover'] ?? '#2c3338',
+		'--yak-admin-subtle-bg'  => $palette['yak-admin-subtle-bg'] ?? '#f1f2f3',
+		'--yak-admin-border'     => $palette['yak-admin-border'] ?? '#e1e2e4',
+		'--yak-admin-text'       => $palette['yak-admin-text'] ?? '#ffffff',
+	];
+
+	echo '<style>:root {';
+	foreach ($vars as $key => $val) {
+		echo "{$key}: {$val};";
+	}
+	echo '}</style>';
+}
+
+
+
 
 
 // helpers for color work
@@ -509,7 +557,7 @@ function yak_generate_color_palette($hex, $prefix = 'yak-base') {
 
 	list($h, $s, $l) = yak_rgb_to_hsl($r, $g, $b);
 	$palette = [];
-	$closest_key = null;
+	$highlight_key = null;
 	$closest_dist = PHP_INT_MAX;
 
 	// Swatches 1–3: light grays (base hue, desaturated, light)
@@ -526,8 +574,8 @@ function yak_generate_color_palette($hex, $prefix = 'yak-base') {
 	}
 
 	// Swatches 4–9: base color ramp, consistent saturation, stepped lightness
-	$base_s = min(1.0, $s + 0.05); // slight bump to saturation, or just use $s
-	$lightness_values = [0.82, 0.68, 0.54, 0.40, 0.26, 0.14]; // clean descending steps
+	$base_s = min(1.0, $s + 0.05); // slight bump to saturation
+	$lightness_values = [0.82, 0.68, 0.54, 0.40, 0.26, 0.14];
 
 	$color_steps = array_map(function ($l) use ($base_s) {
 		return ['s' => $base_s, 'l' => $l];
@@ -543,7 +591,7 @@ function yak_generate_color_palette($hex, $prefix = 'yak-base') {
 		$dist = yak_rgb_distance([$r, $g, $b], $rgb);
 		if ($dist < $closest_dist) {
 			$closest_dist = $dist;
-			$closest_key = "{$prefix}-{$index}";
+			$highlight_key = "{$prefix}-{$index}";
 		}
 	}
 
@@ -561,10 +609,21 @@ function yak_generate_color_palette($hex, $prefix = 'yak-base') {
 	}
 
 	// Force exact original color into closest swatch
-	$palette[$closest_key] = '#' . $hex;
+	$palette[$highlight_key] = '#' . $hex;
 
-	return [$palette, $closest_key];
+	// --- Admin-specific CSS variable-friendly names ---------------------
+	$admin_palette = [
+		'yak-admin-main'       => yak_hsl_to_hex([$h, min(0.35, $s * 0.8), 0.28]), // sidebar / topbar
+		'yak-admin-hover'      => yak_hsl_to_hex([$h, min(0.40, $s * 0.9), 0.36]), // hover state
+		'yak-admin-subtle-bg'  => yak_hsl_to_hex([$h, 0.08, 0.94]),               // panels, submenus
+		'yak-admin-border'     => yak_hsl_to_hex([$h, 0.06, 0.86]),               // border color
+		'yak-admin-black'     => yak_hsl_to_hex([$h, 0.05, 0.1]),               // border color
+		'yak-admin-text'       => (yak_calculate_contrast(yak_hsl_to_hex([$h, $s, 0.28]), '#ffffff') > 4.5) ? '#ffffff' : '#000000',
+	];
+
+	return [array_merge($palette, $admin_palette), $highlight_key];
 }
+
 
 
 
@@ -593,6 +652,13 @@ function yak_rgb_to_hsl($r, $g, $b) {
 	}
 	return [$h, $s, $l];
 }
+
+function yak_hsl_to_hex(array $hsl) {
+	list($h, $s, $l) = $hsl;
+	$rgb = yak_hsl_to_rgb($h, $s, $l);
+	return yak_rgb_to_hex($rgb);
+}
+
 
 function yak_hsl_to_rgb($h, $s, $l) {
 	$r = $g = $b = 0;
