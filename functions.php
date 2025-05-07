@@ -217,8 +217,8 @@ add_action('acf/init', function () {
 		]);
 
 		acf_add_options_sub_page([
-			'page_title'  => 'Spacing & Layout',
-			'menu_title'  => 'Spacing & Layout',
+			'page_title'  => 'Layouts',
+			'menu_title'  => 'Layouts',
 			'menu_slug'   => 'yak-options-layouts', // ✅ this prevents the acf-options- prefix
 			'parent_slug' => 'theme-settings',
 		]);
@@ -242,6 +242,9 @@ require_once get_stylesheet_directory() . '/inc/yak-colors.php';
 // Load YAK typography system
 require_once get_stylesheet_directory() . '/inc/yak-typography.php';
 
+// Load YAK layout settings
+require_once get_stylesheet_directory() . '/inc/yak-layouts.php';
+
 
 
 // Update CSS within in Admin
@@ -257,18 +260,17 @@ add_action('admin_enqueue_scripts', 'clb_custom_admin_styles');
 
 
 // Enqueue custom scripts & styles
-// add_action( 'wp_enqueue_scripts', 'clb_enqueue_custom_scripts_styles', 100 );
-// function clb_enqueue_custom_scripts_styles() {
+add_action( 'wp_enqueue_scripts', 'clb_enqueue_custom_scripts_styles', 100 );
+function clb_enqueue_custom_scripts_styles() {
 
-// 	// custom JS
-//     wp_enqueue_script( 'clb-parallax', get_stylesheet_directory_uri() . '/js/parallax.min.js', array( 'jquery' ), '', true );
-// 	wp_enqueue_script( 'clb-custom-ironwood-scripts', get_stylesheet_directory_uri() . '/js/clb-custom-ironwood-scripts.js', array( 'jquery' ), '', true );
+	// custom JS
+    wp_enqueue_script( 'clb-custom-yak-scripts', get_stylesheet_directory_uri() . '/js/clb-custom-yak-scripts.js', array( 'jquery' ), '', true );
     
 
-// 	// custom front-end CSS
-// 	wp_enqueue_style( 'clb-custom-ironwood-styles', get_stylesheet_directory_uri() . '/css/clb-custom-ironwood-styles.css', array(), '1.0.0', 'all');
+	// custom front-end CSS
+	// wp_enqueue_style( 'clb-custom-yak-styles', get_stylesheet_directory_uri() . '/css/clb-custom-yak-styles.css', array(), '1.0.0', 'all');
 
-// }
+}
 
 
 
@@ -1019,21 +1021,21 @@ function clb_ironwood_add_custom_font_families_via_css_variable() {
 
 
 // Add Bootstrap functionality
-add_action('wp_head', 'clb_add_bootstrap_5_2', 4);
+// add_action('wp_head', 'clb_add_bootstrap_5_2', 4);
 //add_action('admin_head', 'clb_add_bootstrap_5_2', 4);
-function clb_add_bootstrap_5_2() {
+// function clb_add_bootstrap_5_2() {
 
-    //echo '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">';
-    echo '<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>';
+//     //echo '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">';
+//     echo '<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>';
 
-    echo '
-    <!-- link tag to stylesheet that define your layers -->
-    <link rel="stylesheet" href="' . get_stylesheet_directory_uri() . '/style.css">
-    <style>
-    @import url("https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css") layer(bootstrap);
-    </style>';
+//     echo '
+//     <!-- link tag to stylesheet that define your layers -->
+//     <link rel="stylesheet" href="' . get_stylesheet_directory_uri() . '/style.css">
+//     <style>
+//     @import url("https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css") layer(bootstrap);
+//     </style>';
 
-}
+// }
 
 
 
@@ -1135,56 +1137,6 @@ function clb_ironwood_publish_hello_bar() {
 
 
 // Search Bar modal
-add_action('genesis_after_header', 'clb_ironwood_modal_search');
-function clb_ironwood_modal_search() {
-
-	$blog_title = get_bloginfo();
-
-?>
-
-	<div class="clb-move-modals">
-	
-		<!-- Modal -->
-		<div id="site-search" class="modal fade" tabindex="-1" role="dialog">
-		<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-
-				<h4 class="modal-title">Search <?php echo $blog_title; ?></h4>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">×</span>
-				</button>
-			</div>
-
-			<div class="modal-body"><?php echo get_search_form(); ?></div>
-		</div><!-- /.modal-content -->
-		</div><!-- /.modal-dialog -->
-		</div><!-- /.modal -->
-
-
-        <!-- Modal -->
-		<div id="contact" class="modal fade" tabindex="-1" role="dialog">
-		<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-
-				<h4 class="modal-title">Contact The Modpodders</h4>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">×</span>
-				</button>
-			</div>
-
-			<div class="modal-body"><?php echo do_shortcode('[gravityform id="1" title="false" description="true" ajax="false"]'); ?></div>
-		</div><!-- /.modal-content -->
-		</div><!-- /.modal-dialog -->
-		</div><!-- /.modal -->
-
-	</div>
-
-<?php
-
-}
-
 
 
 if( function_exists('acf_add_local_field_group') ):

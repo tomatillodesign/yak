@@ -298,18 +298,39 @@ function yak_get_editor_palette_colors() {
 
 function yak_output_editor_palette_css_vars() {
 	$colors = yak_get_editor_palette_colors(); // get selected ACF repeater
-	if (empty($colors)) return;
+	if (empty($colors)) $colors = [];
 
+	// Fallback core theme vars referencing ACF-based generated color vars
+	$base   = get_field('yak_base_color', 'option');
+	$core_colors = [
+		'yak-color-primary' => $base,       // base color
+		'yak-color-black'   => 'var(--yak-base-12)',    // dark shade
+		'yak-color-muted'   => 'var(--yak-base-2)',     // lightest shade
+		'yak-color-white'   => '#ffffff',               // hard-coded white
+	];
+
+	// Ensure required theme color vars are included in the output
+	foreach ($core_colors as $slug => $value) {
+		$exists = array_filter($colors, function($c) use ($slug) {
+			return sanitize_title($c['slug']) === $slug;
+		});
+		if (empty($exists)) {
+			$colors[] = [ 'slug' => $slug, 'color' => $value ];
+		}
+	}
+
+	// Start CSS output
 	$css  = "<style id='yak-editor-colors'>\n";
 	$css .= ":root {\n";
 
 	foreach ($colors as $c) {
 		$slug = sanitize_title($c['slug']);
-		$hex  = esc_attr($c['color']);
-		$css .= "  --{$slug}: {$hex};\n";
+		$val  = esc_attr($c['color']);
+		$css .= "  --{$slug}: {$val};\n";
 	}
 	$css .= "}\n";
 
+	// Generate color utility classes
 	foreach ($colors as $c) {
 		$slug = sanitize_title($c['slug']);
 		$css .= ".has-{$slug}-color { color: var(--{$slug}); }\n";
@@ -319,6 +340,7 @@ function yak_output_editor_palette_css_vars() {
 
 	echo $css;
 }
+
 
 // Frontend
 add_action('wp_head', 'yak_output_editor_palette_css_vars');
@@ -446,6 +468,47 @@ function yak_generate_color_palette($hex, $prefix = 'yak-base') {
 }
 
 
+// add_action('admin_head', 'yak_output_all_color_swatches_css_vars');
+add_action('wp_head', 'yak_output_all_color_swatches_css_vars');
+function yak_output_all_color_swatches_css_vars() {
+	if (!function_exists('get_field')) return;
+
+	$base    = get_field('yak_base_color', 'option');
+	$accent  = get_field('yak_accent_color', 'option');
+	$customs = get_field('yak_additional_colors', 'option') ?: [];
+
+	$all_palettes = [];
+
+	// 1. Base palette
+	if ($base) {
+		list($palette) = yak_generate_color_palette($base, 'yak-base');
+		$all_palettes = array_merge($all_palettes, $palette);
+	}
+
+	// 2. Accent palette
+	if ($accent) {
+		list($palette) = yak_generate_color_palette($accent, 'yak-accent');
+		$all_palettes = array_merge($all_palettes, $palette);
+	}
+
+	// 3. Additional custom palettes
+	foreach ($customs as $item) {
+		if (empty($item['name']) || empty($item['hex'])) continue;
+		$slug = 'yak-' . sanitize_title($item['name']);
+		list($palette) = yak_generate_color_palette($item['hex'], $slug);
+		$all_palettes = array_merge($all_palettes, $palette);
+	}
+
+	// Output CSS to front end
+	if (!empty($all_palettes)) {
+		echo "<style id='yak-all-swatches'>\n";
+		echo ":root {\n";
+		foreach ($all_palettes as $slug => $hex) {
+			echo "  --{$slug}: {$hex};\n";
+		}
+		echo "}\n</style>\n";
+	}
+}
 
 
 
