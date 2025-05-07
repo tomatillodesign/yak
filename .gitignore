@@ -1,0 +1,18 @@
+# OS crap
+.DS_Store
+
+# Editor stuff
+*.code-workspace
+.vscode/
+.idea/
+
+# Node / Composer
+node_modules/
+vendor/
+
+# Build artifacts
+*.log
+*.zip
+*.map
+dist/
+build/

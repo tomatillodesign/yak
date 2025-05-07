@@ -1,0 +1,143 @@
+/* ==========================================================================
+   YAK Admin Theme – WordPress Custom Admin Styles
+   Author: Chris Liu-Beers, Tomatillo Design
+   ========================================================================== */
+
+
+/* =VARIABLES
+   -------------------------------------------------------------------------- */
+   :root {
+    /* Brand colors */
+    --yak-primary-color: #2F5E98;
+    --yak-primary-color-10: #2f4e8a;
+    --yak-primary-color-20: #264278;
+    --yak-primary-color-30: #1d3565;
+    --yak-primary-color-40: #142753;
+
+    --yak-white: #ffffff;
+    --yak-black: #000000;
+    --yak-light-gray: #f5f5f5;
+    --yak-medium-gray: #eeeeee;
+    --yak-dark-gray: #777777;
+
+    /* Font family */
+    --yak-font-primary: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+
+    /* WP admin integration colors */
+    --wp-admin-theme-color: var(--yak-primary-color);
+    --wp-admin-theme-color-darker-10: var(--yak-primary-color-20);
+}
+
+
+/* =TYPOGRAPHY
+  -------------------------------------------------------------------------- */
+body.wp-admin,
+#wpadminbar,
+#adminmenu,
+.wrap {
+    font-family: var(--yak-font-primary, sans-serif);
+    font-size: 14px;
+    line-height: 1.5;
+    color: #1d1d1d;
+}
+
+
+/* =ADMIN MENU STYLING
+  -------------------------------------------------------------------------- */
+#adminmenu,
+#adminmenuback,
+#adminmenuwrap {
+    background-color: var(--yak-primary-color-30, #23282d);
+}
+
+#adminmenu .wp-submenu {
+    background-color: var(--yak-primary-color-40, #191e23);
+}
+
+#adminmenu .wp-has-current-submenu .wp-submenu,
+#adminmenu li.current a.menu-top,
+#adminmenu li.menu-top:hover,
+#adminmenu li.opensub > a.menu-top,
+#adminmenu li > a.menu-top:focus {
+    background-color: var(--yak-primary-color-10, #0073aa);
+    color: var(--yak-white, #fff);
+}
+
+#adminmenu a:hover,
+#adminmenu .wp-submenu a:hover,
+#adminmenu .wp-submenu a:focus {
+    color: var(--yak-white, #fff);
+}
+
+
+/* =TOOLBAR (TOP BAR)
+  -------------------------------------------------------------------------- */
+#wpadminbar {
+    background: var(--yak-primary-color-30, #23282d);
+    border-bottom: 1px solid var(--yak-primary-color-20, #1d1d1d);
+}
+
+#wpadminbar a.ab-item,
+#wpadminbar .ab-label {
+    color: var(--yak-white, #fff);
+}
+
+#wpadminbar a.ab-item:hover,
+#wpadminbar .ab-label:hover {
+    color: var(--yak-light-gray, #f5f5f5);
+}
+
+
+/* =DASHBOARD WIDGETS
+  -------------------------------------------------------------------------- */
+#dashboard-widgets-wrap .postbox {
+    border: 1px solid var(--yak-medium-gray, #ccc);
+    background: var(--yak-white, #fff);
+}
+
+#dashboard-widgets-wrap .postbox h2 {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+
+/* =CUSTOM FOOTER CREDIT
+  -------------------------------------------------------------------------- */
+  .yak-admin-credit {
+    font-style: italic;
+    font-size: 13px;
+    line-height: 1.55;
+    color: #50575e;
+}
+
+.yak-admin-credit a {
+    color: #2271b1;
+    text-decoration: underline;
+}
+
+.yak-admin-credit a:hover,
+.yak-admin-credit a:focus {
+    color: #135e96;
+    
+}
+
+
+/* =ACF PANELS
+  -------------------------------------------------------------------------- */
+/* Hide ACF group from all users except user ID 1 */
+body:not(.user-id-1) #acf-group_62a6319cdf400 {
+    display: none !important;
+}
+
+
+/* =GUTENBERG / BLOCK EDITOR (optional)
+  -------------------------------------------------------------------------- */
+.edit-post-visual-editor {
+    font-family: var(--yak-font-primary, sans-serif);
+    background-color: var(--yak-light-gray, #f9f9f9);
+}
+
+
+/* =MISC FIXES / OVERRIDES
+  -------------------------------------------------------------------------- */
+/* Customize login screen, modals, notifications, etc. here as needed */
