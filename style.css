@@ -274,6 +274,7 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 
 
 @layer yak-layout {
+
   .site-container {
     display: flex;
     flex-direction: column;
@@ -292,12 +293,12 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 	font-size: var(--yak-font-sm);
 	color: var(--yak-color-white);
 
-	& a {
+	a {
 		color: var(--yak-color-white);
 		text-decoration: none;
 	}
 
-	& a:hover {
+	a:hover {
 		text-decoration: underline;
 	}
 
@@ -385,6 +386,7 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 	.yak-footer-widgets-outer-wrapper {
 		width: 100%;
 		background: var(--yak-color-muted);
+		margin-top: 4rem;
 	}
 
 	.yak-footer-widgets {
@@ -397,6 +399,114 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 		margin-right: auto;
 		width: 100%;
 	}
+
+	.yak-blog-page-content {
+		margin-bottom: 4rem;
+	}
+
+	.yak-archive-wrapper.yak-blog-format-list {
+		display: flex;
+		flex-direction: column;
+		gap: 2rem;
+
+		article {
+			box-shadow: 0 0 20px rgba(0,0,0,.1);
+			border-radius: var(--yak-radius);
+		}
+
+		.yak-archive-entry.yak-has-thumbnail {
+			display: grid;
+			grid-template-columns: 1fr 4fr;
+			gap: 1rem;
+			align-items: stretch; /* Stretch image wrapper to match text content */
+		}
+
+		.yak-archive-body {
+			padding: 2rem;
+		}
+
+		.yak-archive-body h2 {
+			margin: 0 0 1rem 0;
+		}
+
+		.yak-entry-date {
+			margin: 0 0 1rem 0;
+		}
+
+		.yak-archive-body p:last-of-type {
+			margin-bottom: 0;
+		}
+
+		.yak-archive-image a {
+			height: 100%;
+			width: 100%;
+		}
+
+		/* 👇 Prevent default img aspect ratio from pushing height */
+		.yak-archive-image {
+			display: flex;
+			align-items: stretch;
+			overflow: hidden;
+		}
+
+		.yak-archive-image a,
+		.yak-archive-image img {
+			width: 100%;
+			height: auto;         /* <- switch from 100% to auto */
+			aspect-ratio: 4 / 3;  /* <- force consistent height visually */
+			object-fit: cover;
+			display: block;
+		}
+  
+	   .yak-archive-body {
+			align-self: start; /* Ensure it doesn't stretch */
+	   }
+
+	   .yak-archive-image {
+			height: auto;
+		}
+		
+		.yak-archive-image img {
+			border-top-right-radius: 0;
+			border-bottom-right-radius: 0;
+			height: 100%;
+		}
+
+	}
+
+	.yak-archive-wrapper.yak-blog-format-list article {
+		display: block;
+		container-type: inline-size;
+		container-name: yakCard;
+	}
+
+	@container yakCard (max-width: 700px) {
+		.yak-archive-entry {
+			display: flex;
+			flex-direction: column;
+		}
+	
+		.yak-archive-image {
+			order: 1;
+			width: 100%;
+			height: auto;
+		}
+	
+		.yak-archive-image img {
+			width: 100%;
+			height: auto;
+			object-fit: cover;
+			aspect-ratio: 4 / 3;
+		}
+	
+		.yak-archive-body {
+			order: 2;
+			padding: 1.5rem;
+		}
+		
+	}
+	
+	
 
   @media (min-width: 960px) {
 
