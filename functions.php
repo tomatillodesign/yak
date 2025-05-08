@@ -233,6 +233,9 @@ add_action('acf/init', function () {
 	}
 });
 
+// Load YAK general theme settings
+require_once get_stylesheet_directory() . '/inc/yak-theme-settings.php';
+
 // Load YAK custom login functionality
 require_once get_stylesheet_directory() . '/inc/yak-custom-login.php';
 
@@ -297,6 +300,20 @@ add_action('wp_enqueue_scripts', function () {
 }, 100);
 
 
+// Remove Superfish scripts and styles
+remove_action('wp_enqueue_scripts', 'genesis_load_superfish_scripts', 20);
+
+// Load Dashicons on front end for all users
+add_action('wp_enqueue_scripts', function () {
+	wp_enqueue_style('dashicons');
+});
+
+add_filter('wp_nav_menu_args', function ($args) {
+	if (!empty($args['theme_location']) && $args['theme_location'] === 'primary') {
+		$args['menu_class'] = 'menu genesis-nav-menu yak-main-nav';
+	}
+	return $args;
+});
 
 
 

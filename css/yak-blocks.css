@@ -306,7 +306,7 @@
 	}
 
     .wp-block-button .wp-block-button__link {
-        font-family: var(--yak-secondary-font);
+        font-family: var(--yak-accent-font);
         background-color: var(--yak-color-primary);
         color: var(--yak-color-white);
         border-radius: var(--yak-radius);

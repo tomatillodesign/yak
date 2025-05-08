@@ -135,3 +135,5 @@ add_action('wp_head', function () {
     echo '</style>' . PHP_EOL;
 }, 20);
 
+
+add_theme_support('disable-custom-font-sizes');
