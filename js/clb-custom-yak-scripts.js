@@ -108,3 +108,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	window.addEventListener('resize', evaluateYakPulls);
 	window.addEventListener('DOMContentLoaded', evaluateYakPulls);
 })();
+
+
+
