@@ -1,0 +1,330 @@
+
+
+
+@layer yak-blocks {
+
+	/* 🧱 WordPress Core Block Replacements */
+	
+	/* --- Images --- */
+	.wp-block-image {
+		margin: 0 0 2em;
+		max-width: 100%;
+		height: auto;
+		display: block;
+	}
+
+	.wp-block-image img {
+		max-width: 100%;
+		height: auto;
+		display: block;
+	}
+
+	.wp-block-image figcaption {
+		font-size: 0.875rem;
+		color: #666;
+		text-align: center;
+		margin-top: 0.5em;
+	}
+
+	/* --- Quotes --- */
+	.wp-block-quote {
+		border-left: 4px solid #ccc;
+		padding-left: 1.25em;
+		margin: 2em 0;
+		font-style: italic;
+	}
+
+	.wp-block-quote cite {
+		display: block;
+		margin-top: 0.5em;
+		font-style: normal;
+		font-size: 0.9em;
+		color: #555;
+	}
+
+	/* --- Buttons --- */
+	/* .wp-block-button a {
+		display: inline-block;
+		background-color: var(--yak-accent, #000);
+		color: #fff;
+		padding: 0.75em 1.25em;
+		text-decoration: none;
+		font-weight: bold;
+		border-radius: 4px;
+	} */
+
+	.wp-block-button.is-style-outline a {
+		background: transparent;
+		border: 2px solid var(--yak-accent, #000);
+		color: var(--yak-accent, #000);
+	}
+
+	/* --- Groups --- */
+	.wp-block-group {
+		margin-bottom: 2em;
+	}
+
+	/* --- Alignments --- */
+	.alignleft {
+		float: left;
+		margin-right: 2em;
+		margin-bottom: 1em;
+	}
+
+	.alignright {
+		float: right;
+		margin-left: 2em;
+		margin-bottom: 1em;
+	}
+
+	.aligncenter {
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	/* --- Columns Layout --- */
+    .wp-block-columns {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--yak-gap, 2rem);
+        margin-bottom: 2rem;
+    }
+
+    .wp-block-column {
+        flex-grow: 1;
+        flex-basis: 0;
+        min-width: 200px;
+    }
+
+    /* Optional: narrow columns get stacked on small screens */
+    @media (max-width: 768px) {
+        .wp-block-columns {
+            flex-direction: column;
+        }
+
+        .wp-block-column {
+            width: 100%;
+        }
+    }
+
+    /* --- Media & Text Block --- */
+    .wp-block-media-text {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--yak-gap, 2rem);
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .wp-block-media-text.has-media-on-the-right {
+        grid-template-columns: 1fr 1fr;
+        direction: rtl;
+    }
+
+    .wp-block-media-text .wp-block-media-text__content {
+        direction: ltr;
+    }
+
+    .wp-block-media-text__media img,
+    .wp-block-media-text__media video {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    @media (max-width: 768px) {
+        .wp-block-media-text,
+        .wp-block-media-text.has-media-on-the-right {
+            grid-template-columns: 1fr;
+            direction: ltr;
+        }
+    }
+
+	/* --- Spacer --- */
+	.wp-block-spacer {
+		display: block;
+		height: var(--wp--preset--spacing--40, 2rem);
+	}	
+
+	.entry-content .has-background,
+	.entry-content img {
+		border-radius: var(--yak-radius);
+	}
+
+	/* Base: behaves like normal content on small screens */
+	.yak-alignwide-wrapper {
+		width: 100%;
+		margin: 0 auto;
+	}
+
+	.yak-alignfull-inner {
+		width: 100%;
+		box-sizing: border-box;
+	   }
+
+	.yak-alignfull-wrapper {
+		width: 100vw;
+		margin-left: calc(-50vw + 50%);
+		margin-right: calc(-50vw + 50%);
+		display: flex;
+		justify-content: center;
+		padding: 0;
+		box-sizing: content-box; /* important for correct margin math */
+	}
+
+	@media (min-width: 960px) {
+		
+		.yak-alignwide-wrapper {
+			width: 100vw;
+			margin-left: calc(-50vw + 50%);
+			margin-right: calc(-50vw + 50%);
+			display: flex;
+			justify-content: center;
+			padding: 0;
+			box-sizing: content-box; /* important for correct margin math */
+	   }
+	   
+	   .yak-alignwide-inner {
+			width: 100%;
+			max-width: 1200px;
+			box-sizing: border-box;
+	   }
+
+	}
+
+	.has-background {
+		padding: var(--yak-padding-block);
+	}
+	
+	@media (max-width: 768px) {
+		.has-background {
+			padding: var(--yak-padding-block-mobile);
+		}
+	}
+
+/* ===============================
+   Cover Block Base Styles
+   =============================== */
+   .wp-block-cover {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 430px;
+	padding: 2rem;
+	overflow: hidden;
+	background-position: 50%;
+	background-size: cover;
+	color: #fff;
+	text-align: center;
+	box-sizing: border-box;
+}
+
+.wp-block-cover__inner-container {
+	position: relative;
+	z-index: 2;
+	width: 100%;
+	max-width: 1000px;
+	padding: 1rem;
+	color: inherit;
+}
+
+/* ===============================
+   Background Layer and Image/Video
+   =============================== */
+.wp-block-cover__image-background,
+.wp-block-cover__video-background {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	z-index: 1;
+	pointer-events: none;
+}
+
+/* ===============================
+   Dim Overlay Logic
+   =============================== */
+.wp-block-cover.has-background-dim::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background-color: inherit;
+	opacity: 0.5;
+	z-index: 1;
+	pointer-events: none;
+}
+
+.wp-block-cover.has-background-dim-10::before { opacity: 0.1; }
+.wp-block-cover.has-background-dim-20::before { opacity: 0.2; }
+.wp-block-cover.has-background-dim-30::before { opacity: 0.3; }
+.wp-block-cover.has-background-dim-40::before { opacity: 0.4; }
+.wp-block-cover.has-background-dim-50::before { opacity: 0.5; }
+.wp-block-cover.has-background-dim-60::before { opacity: 0.6; }
+.wp-block-cover.has-background-dim-70::before { opacity: 0.7; }
+.wp-block-cover.has-background-dim-80::before { opacity: 0.8; }
+.wp-block-cover.has-background-dim-90::before { opacity: 0.9; }
+.wp-block-cover.has-background-dim-100::before { opacity: 1; }
+
+.wp-block-cover.has-background-gradient.has-background-dim::before {
+	background-color: transparent;
+}
+
+.wp-block-cover .wp-block-cover__background, .wp-block-cover .wp-block-cover__gradient-background, .wp-block-cover-image .wp-block-cover__background, .wp-block-cover-image .wp-block-cover__gradient-background, .wp-block-cover-image.has-background-dim:not(.has-background-gradient):before, .wp-block-cover.has-background-dim:not(.has-background-gradient):before {
+    bottom: 0;
+    left: 0;
+    opacity: .5;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.wp-block-cover .wp-block-cover__background.has-background-dim.has-background-dim-100, .wp-block-cover .wp-block-cover__gradient-background.has-background-dim.has-background-dim-100, .wp-block-cover-image .wp-block-cover__background.has-background-dim.has-background-dim-100, .wp-block-cover-image .wp-block-cover__gradient-background.has-background-dim.has-background-dim-100 {
+    opacity: 1;
+}
+
+/* ===============================
+   Text Color Fallbacks
+   =============================== */
+:where(.wp-block-cover):not(.has-text-color) {
+	color: #fff;
+}
+:where(.wp-block-cover.is-light):not(.has-text-color) {
+	color: #000;
+}
+
+	.has-yak-black-color {
+		color: var(--yak-color-black);
+	}
+
+	.has-accent-background-color {
+		background-color: var(--yak-color-primary);
+		color: var(--yak-color-white);
+	}
+
+    .wp-block-button .wp-block-button__link {
+        font-family: var(--yak-secondary-font);
+        background-color: var(--yak-color-primary);
+        color: var(--yak-color-white);
+        border-radius: var(--yak-radius);
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        box-shadow: none;
+        transition: background-color 0.2s ease;
+    }
+
+    .wp-block-button .wp-block-button__link:hover,
+    .wp-block-button .wp-block-button__link:focus {
+        background-color: var(--yak-color-black);
+    }
+
+}

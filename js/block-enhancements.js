@@ -1,3 +1,9 @@
+
+console.log('Yak enhancements loaded 1032');
+
+////////////////////////////////////////////////////////////
+// *** Mobile/Desktop Only Settings Toggle
+////////////////////////////////////////////////////////////
 (function () {
     const { addFilter } = wp.hooks;
     const { createHigherOrderComponent } = wp.compose;
@@ -7,82 +13,249 @@
 
     // 1. Add custom attributes to all core blocks
     addFilter(
-         'blocks.registerBlockType',
-         'yak/custom-visibility-toggles',
-         function (settings, name) {
-              if (!name.startsWith('core/')) return settings;
+        'blocks.registerBlockType',
+        'yak/custom-visibility-toggles',
+        function (settings, name) {
+            if (!name.startsWith('core/')) return settings;
 
-              return Object.assign({}, settings, {
-                   attributes: Object.assign({}, settings.attributes, {
-                        yakMobileOnly: {
-                             type: 'boolean',
-                             default: false
-                        },
-                        yakDesktopOnly: {
-                             type: 'boolean',
-                             default: false
-                        }
-                   })
-              });
-         }
+            return {
+                ...settings,
+                attributes: {
+                    ...settings.attributes,
+                    yakMobileOnly: {
+                        type: 'boolean',
+                        default: false,
+                    },
+                    yakDesktopOnly: {
+                        type: 'boolean',
+                        default: false,
+                    }
+                }
+            };
+        }
     );
 
-    // 2. Add toggles to block inspector panel
-    const withVisibilityToggles = createHigherOrderComponent(function (BlockEdit) {
-         return function (props) {
-              const { attributes, setAttributes, name } = props;
+    // 2. Add visibility toggles to the block sidebar
+    const withVisibilityToggles = createHigherOrderComponent((BlockEdit) => {
+        return (props) => {
+            const { attributes, setAttributes, name } = props;
 
-              if (!name.startsWith('core/')) return createElement(BlockEdit, props);
+            if (!name.startsWith('core/')) {
+                return createElement(BlockEdit, props);
+            }
 
-              return createElement(
-                   Fragment,
-                   {},
-                   createElement(BlockEdit, props),
-                   createElement(
-                        InspectorControls,
-                        {},
-                        createElement(
-                             PanelBody,
-                             { title: 'Visibility Settings', initialOpen: false },
-                             createElement(ToggleControl, {
-                                  label: 'Mobile Only',
-                                  checked: !!attributes.yakMobileOnly,
-                                  onChange: function (value) {
-                                       setAttributes({ yakMobileOnly: value, yakDesktopOnly: false });
-                                  }
-                             }),
-                             createElement(ToggleControl, {
-                                  label: 'Desktop Only',
-                                  checked: !!attributes.yakDesktopOnly,
-                                  onChange: function (value) {
-                                       setAttributes({ yakDesktopOnly: value, yakMobileOnly: false });
-                                  }
-                             })
-                        )
-                   )
-              );
-         };
+            return createElement(
+                Fragment,
+                {},
+                createElement(BlockEdit, props),
+                createElement(
+                    InspectorControls,
+                    {},
+                    createElement(
+                        PanelBody,
+                        {
+                            title: 'Visibility Settings',
+                            initialOpen: false
+                        },
+                        createElement(ToggleControl, {
+                            label: 'Mobile Only',
+                            checked: !!attributes.yakMobileOnly,
+                            onChange: (value) =>
+                                setAttributes({
+                                    yakMobileOnly: value,
+                                    yakDesktopOnly: value ? false : attributes.yakDesktopOnly
+                                })
+                        }),
+                        createElement(ToggleControl, {
+                            label: 'Desktop Only',
+                            checked: !!attributes.yakDesktopOnly,
+                            onChange: (value) =>
+                                setAttributes({
+                                    yakDesktopOnly: value,
+                                    yakMobileOnly: value ? false : attributes.yakMobileOnly
+                                })
+                        })
+                    )
+                )
+            );
+        };
     }, 'withVisibilityToggles');
 
     addFilter('editor.BlockEdit', 'yak/with-visibility-toggles', withVisibilityToggles);
 
-    // 3. Add class to saved block output
+    // 3. Add CSS classes to saved block output
     addFilter(
-         'blocks.getSaveContent.extraProps',
-         'yak/add-visibility-classes',
-         function (extraProps, blockType, attributes) {
-              if (!blockType.name.startsWith('core/')) return extraProps;
+        'blocks.getSaveContent.extraProps',
+        'yak/add-visibility-classes',
+        function (extraProps, blockType, attributes) {
+            if (!blockType.name.startsWith('core/')) return extraProps;
 
-              const classes = extraProps.className ? [extraProps.className] : [];
+            const classes = extraProps.className ? [extraProps.className] : [];
 
-              if (attributes.yakMobileOnly) {
-                   classes.push('yak-mobile-only');
-              } else if (attributes.yakDesktopOnly) {
-                   classes.push('yak-desktop-only');
-              }
+            if (attributes.yakMobileOnly) {
+                classes.push('yak-mobile-only');
+            } else if (attributes.yakDesktopOnly) {
+                classes.push('yak-desktop-only');
+            }
 
-              extraProps.className = classes.join(' ').trim();
-              return extraProps;
-         }
+            extraProps.className = classes.join(' ').trim();
+            return extraProps;
+        }
     );
 })();
+
+////////////////////////////////////////////////////////////
+// END Mobile/Desktop Only Settings Toggle
+////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////
+// *** Pull Left/Right Custom Alignment + Settings
+////////////////////////////////////////////////////////////
+const { addFilter } = wp.hooks;
+const { createHigherOrderComponent } = wp.compose;
+const { Fragment, createElement } = wp.element;
+const { BlockControls, InspectorControls } = wp.blockEditor || wp.editor;
+const { ToolbarGroup, ToolbarButton, PanelBody, TextControl } = wp.components;
+
+// Extend attributes
+addFilter(
+    'blocks.registerBlockType',
+    'yak/extend-alignment-attributes',
+    function (settings, name) {
+        if (!['core/image', 'core/quote', 'core/group'].includes(name)) return settings;
+
+        settings.attributes = {
+            ...settings.attributes,
+            yakPullAlign: {
+                type: 'string',
+                default: ''
+            },
+            yakPullAmount: {
+                type: 'string',
+                default: '150'
+            }
+        };
+
+        return settings;
+    }
+);
+
+// Extend block editor UI
+const withPullAlignmentEnhancements = createHigherOrderComponent((BlockEdit) => {
+    return (props) => {
+        const { name, attributes, setAttributes, isSelected } = props;
+        if (!['core/image', 'core/quote', 'core/group'].includes(name)) return createElement(BlockEdit, props);
+
+        const { align, yakPullAlign, yakPullAmount } = attributes;
+
+        // Pull alignment clicks clear native align
+        const handleYakPullClick = (side) => {
+            const isActive = yakPullAlign === side;
+            setAttributes({
+                yakPullAlign: isActive ? '' : side,
+                align: '' // always clear native align
+            });
+        };
+
+        // Native alignment clears yakPullAlign
+        const handleDefaultAlign = (newAlign) => {
+            if (yakPullAlign) {
+                setAttributes({ yakPullAlign: '' });
+            }
+            setAttributes({ align: newAlign });
+        };
+
+        return createElement(
+            Fragment,
+            {},
+            createElement(BlockEdit, {
+                ...props,
+                setAttributes: (attrs) => {
+                    if ('align' in attrs) handleDefaultAlign(attrs.align);
+                    else setAttributes(attrs);
+                }
+            }),
+
+            // 👇 Inject toolbar into BlockControls without replacing native one
+            isSelected &&
+            createElement(
+                BlockControls,
+                {},
+                createElement(
+                    ToolbarGroup,
+                    { label: 'Pull Alignment' },
+                    createElement(ToolbarButton, {
+                        label: 'Pull Left (Desktop)',
+                        icon: 'arrow-left-alt2',
+                        isPressed: yakPullAlign === 'left',
+                        onClick: () => handleYakPullClick('left')
+                    }),
+                    createElement(ToolbarButton, {
+                        label: 'Pull Right (Desktop)',
+                        icon: 'arrow-right-alt2',
+                        isPressed: yakPullAlign === 'right',
+                        onClick: () => handleYakPullClick('right')
+                    })
+                )
+            ),
+
+            // 👇 Optional Inspector Controls when yakPullAlign is active
+            yakPullAlign && isSelected && createElement(
+                InspectorControls,
+                {},
+                createElement(
+                    PanelBody,
+                    { title: 'Pull Alignment Options', initialOpen: true },
+
+                    // Pull Amount (in px)
+                    createElement(TextControl, {
+                        label: 'Pull Distance (px)',
+                        help: 'Negative margin applied when space allows. Leave blank for default (150).',
+                        type: 'number',
+                        value: yakPullAmount || '',
+                        onChange: (val) => setAttributes({ yakPullAmount: val })
+                    })
+                )
+            )
+
+        );
+    };
+}, 'withPullAlignmentEnhancements');
+
+addFilter('editor.BlockEdit', 'yak/pull-align-ui', withPullAlignmentEnhancements);
+
+
+addFilter(
+	'blocks.getSaveContent.extraProps',
+	'yak/apply-pull-alignment-class-and-data',
+	function (extraProps, blockType, attributes) {
+		if (!['core/image', 'core/quote', 'core/group'].includes(blockType.name)) return extraProps;
+
+		const { yakPullAlign = '', yakPullAmount = '150' } = attributes || {};
+		const classes = extraProps.className ? [extraProps.className] : [];
+
+		// Add alignment class
+		if (yakPullAlign === 'left') {
+			classes.push('yak-pull-left');
+		} else if (yakPullAlign === 'right') {
+			classes.push('yak-pull-right');
+		}
+
+		// Add class string
+		extraProps.className = classes.join(' ').trim();
+
+		// Add pull amount as data attribute
+		const amount = parseInt(yakPullAmount || '150', 10);
+		if (!isNaN(amount)) {
+			extraProps['data-yak-pull'] = amount.toString();
+		}
+
+		return extraProps;
+	}
+);
+
+
+////////////////////////////////////////////////////////////
+// END Pull Left/Right Custom Alignment + Settings
+////////////////////////////////////////////////////////////

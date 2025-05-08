@@ -247,13 +247,12 @@ require_once get_stylesheet_directory() . '/inc/yak-layouts.php';
 
 add_action('wp_enqueue_scripts', function () {
 	wp_enqueue_style(
-		'yak-gutenberg-overrides',
-		get_stylesheet_directory_uri() . '/css/yak-gutenberg-overrides.css',
+		'yak-blocks',
+		get_stylesheet_directory_uri() . '/css/yak-blocks.css',
 		[],
 		null
 	);
-}, 99); // Ensure it's dead last
-
+}, 20); // Ensure it's dead last
 
 
 // Update CSS within in Admin
@@ -263,10 +262,6 @@ function clb_custom_admin_styles() {
 
 }
 add_action('admin_enqueue_scripts', 'clb_custom_admin_styles');
-
-
-
-
 
 // Enqueue custom scripts & styles
 add_action( 'wp_enqueue_scripts', 'clb_enqueue_custom_scripts_styles', 100 );
@@ -292,6 +287,18 @@ add_action('enqueue_block_editor_assets', function () {
         true
     );
 });
+
+// remove Gutenberg injected styling and replace everything with my own custom styles (many copied directly, but better controlled)
+add_action('wp_enqueue_scripts', function () {
+	wp_dequeue_style('wp-block-library');
+	wp_dequeue_style('wp-block-library-theme');
+	wp_dequeue_style('global-styles'); // WP 5.9+ global styles
+	wp_dequeue_style('classic-theme-styles');
+}, 100);
+
+
+
+
 
 
 
