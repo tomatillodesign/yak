@@ -109,3 +109,60 @@ function yak_output_layout_css_vars() {
 
 
 
+if (function_exists('acf_add_local_field_group')) {
+    acf_add_local_field_group([
+        'key' => 'yak_layout_options',
+        'title' => 'Layout Settings',
+        'fields' => [
+            [
+                'key' => 'yak_number_of_footer_widgets',
+                'label' => 'Number of Footer Widgets',
+                'name' => 'yak_number_of_footer_widgets',
+                'type' => 'range',
+                'instructions' => 'Choose how many footer widget areas to display (0–4)',
+                'min' => 0,
+                'max' => 4,
+                'step' => 1,
+                'default_value' => 3,
+                'wrapper' => [
+                    'width' => '50',
+                ],
+            ],
+            [
+                'key' => 'yak_sticky_header_desktop',
+                'label' => 'Sticky Header (Desktop)',
+                'name' => 'yak_sticky_header_desktop',
+                'type' => 'true_false',
+                'instructions' => 'Enable sticky header on large screens?',
+                'default_value' => 1,
+                'ui' => 1,
+                'wrapper' => [
+                    'width' => '50',
+                ],
+            ],
+        ],
+        'location' => [
+            [
+                [
+                    'param' => 'options_page',
+                    'operator' => '==',
+                    'value' => 'yak-options-layouts',
+                ],
+            ],
+        ],
+    ]);
+}
+
+
+add_filter('body_class', 'yak_add_sticky_header_body_class');
+function yak_add_sticky_header_body_class($classes) {
+	if (is_admin()) {
+		return $classes;
+	}
+
+	$enabled = get_field('yak_sticky_header_desktop', 'option');
+	if ($enabled) {
+		$classes[] = 'yak-has-sticky-header';
+	}
+	return $classes;
+}

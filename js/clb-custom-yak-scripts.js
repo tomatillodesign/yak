@@ -111,3 +111,129 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
+
+
+(function () {
+
+	document.body.classList.add('yak-disable-header-transition');
+	
+	const body = document.body;
+	let lastScrollY = window.scrollY;
+	let placeholder = null;
+	let header = null;
+
+	function getAdminBarHeight() {
+		const bar = document.getElementById('wpadminbar');
+		return bar ? bar.offsetHeight : 0;
+	}
+
+	function getHeaderHeight() {
+		return header ? header.offsetHeight : 0;
+	}
+
+	function updateHeaderAndPlaceholderHeights() {
+		if (!header || !placeholder) return;
+	
+		const adminBarHeight = getAdminBarHeight();
+		const headerHeight = getHeaderHeight();
+		const totalHeight = headerHeight + adminBarHeight;
+	
+		// Save offset
+		header.dataset.offset = totalHeight;
+	
+		// Set placeholder height to match
+		placeholder.style.height = `${totalHeight}px`;
+	
+		// Set visible default position: below admin bar
+		header.style.transform = `translateY(${adminBarHeight}px)`;
+	}
+
+	function createOrUpdatePlaceholder() {
+		if (!placeholder) {
+			placeholder = document.createElement('div');
+			placeholder.className = 'yak-mobile-header-placeholder';
+			header.parentNode.insertBefore(placeholder, header);
+		}
+		updateHeaderAndPlaceholderHeights();
+	}
+
+	function onResize() {
+		if (!header) return;
+
+		if (window.innerWidth < 960) {
+			createOrUpdatePlaceholder();
+		} else if (placeholder) {
+			placeholder.remove();
+			placeholder = null;
+			header.style.transform = ''; // reset
+		}
+	}
+
+	function onScroll() {
+		if (window.innerWidth >= 960) return;
+	
+		const currentY = window.scrollY;
+		const scrollingUp = currentY < lastScrollY;
+		const offset = parseInt(header.dataset.offset || 0, 10);
+		const adminOffset = getAdminBarHeight();
+		const THRESHOLD = 150;
+	
+		// 1. At the very top of the page
+		if (currentY <= 0) {
+			body.classList.add('yak-at-top');
+			body.classList.remove('yak-header-hidden', 'yak-show-mobile-header');
+			header.style.transform = `translateY(${adminOffset}px)`;
+		}
+	
+		// 2. User has scrolled less than threshold — do nothing
+		else if (currentY > 0 && currentY <= THRESHOLD) {
+			// Don't animate yet, just hold position
+			body.classList.remove('yak-header-hidden', 'yak-show-mobile-header', 'yak-at-top');
+			header.style.transform = `translateY(0)`; // Stuck at top (visible)
+		}
+	
+		// 3. User scrolls up beyond threshold — show header at top
+		else if (scrollingUp && currentY > THRESHOLD) {
+			body.classList.add('yak-show-mobile-header');
+			body.classList.remove('yak-header-hidden', 'yak-at-top');
+			header.style.transform = `translateY(0)`;
+		}
+	
+		// 4. User scrolls down beyond threshold — hide header
+		else {
+			body.classList.add('yak-header-hidden');
+			body.classList.remove('yak-show-mobile-header', 'yak-at-top');
+			header.style.transform = `translateY(-${offset}px)`;
+		}
+	
+		lastScrollY = currentY;
+	}
+	
+
+	function init() {
+		header = document.querySelector('.site-header');
+		if (!header) return;
+
+		if (window.innerWidth < 960) {
+			createOrUpdatePlaceholder();
+			onScroll(); // run once immediately
+		}
+
+		// ✅ Remove transition-blocking class
+		requestAnimationFrame(() => {
+			body.classList.remove('yak-disable-header-transition');
+		});
+
+		window.addEventListener('resize', () => {
+			onResize();
+			setTimeout(updateHeaderAndPlaceholderHeights, 50); // after layout settles
+		});
+
+		window.addEventListener('scroll', onScroll, { passive: true });
+	}
+
+	// Run after render settles
+	window.addEventListener('load', () => {
+		setTimeout(init, 10); // wait just long enough for admin bar and header to fully render
+	});
+})();

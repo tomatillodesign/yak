@@ -303,6 +303,7 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 
   }
 
+
 	/* Neutral state for measuring */
 	.yak-pull-left.yak-pull-measuring,
 	.yak-pull-right.yak-pull-measuring {
@@ -381,6 +382,22 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 		margin-top: 0.3em;
 	}
 
+	.yak-footer-widgets-outer-wrapper {
+		width: 100%;
+		background: var(--yak-color-muted);
+	}
+
+	.yak-footer-widgets {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 2rem;
+		padding: 2rem;
+		max-width: 1280px;
+		margin-left: auto;
+		margin-right: auto;
+		width: 100%;
+	}
+
   @media (min-width: 960px) {
 
 		.content {
@@ -420,7 +437,58 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 		.genesis-nav-menu .current-menu-item > a {
 			border-bottom-color: currentColor;
 		}	
-  	}
+	
+		.yak-footer-widgets-1 { grid-template-columns: 1fr; }
+		.yak-footer-widgets-2 { grid-template-columns: 1fr 1fr; }
+		.yak-footer-widgets-3 { grid-template-columns: 1fr 1fr 1fr; }
+		.yak-footer-widgets-4 { grid-template-columns: repeat(4, 1fr); }
+	
+		.yak-footer-widget-column {
+			padding: 0 1rem;
+		}
+
+		body.yak-has-sticky-header .site-header {
+			position: sticky;
+			top: 0;
+			z-index: 100;
+			background: var(--yak-color-header-bg, #fff); /* fallback */
+		}
+
+		body.yak-has-sticky-header.admin-bar .site-header {
+			top: 32px;
+		}
+  
+	}
+
+	@media (max-width: 959px) {
+
+		body.yak-disable-header-transition .site-header {
+			transition: none !important;
+		}
+
+		.site-header {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			transition: transform 0.5s ease-in-out;
+			z-index: 100;
+			transform: translateY(32px); /* will be overwritten by JS */
+		}
+	
+		body.yak-header-hidden .site-header {
+			/* no static transform here — always managed by JS */
+		}
+	
+		.yak-mobile-header-placeholder {
+			display: block;
+			width: 100%;
+		}
+
+	}
+
+	
+
 }
 
 
@@ -569,6 +637,7 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 			visibility: visible;
 			opacity: 1;
 			pointer-events: auto;
+			z-index: 99999;
 		}
 	
 		.yak-mobile-overlay {
@@ -576,18 +645,29 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 			justify-content: flex-end;
 			width: 100%;
 			height: 100%;
-			transition: background 0.3s ease;
+			transition: background 0.3s ease, opacity 0.3s ease;
 			background: rgba(0, 0, 0, 0);
+			backdrop-filter: blur(6px);
+			-webkit-backdrop-filter: blur(6px);
+			opacity: 0;
+			pointer-events: none;
 		}
-	
+		
+		/* Open state: enable background + show overlay */
+		#yak-mobile-nav.is-open .yak-mobile-overlay {
+			background: rgba(0, 0, 0, 0.75);
+			opacity: 1;
+			pointer-events: auto;
+		}
+		
+		/* Closing or inactive: fade both bg and blur visually */
 		#yak-mobile-nav.is-closing .yak-mobile-overlay,
 		#yak-mobile-nav:not(.is-open):not(.is-closing) .yak-mobile-overlay {
 			background: rgba(0, 0, 0, 0);
+			opacity: 0;
+			pointer-events: none;
 		}
-	
-		#yak-mobile-nav.is-open .yak-mobile-overlay {
-			background: rgba(0, 0, 0, 0.4);
-		}
+		
 	
 		/* ===== Sliding Panel ===== */
 		.yak-mobile-panel {
@@ -600,7 +680,7 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 			transform: translateX(100%);
 			transition: transform 0.4s ease;
 			overflow-y: auto;
-			padding: 2rem 1rem;
+			padding: 1rem;
 			position: relative;
 			z-index: 20; /* sits above toggle */
 			will-change: transform;
@@ -634,6 +714,17 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 		}
 	
 		/* ===== Submenu Toggle Button ===== */
+
+		.yak-mobile-menu .sub-menu {
+			position: static !important;
+			visibility: visible !important;
+			opacity: 1 !important;
+			transform: none !important;
+			box-shadow: none !important;
+			background: transparent !important;
+		}
+
+		
 		.yak-submenu-toggle {
 			background: none;
 			border: none;
@@ -647,27 +738,74 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 			line-height: 1;
 			z-index: 1;
 		}
-	
+
 		.yak-submenu-caret {
-			display: inline-block;
+			display: block;
+			width: 1em;
+			height: 1em;
 			transition: transform 0.2s ease;
+			pointer-events: none;
 		}
-	
+
+		.yak-main-nav li.menu-item-has-children > a::after {
+			display: none;
+		}
+
 		.yak-submenu-toggle[aria-expanded="true"] .yak-submenu-caret {
 			transform: rotate(45deg);
 		}
-	
-		/* ===== Submenu ===== */
+
+		/* ===== Submenu (Accordion) ===== */
 		.yak-mobile-menu .sub-menu {
 			list-style: none;
-			margin: 0.5rem 0 0 1rem;
-			padding: 0;
-			display: none;
+			margin: 0;
+			/* padding-left: 1.25rem; */
+			overflow: hidden;
+			max-height: 0;
+			opacity: 0;
+			transition: max-height 0.35s ease, opacity 0.3s ease;
+			font-size: 0.95rem;
 		}
-	
+
+		.yak-mobile-menu .sub-menu li {
+			margin: 0;
+		}
+
 		.yak-mobile-menu .sub-menu.is-open {
-			display: block;
+			max-height: 500px; /* enough to show ~5-6 items */
+			opacity: 1;
 		}
+
+		.yak-mobile-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 0 0 1rem;
+			margin-bottom: 1rem;
+			border-bottom: 1px solid var(--yak-color-muted);
+		}
+		
+		.yak-mobile-title {
+			font-size: 1.25rem;
+			font-weight: 700;
+			font-family: var(--yak-accent-font, inherit);
+			color: var(--yak-color-black);
+		}
+		
+		.yak-mobile-close {
+			background: none;
+			border: none;
+			font-size: 2rem;
+			line-height: 1;
+			cursor: pointer;
+			color: var(--yak-color-black);
+			padding: 0;
+			margin: 0;
+		}
+		
+
+		
+
 	}
 	
 		

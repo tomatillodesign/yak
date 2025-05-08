@@ -324,6 +324,57 @@ add_filter('wp_nav_menu_args', function ($args) {
 
 
 
+add_action('widgets_init', function () {
+    $count = (int) get_field('yak_number_of_footer_widgets', 'option');
+
+    // Safety clamp
+    $count = max(0, min($count, 4));
+
+    for ($i = 1; $i <= $count; $i++) {
+        register_sidebar([
+            'name'          => "Footer Widget Area {$i}",
+            'id'            => "yak-footer-widget-{$i}",
+            'description'   => "Footer widget area #{$i}",
+            'before_widget' => '<div id="%1$s" class="yak-footer-widget %2$s">',
+            'after_widget'  => '</div>',
+            'before_title'  => '<h4 class="yak-footer-widget-title">',
+            'after_title'   => '</h4>',
+        ]);
+    }
+});
+
+add_action('genesis_before_footer', 'yak_output_footer_widgets', 10);
+function yak_output_footer_widgets() {
+    $count = (int) get_field('yak_number_of_footer_widgets', 'option');
+    $count = max(0, min($count, 4));
+
+    if ($count === 0) {
+        return;
+    }
+
+	echo '<div class="yak-footer-widgets-outer-wrapper">';
+    echo '<div class="yak-footer-widgets yak-footer-widgets-' . esc_attr($count) . '">';
+
+    for ($i = 1; $i <= $count; $i++) {
+        echo '<div class="yak-footer-widget-column yak-footer-widget-' . esc_attr($i) . '">';
+        dynamic_sidebar("yak-footer-widget-{$i}");
+        echo '</div>';
+    }
+
+    echo '</div></div>';
+}
+
+
+add_action('widgets_init', 'yak_unregister_default_sidebars', 11);
+function yak_unregister_default_sidebars() {
+	unregister_sidebar('sidebar');
+}
+
+
+
+
+
+
 
 
 

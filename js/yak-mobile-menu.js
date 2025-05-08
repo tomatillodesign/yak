@@ -1,10 +1,6 @@
-
-
-
 ////////////////////////////////////////////////////////////
 // *** Mobile Menu
 ////////////////////////////////////////////////////////////
-
 
 (function () {
 	/**
@@ -12,8 +8,7 @@
 	 * Returns DOM references for behavior logic
 	 */
 	function yakMenuSetup() {
-
-        console.log("Menu setup 233");
+		console.log("Menu setup 233");
 
 		const siteHeader = document.querySelector('.site-header .wrap');
 		const desktopMenu = document.querySelector('.yak-main-nav');
@@ -50,6 +45,23 @@
 		panel.className = 'yak-mobile-panel';
 		panel.setAttribute('aria-label', 'Mobile Navigation');
 
+		// === Mobile Menu Header ===
+		const header = document.createElement('div');
+		header.className = 'yak-mobile-header';
+
+		const title = document.createElement('span');
+		title.className = 'yak-mobile-title';
+		title.textContent = 'Menu';
+
+		const closeBtn = document.createElement('button');
+		closeBtn.className = 'yak-mobile-close';
+		closeBtn.setAttribute('aria-label', 'Close Menu');
+		closeBtn.innerHTML = '&times;';
+
+		header.appendChild(title);
+		header.appendChild(closeBtn);
+
+		// === Clone Desktop Menu ===
 		const clonedMenu = desktopMenu.cloneNode(true);
 		clonedMenu.classList.add('yak-mobile-menu');
 
@@ -67,37 +79,38 @@
 			li.insertBefore(btn, submenu);
 		});
 
+		// === Build DOM structure ===
+		panel.appendChild(header);
 		panel.appendChild(clonedMenu);
 		overlay.appendChild(panel);
 		mobileNav.appendChild(overlay);
 		document.body.appendChild(mobileNav);
 
-		return { toggle, mobileNav, panel };
+		return { toggle, mobileNav, panel, closeBtn };
 	}
 
 	/**
 	 * Behavior: Adds interactivity to mobile nav
 	 */
-	function yakMenuBehavior({ toggle, mobileNav, panel }) {
+	function yakMenuBehavior({ toggle, mobileNav, panel, closeBtn }) {
 		if (!toggle || !mobileNav || !panel) return;
 
 		function openMenu() {
-            // Clear any lingering state
-	        mobileNav.classList.remove('is-closing');
+			mobileNav.classList.remove('is-closing');
 			toggle.setAttribute('aria-expanded', 'true');
-            requestAnimationFrame(() => {
-                mobileNav.classList.add('is-open');
-            });
+			requestAnimationFrame(() => {
+				mobileNav.classList.add('is-open');
+			});
 		}
 
 		function closeMenu() {
 			toggle.setAttribute('aria-expanded', 'false');
-            mobileNav.classList.remove('is-open');
-            mobileNav.classList.add('is-closing');
-            setTimeout(() => {
-                mobileNav.classList.remove('is-closing');
-                resetSubmenus();
-            }, 500); // match the CSS transition time
+			mobileNav.classList.remove('is-open');
+			mobileNav.classList.add('is-closing');
+			setTimeout(() => {
+				mobileNav.classList.remove('is-closing');
+				resetSubmenus();
+			}, 500);
 		}
 
 		function resetSubmenus() {
@@ -113,6 +126,8 @@
 			const expanded = toggle.getAttribute('aria-expanded') === 'true';
 			expanded ? closeMenu() : openMenu();
 		});
+
+		closeBtn.addEventListener('click', closeMenu);
 
 		mobileNav.querySelector('.yak-mobile-overlay').addEventListener('click', (e) => {
 			if (!panel.contains(e.target)) {
@@ -143,8 +158,6 @@
 		if (refs) yakMenuBehavior(refs);
 	});
 })();
-
-
 
 ////////////////////////////////////////////////////////////
 // END Mobile Menu
