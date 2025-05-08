@@ -5,6 +5,7 @@ Author: Tomatillo Design
 Author URI: http://www.tomatillodesign.com
 Description: Custom Genesis child theme with modern CSS architecture and full block editor support.
 Version: 1.0
+Template: genesis
 License: GNU General Public License v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: yak
@@ -89,6 +90,7 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
   .entry-content {
 	position: relative;
 	z-index: 0;
+	text-wrap: pretty;
 	}
 
 
@@ -199,6 +201,21 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 		margin-bottom: 0;
 	}
 
+	@media (max-width: 960px) {
+
+		.yak-desktop-only {
+			display: none !important;
+		}
+
+	}
+
+	@media (min-width: 960px) {
+
+		.yak-mobile-only {
+			display: none !important;
+		}
+
+	}
 
 }
 
@@ -270,27 +287,48 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 		border-radius: var(--yak-radius);
 	}
 
-	.alignwide,
-	.alignfull {
-		margin-left: calc(50% - 50vw);
-		margin-right: calc(50% - 50vw);
-		width: 100vw;
+	/* Base: behaves like normal content on small screens */
+	.yak-alignwide-wrapper {
+		width: 100%;
+		margin: 0 auto;
 	}
 
-	.alignwide {
-		max-width: 100vw;
+	.yak-alignfull-inner {
+		width: 100%;
+		box-sizing: border-box;
+	   }
+
+	.yak-alignfull-wrapper {
+		width: 100vw;
+		margin-left: calc(-50vw + 50%);
+		margin-right: calc(-50vw + 50%);
+		display: flex;
+		justify-content: center;
+		padding: 0;
+		box-sizing: content-box; /* important for correct margin math */
 	}
 
 	@media (min-width: 960px) {
-		.entry-content .alignwide {
-			display: block;
+		
+		.yak-alignwide-wrapper {
+			width: 100vw;
+			margin-left: calc(-50vw + 50%);
+			margin-right: calc(-50vw + 50%);
+			display: flex;
+			justify-content: center;
+			padding: 0;
+			box-sizing: content-box; /* important for correct margin math */
+	   }
+	   
+	   .yak-alignwide-inner {
 			width: 100%;
-			max-width: 90rem; /* ~1440px */
-			margin-left: auto;
-			margin-right: auto;
-		}
-	}
-	
+			max-width: 1200px;
+			box-sizing: border-box;
+	   }
+	   
+   }
+   
+
 	
 	
 	  

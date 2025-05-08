@@ -282,6 +282,18 @@ function clb_enqueue_custom_scripts_styles() {
 }
 
 
+// Yak custom BLOCK settings
+add_action('enqueue_block_editor_assets', function () {
+    wp_enqueue_script(
+        'yak-block-enhancements',
+        get_stylesheet_directory_uri() . '/js/block-enhancements.js',
+        ['wp-blocks', 'wp-dom-ready', 'wp-edit-post', 'wp-hooks', 'wp-components', 'wp-element'],
+        filemtime(get_stylesheet_directory() . '/js/block-enhancements.js'),
+        true
+    );
+});
+
+
 
 
 
