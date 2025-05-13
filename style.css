@@ -605,68 +605,112 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 			border-bottom-color: currentColor;
 		}	
 
-		/* === Mega Menu Wrapper === */
-		.nav-primary .menu-item-has-children:hover > .sub-menu {
+		/* === Base Submenu Behavior (Default Dropdowns) === */
+		
+		.nav-primary .menu-item-has-children > .sub-menu {
+			display: none;
 			position: absolute;
 			top: 100%;
 			left: 0;
-			display: flex;
-			flex-wrap: wrap;
-			background: white;
+			background: #fff;
 			border: 1px solid #ddd;
-			padding: 2rem;
+			padding: 0.5rem 0;
+			min-width: 220px;
 			z-index: 1000;
-			min-width: 600px;
-			gap: 2rem;
 		}
 
-		/* === Columns for 2nd-level items === */
-		.nav-primary .menu-item-has-children > .sub-menu > .menu-item {
-			flex: 1 1 200px;
-			list-style: none;
+		.nav-primary .menu-item-has-children:hover > .sub-menu,
+		.nav-primary .menu-item-has-children:focus-within > .sub-menu {
+			display: block;
+		}
+
+		/* === Mega Menu Only: Override for 3-level menu items with yak-has-mega === */
+
+		.nav-primary .yak-has-mega:hover > .sub-menu,
+		.nav-primary .yak-has-mega:focus-within > .sub-menu,
+		.nav-primary .yak-has-mega > .sub-menu:hover {
+			display: grid;
+			position: absolute;
+			top: 100%;
+			left: 0;
+			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+			background: #fff;
+			border: 1px solid #ddd;
+			padding: 2rem;
+			gap: 2rem;
+			min-width: 600px;
+			white-space: normal; /* Allow wrapping inside columns */
+			z-index: 1000;
+		}
+
+		/* === 2nd-Level Columns in Mega Menu === */
+
+		.nav-primary .yak-has-mega > .sub-menu > .menu-item {
+			display: flex;
+			flex-direction: column;
 			margin: 0;
 			padding: 0;
 		}
 
-		/* === 3rd-level: nest under 2nd === */
-		.nav-primary .menu-item-has-children > .sub-menu > .menu-item > .sub-menu {
+		/* === Optional div.yak-mega-column wrapper (if JS adds it) === */
+		.yak-mega-column {
+			display: flex;
+			flex-direction: column;
+			gap: 0.25rem;
+		}
+
+		/* === 3rd-Level Submenus === */
+
+		.nav-primary .yak-has-mega > .sub-menu > .menu-item > .sub-menu {
 			display: block;
 			margin-top: 0.5rem;
 			padding-left: 0;
 			list-style: none;
 		}
 
-		.nav-primary .menu-item-has-children > .sub-menu > .menu-item > .sub-menu > .menu-item {
-			margin-bottom: 0.5rem;
-		}
+		/* === Link Styling Inside All Menus === */
 
-		/* === Link Styling === */
 		.nav-primary .sub-menu a {
 			display: block;
-			padding: 0.25rem 0;
+			padding: 0.25rem 1rem;
 			text-decoration: none;
 			color: #222;
 			font-size: 0.95rem;
+			background: transparent;
 		}
 
-		/* === Top-level link hover keeps submenu open === */
-		.nav-primary .menu-item-has-children:hover > a {
-			background: #f0f0f0;
+		.nav-primary .sub-menu a:hover,
+		.nav-primary .sub-menu a:focus {
+			background: var(--yak-color-muted);
+			color: var(--yak-color-black);
 		}
 
-		/* === Make sure menus don’t wrap under each other === */
-		.nav-primary ul.sub-menu {
-			white-space: nowrap;
+		/* === Remove Arrows from Mega Menu 2nd-Level Items === */
+		.nav-primary .yak-has-mega > .sub-menu > .menu-item > a::after {
+			display: none !important;
 		}
 
-		/* === Optional: hide submenu initially === */
-		.nav-primary .menu-item .sub-menu {
-			display: none;
+		/* === Keep arrow on regular dropdowns (optional) === */
+		.nav-primary .menu-item-has-children > a::after {
+			content: '';
+			display: inline-block;
+			margin-left: 0.5em;
+			vertical-align: middle;
+			width: 0.5em;
+			height: 0.5em;
+			border-right: 2px solid currentColor;
+			border-bottom: 2px solid currentColor;
+			transform: rotate(45deg);
+			margin-top: -0.3em;
 		}
 
-		.nav-primary .menu-item:hover > .sub-menu {
-			display: flex;
+		.nav-primary .yak-has-mega > .sub-menu {
+			outline: 2px solid red;
+			min-height: 200px; /* temp */
 		}
+
+		
+		
 
 	
 		.yak-footer-widgets-1 { grid-template-columns: 1fr; }

@@ -237,3 +237,28 @@ document.addEventListener('DOMContentLoaded', () => {
 		setTimeout(init, 10); // wait just long enough for admin bar and header to fully render
 	});
 })();
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+	const megaMenus = document.querySelectorAll('.nav-primary .menu-item-has-children > .sub-menu');
+
+	megaMenus.forEach(submenu => {
+		// Wrap each 2nd-level menu item in a div.yak-mega-column
+		submenu.querySelectorAll(':scope > .menu-item').forEach(item => {
+			const wrapper = document.createElement('div');
+			wrapper.className = 'yak-mega-column';
+			item.parentNode.insertBefore(wrapper, item);
+			wrapper.appendChild(item);
+		});
+	});
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+	document.querySelectorAll('.nav-primary .menu-item-has-children').forEach(item => {
+		const secondLevel = item.querySelector(':scope > .sub-menu');
+		if (secondLevel && secondLevel.querySelector('.menu-item-has-children')) {
+			item.classList.add('yak-has-mega');
+		}
+	});
+});
