@@ -611,7 +611,7 @@ function gutenberg_sections_register_acf_color_palette() {
 //* Customize search form input box text
 add_filter( 'genesis_search_text', 'sp_search_text' );
 function sp_search_text( $text ) {
-	return esc_attr( 'Search the Coalition\'s website...' );
+	return esc_attr( 'Search this website...' );
 }
 
 
@@ -722,5 +722,15 @@ function yak_custom_archive_entry_markup() {
 	echo '</div>'; // .yak-archive-body
 	echo '</div>'; // .yak-archive-entry
 	echo '</div>'; // .yak-archive-card
+
+}
+
+
+remove_action( 'genesis_footer', 'genesis_do_footer' );
+add_action( 'genesis_footer', 'yak_custom_site_footer' );
+function yak_custom_site_footer() {
+
+	$site_title = get_bloginfo( 'name' );
+	echo '&copy; ' . date('Y') . ' &middot <a href="/">' . $site_title . '</a> &middot All rights reserved &middot Website by <a href="http://www.tomatillodesign.com" title="Amazing, Affordable Websites for Nonprofits" target="_blank">Tomatillo Design</a>';
 
 }

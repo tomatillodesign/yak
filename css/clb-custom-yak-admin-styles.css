@@ -216,3 +216,7 @@ body.wp-admin,
   height: fit-content;
   width: fit-content;
 }
+
+.components-panel__body .components-base-control:first-of-type {
+	margin-top: 20px;
+}

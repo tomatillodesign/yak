@@ -49,9 +49,22 @@
 		const header = document.createElement('div');
 		header.className = 'yak-mobile-header';
 
+		// Try to get favicon from <link rel="icon">
+		const faviconLink = document.querySelector('link[rel="icon"]');
+		let faviconUrl = faviconLink ? faviconLink.getAttribute('href') : null;
+
 		const title = document.createElement('span');
 		title.className = 'yak-mobile-title';
-		title.textContent = 'Menu';
+
+		if (faviconUrl) {
+			const faviconImg = document.createElement('img');
+			faviconImg.src = faviconUrl;
+			faviconImg.alt = 'Site icon';
+			faviconImg.className = 'yak-mobile-favicon';
+			title.appendChild(faviconImg);
+		}
+
+		title.appendChild(document.createTextNode('Menu'));
 
 		const closeBtn = document.createElement('button');
 		closeBtn.className = 'yak-mobile-close';
@@ -60,6 +73,7 @@
 
 		header.appendChild(title);
 		header.appendChild(closeBtn);
+
 
 		// === Clone Desktop Menu ===
 		const clonedMenu = desktopMenu.cloneNode(true);
