@@ -193,14 +193,6 @@ function yak_custom_admin_footer_text($footer_text) {
 // In functions.php or a theme setup file
 add_action('acf/init', function () {
 	if (function_exists('acf_add_options_page')) {
-		acf_add_options_page([
-			'page_title' => 'Theme Settings',
-			'menu_title' => 'Theme Settings',
-			'menu_slug'  => 'theme-settings',
-            'icon_url' => 'dashicons-superhero',
-			'capability' => 'manage_options',
-			'redirect'   => false,
-		]);
 
 		acf_add_options_sub_page([
 			'page_title'  => 'Colors',
@@ -256,6 +248,43 @@ add_action('wp_enqueue_scripts', function () {
 		null
 	);
 }, 20); // Ensure it's dead last
+
+
+// updated custom theme menu pages
+add_action( 'admin_menu', 'yak_register_theme_settings_menu' );
+
+function yak_register_theme_settings_menu() {
+	add_menu_page(
+		'Theme Settings',
+		'Theme Settings',
+		'manage_options',
+		'theme-settings',
+		'yak_render_theme_settings_page',
+		'dashicons-superhero',
+		88
+	);
+
+	add_submenu_page(
+		'theme-settings',
+		'Recommended Plugins',
+		'Plugins',
+		'manage_options',
+		'yak-recommended-plugins',
+		'yak_render_plugins_page'
+	);
+}
+
+
+add_action( 'load-toplevel_page_theme-settings', function () {
+	require_once get_stylesheet_directory() . '/inc/yak-theme-settings.php';
+} );
+
+function yak_render_plugins_page() {
+	echo '<div class="wrap"><h1>Yak Recommended Plugins</h1>';
+	// Your custom plugin list logic here
+}
+
+
 
 
 // Update CSS within in Admin

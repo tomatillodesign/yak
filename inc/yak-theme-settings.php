@@ -1,5 +1,66 @@
 <?php
 
+add_action( 'admin_enqueue_scripts', function( $hook ) {
+	if ( isset( $_GET['page'] ) && $_GET['page'] === 'theme-settings' ) {
+		// Load all ACF field JS + input behavior
+		do_action( 'acf/input/admin_enqueue_scripts' );
+
+		// 💡 Manually enqueue ACF's input styles (this is what styles the field boxes)
+		wp_enqueue_style( 'acf-input' );
+	}
+}, 20 );
+
+
+// 2. Add acf_form_head early
+add_action( 'load-toplevel_page_theme-settings', function () {
+	acf_form_head();
+} );
+
+
+function yak_render_theme_settings_page() {
+	?>
+	<div class="wrap">
+		<h1>Yak Theme Settings</h1>
+
+		<form method="post">
+			<?php
+			// Required hidden fields
+			acf_form([
+				'post_id' => 'options',
+				'form'    => false, // still needed to output hidden fields
+				// no field_groups or fields here
+			]);
+			
+
+			// Optional: pull the field group title from the group
+			$group = acf_get_field_group( 'group_yak_theme_settings_logo' );
+			$group_title = $group['title'] ?? 'Theme Settings';
+			?>
+
+			<div id="yak-settings-box" class="postbox">
+				<div class="postbox-header">
+					<h2 class="hndle"><?php echo esc_html( $group_title ); ?></h2>
+				</div>
+				<div class="inside">
+					<div class="acf-fields -left">
+						<?php
+						$fields = acf_get_fields( 'group_yak_theme_settings_logo' );
+						if ( $fields ) {
+							acf_render_fields( 'options', $fields );
+						}
+						?>
+					</div>
+				</div>
+			</div>
+
+			<?php submit_button( 'Save Settings' ); ?>
+		</form>
+	</div>
+	<?php
+}
+
+
+
 
 if ( function_exists( 'acf_add_local_field_group' ) ) :
 
@@ -265,7 +326,7 @@ function yak_output_custom_logo_and_title() {
 
 		echo '</div>'; // .yak-title-text
 	}
-	
+
 }
 
 

@@ -605,113 +605,6 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 			border-bottom-color: currentColor;
 		}	
 
-		/* === Base Submenu Behavior (Default Dropdowns) === */
-		
-		.nav-primary .menu-item-has-children > .sub-menu {
-			display: none;
-			position: absolute;
-			top: 100%;
-			left: 0;
-			background: #fff;
-			border: 1px solid #ddd;
-			padding: 0.5rem 0;
-			min-width: 220px;
-			z-index: 1000;
-		}
-
-		.nav-primary .menu-item-has-children:hover > .sub-menu,
-		.nav-primary .menu-item-has-children:focus-within > .sub-menu {
-			display: block;
-		}
-
-		/* === Mega Menu Only: Override for 3-level menu items with yak-has-mega === */
-
-		.nav-primary .yak-has-mega:hover > .sub-menu,
-		.nav-primary .yak-has-mega:focus-within > .sub-menu,
-		.nav-primary .yak-has-mega > .sub-menu:hover {
-			display: grid;
-			position: absolute;
-			top: 100%;
-			left: 0;
-			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-			background: #fff;
-			border: 1px solid #ddd;
-			padding: 2rem;
-			gap: 2rem;
-			min-width: 600px;
-			white-space: normal; /* Allow wrapping inside columns */
-			z-index: 1000;
-		}
-
-		/* === 2nd-Level Columns in Mega Menu === */
-
-		.nav-primary .yak-has-mega > .sub-menu > .menu-item {
-			display: flex;
-			flex-direction: column;
-			margin: 0;
-			padding: 0;
-		}
-
-		/* === Optional div.yak-mega-column wrapper (if JS adds it) === */
-		.yak-mega-column {
-			display: flex;
-			flex-direction: column;
-			gap: 0.25rem;
-		}
-
-		/* === 3rd-Level Submenus === */
-
-		.nav-primary .yak-has-mega > .sub-menu > .menu-item > .sub-menu {
-			display: block;
-			margin-top: 0.5rem;
-			padding-left: 0;
-			list-style: none;
-		}
-
-		/* === Link Styling Inside All Menus === */
-
-		.nav-primary .sub-menu a {
-			display: block;
-			padding: 0.25rem 1rem;
-			text-decoration: none;
-			color: #222;
-			font-size: 0.95rem;
-			background: transparent;
-		}
-
-		.nav-primary .sub-menu a:hover,
-		.nav-primary .sub-menu a:focus {
-			background: var(--yak-color-muted);
-			color: var(--yak-color-black);
-		}
-
-		/* === Remove Arrows from Mega Menu 2nd-Level Items === */
-		.nav-primary .yak-has-mega > .sub-menu > .menu-item > a::after {
-			display: none !important;
-		}
-
-		/* === Keep arrow on regular dropdowns (optional) === */
-		.nav-primary .menu-item-has-children > a::after {
-			content: '';
-			display: inline-block;
-			margin-left: 0.5em;
-			vertical-align: middle;
-			width: 0.5em;
-			height: 0.5em;
-			border-right: 2px solid currentColor;
-			border-bottom: 2px solid currentColor;
-			transform: rotate(45deg);
-			margin-top: -0.3em;
-		}
-
-		.nav-primary .yak-has-mega > .sub-menu {
-			outline: 2px solid red;
-			min-height: 200px; /* temp */
-		}
-
-		
-		
-
 	
 		.yak-footer-widgets-1 { grid-template-columns: 1fr; }
 		.yak-footer-widgets-2 { grid-template-columns: 1fr 1fr; }
@@ -725,8 +618,14 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 		body.yak-has-sticky-header .site-header {
 			position: sticky;
 			top: 0;
+			transition: all ease-in-out .5s;
 			z-index: 100;
 			background: var(--yak-color-header-bg, #fff); /* fallback */
+		}
+
+		body.yak-has-sticky-header.yak-scrolled .site-header {
+			padding-top: 4px;
+			padding-bottom: 4px;
 		}
 
 		body.yak-has-sticky-header.admin-bar .site-header {
@@ -778,7 +677,7 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 
 @layer yak-components {
 
-	/* ========== Desktop Nav ========== */
+	/* ========== Desktop Navigation Structure ========== */
 
 	.yak-main-nav {
 		display: flex;
@@ -793,6 +692,7 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 		position: relative;
 	}
 
+	/* === Top-level Links === */
 	.yak-main-nav a {
 		font-family: var(--yak-primary-font);
 		display: inline-block;
@@ -810,7 +710,8 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 		outline: none;
 	}
 
-	.yak-main-nav li.menu-item-has-children > a::after {
+	/* === Dropdown Arrow for Has-Children === */
+	.yak-main-nav > li.menu-item-has-children > a::after {
 		content: '';
 		display: inline-block;
 		margin-left: 0.5em;
@@ -823,7 +724,10 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 		margin-top: -0.3em;
 	}
 
-	.yak-main-nav .sub-menu {
+	/* ========== Submenu Dropdown (Default) ========== */
+
+	/* Only hide sub-menus for regular dropdowns */
+	.yak-main-nav > li.menu-item-has-children:not(.yak-has-mega) > .sub-menu {
 		position: absolute;
 		top: 100%;
 		left: 0;
@@ -844,25 +748,131 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 	}
 
 	.yak-main-nav .sub-menu a {
-		padding: 0.5rem 1rem;
 		display: block;
-		color: var(--yak-base-10);
+		padding: 0.5rem 1rem;
+		color: var(--yak-color-black);
 		font-weight: 400;
+		text-decoration: none;
 		background: transparent;
+		font-size: 0.95rem;
 	}
 
 	.yak-main-nav .sub-menu a:hover,
 	.yak-main-nav .sub-menu a:focus {
-		color: var(--yak-color-black);
 		background-color: var(--yak-color-muted);
 	}
 
-	.yak-main-nav li:hover > .sub-menu,
-	.yak-main-nav li:focus-within > .sub-menu {
+	/* === Show submenu on hover/focus === */
+	/* On hover/focus, reveal regular dropdowns (non-mega only) */
+	.yak-main-nav > li.menu-item-has-children:not(.yak-has-mega):hover > .sub-menu,
+	.yak-main-nav > li.menu-item-has-children:not(.yak-has-mega):focus-within > .sub-menu {
 		visibility: visible;
 		opacity: 1;
 		transform: translateY(0);
 	}
+
+
+	/* ========== Mega Menu Enhancement (3-level nav with .yak-mega-column wrappers) ========== */
+
+	@media (min-width: 960px) {
+
+		.yak-main-nav > li.yak-has-mega > .sub-menu {
+			display: none;
+			visibility: hidden;
+			opacity: 0;
+			transform: translateY(0.5rem);
+		}	
+
+		/* Mega panel is a grid of columns */
+		.yak-main-nav .yak-has-mega:hover > .sub-menu,
+		.yak-main-nav .yak-has-mega:focus-within > .sub-menu,
+		.yak-main-nav .yak-has-mega > .sub-menu:hover {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+			padding: 1rem;
+			gap: 1rem;
+			background: #fff;
+			border: 1px solid #ddd;
+			visibility: visible;
+			opacity: 1;
+			transform: none;
+			z-index: 1000;
+			width: max-content;
+			max-width: 90vw;
+			position: absolute;
+		}
+
+		.yak-main-nav > li.yak-has-mega {
+			position: relative;
+		}
+		
+
+		/* Each column's content is stacked vertically */
+		.yak-mega-column {
+			display: flex;
+			flex-direction: column;
+			gap: 0.25rem;
+		}
+
+		/* 2nd-level menu item (e.g., 'Northwest') inside each column */
+		.yak-main-nav .yak-has-mega > .sub-menu > .yak-mega-column > .menu-item {
+			display: flex;
+			flex-direction: column;
+			margin: 0;
+			padding: 0;
+		}
+
+		.yak-main-nav .yak-has-mega > .sub-menu > .yak-mega-column > a {
+			font-weight: 700;
+		}
+
+		.yak-main-nav .yak-has-mega > .sub-menu > .yak-mega-column > a:hover {
+			background: transparent;
+			border-bottom: 2px solid transparent;
+			text-decoration: underline;
+		}
+
+		/* Hide arrows on 2nd-level column headers inside mega menu */
+		.yak-main-nav > li.yak-has-mega .yak-mega-column > .menu-item-has-children > a::after {
+			display: none !important;
+		}
+
+		/* 3rd-level submenus under 2nd-level mega columns */
+		.yak-main-nav .yak-has-mega > .sub-menu > .yak-mega-column > .menu-item > .sub-menu {
+			display: block;
+			margin-top: 0.5rem;
+			padding-left: 0;
+			list-style: none;
+		}
+
+		/* 3rd-level link spacing */
+		.yak-main-nav .yak-has-mega > .sub-menu > .yak-mega-column > .menu-item > .sub-menu > .menu-item {
+			margin-bottom: 0.5rem;
+		}
+
+		/* Always show 3rd-level lists inside mega menu columns */
+		.yak-main-nav .yak-has-mega .yak-mega-column > .sub-menu {
+			display: block;
+			/* margin-top: 0.5rem; */
+			padding-left: 0;
+			list-style: none;
+		}
+
+		.yak-main-nav .yak-has-mega .yak-mega-column > .sub-menu a {
+			padding-top: 0;
+			padding-bottom: 0;
+		}
+
+		.yak-main-nav .yak-has-mega .yak-mega-column > .sub-menu a:hover {
+			background: transparent;
+			border-bottom: 2px solid transparent;
+			text-decoration: underline;
+		}
+
+	}
+
+
+
 
 
 	@media (max-width: 959px) {
@@ -1059,6 +1069,10 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 			opacity: 0;
 			transition: max-height 0.35s ease, opacity 0.3s ease;
 			font-size: 0.95rem;
+		}
+
+		.yak-mobile-menu ul {
+			padding-left: 1rem;
 		}
 
 		.yak-mobile-menu .sub-menu li {

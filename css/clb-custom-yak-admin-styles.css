@@ -128,6 +128,9 @@ body.wp-admin,
 /* =ACF PANELS
   -------------------------------------------------------------------------- */
 
+  #yak-settings-box {
+    max-width: 1200px;
+  }
 
 
 /* =GUTENBERG / BLOCK EDITOR (optional)
