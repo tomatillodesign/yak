@@ -1042,3 +1042,242 @@ function clb_searchwp_custom_excerpt() {
 	echo '</div>';
 }
 
+
+
+
+
+add_action('acf/init', function () {
+	if (!function_exists('acf_add_local_field_group')) {
+		return;
+	}
+
+	acf_add_local_field_group(array(
+		'key' => 'group_site_notice_bar',
+		'title' => 'Top Notice Bar Settings',
+		'fields' => array(
+			array(
+				'key' => 'field_hello_bar_text',
+				'label' => 'Notice Text',
+				'name' => 'hello_bar_text',
+				'type' => 'text',
+			),
+			array(
+				'key' => 'field_hello_bar_start_date',
+				'label' => 'Start Date',
+				'name' => 'hello_bar_start_date',
+				'type' => 'date_picker',
+				'display_format' => 'Y-m-d',
+				'return_format' => 'Y-m-d',
+				'first_day' => 1,
+				'wrapper' => [ 'width' => '33' ],
+			),
+			array(
+				'key' => 'field_hello_bar_end_date',
+				'label' => 'End Date',
+				'name' => 'hello_bar_end_date',
+				'type' => 'date_picker',
+				'display_format' => 'Y-m-d',
+				'return_format' => 'Y-m-d',
+				'first_day' => 1,
+				'wrapper' => [ 'width' => '33' ],
+			),
+			array(
+				'key' => 'field_hello_bar_link',
+				'label' => 'Link URL',
+				'name' => 'hello_bar_link',
+				'type' => 'url',
+				'wrapper' => [ 'width' => '33' ],
+			),
+			array(
+				'key' => 'field_link_format',
+				'label' => 'Link Format',
+				'name' => 'link_format',
+				'type' => 'radio',
+				'choices' => array(
+					'No Button' => 'No Button',
+					'Button' => 'Button',
+				),
+				'default_value' => 'No Button',
+				'layout' => 'horizontal',
+			),
+			array(
+				'key' => 'field_button_text',
+				'label' => 'Button Text',
+				'name' => 'button_text',
+				'type' => 'text',
+				'conditional_logic' => array(
+					array(
+						array(
+							'field' => 'field_link_format',
+							'operator' => '==',
+							'value' => 'Button',
+						),
+					),
+				),
+			),
+			array(
+				'key' => 'field_link_target',
+				'label' => 'Link Target',
+				'name' => 'link_target',
+				'type' => 'select',
+				'choices' => array(
+					'Same Tab' => 'Same Tab',
+					'New Tab' => 'New Tab',
+				),
+				'default_value' => 'Same Tab',
+				'ui' => 1,
+			),
+		),
+		'location' => array(
+			array(
+				array(
+					'param' => 'page',
+					'operator' => '==',
+					'value' => get_option('page_on_front'),
+				),
+			),
+		),
+		'menu_order' => 3,
+		'style' => 'default',
+		'label_placement' => 'top',
+		'instruction_placement' => 'label',
+		'active' => true,
+		'description' => '',
+	));
+});
+
+// Display the Top Notice Bar on the homepage only
+add_action('genesis_before_header', 'yak_display_hello_bar');
+function yak_display_hello_bar() {
+
+	// Only run on the homepage
+	if ( ! is_front_page() ) return;
+
+	$home_id = get_option('page_on_front');
+	$now     = time();
+
+	$text        = get_field('hello_bar_text', $home_id);
+	$start_date  = get_field('hello_bar_start_date', $home_id);
+	$end_date    = get_field('hello_bar_end_date', $home_id);
+	$link        = get_field('hello_bar_link', $home_id);
+	$link_format = get_field('link_format', $home_id);
+	$target_attr = (get_field('link_target', $home_id) === 'New Tab') ? ' target="_blank"' : ' target="_self"';
+
+	if ( ! $text ) return;
+
+	// Date visibility logic
+	if ( $start_date && strtotime($start_date) > $now ) return;
+	if ( $end_date && strtotime($end_date) < $now ) return;
+
+	// Determine output
+	if ( ! $link ) {
+		$output = esc_html($text);
+	} elseif ( $link && $link_format === 'No Button' ) {
+		$output = '<a href="' . esc_url($link) . '"' . $target_attr . '>' . esc_html($text) . '</a>';
+	} elseif ( $link && $link_format === 'Button' ) {
+		$button_text = get_field('button_text', $home_id) ?: 'Learn More';
+		$output = '<span class="clb-hello-bar-text-wrapper">' . esc_html($text) . '</span>';
+		$output .= '<span class="clb-hello-bar-button-wrapper"><a href="' . esc_url($link) . '" class="button"' . $target_attr . '>' . esc_html($button_text) . '</a></span>';
+	} else {
+		return;
+	}
+
+	echo '<div class="clb-hello-bar-wrapper">' . $output . '</div>';
+}
+
+
+
+// 🔒 Restrict Yak Theme Settings to specific users via ACF
+
+add_filter('user_has_cap', 'yak_restrict_theme_settings_capability', 10, 4);
+function yak_restrict_theme_settings_capability($all_caps, $caps, $args, $user) {
+
+	if ( ! in_array('manage_options', $caps, true) ) {
+		return $all_caps;
+	}
+
+	// Always allow Super Admin
+	if ( $user->ID === 1 ) {
+		$all_caps['manage_options'] = true;
+		return $all_caps;
+	}
+
+	$allowed_users = get_field('yak_allowed_users', 'option');
+
+	if ( is_array($allowed_users) && in_array($user->ID, $allowed_users, true) ) {
+		$all_caps['manage_options'] = true;
+	}
+
+	return $all_caps;
+}
+
+add_action('admin_init', 'yak_restrict_theme_settings_page_access');
+function yak_restrict_theme_settings_page_access() {
+
+	if ( ! is_admin() || empty($_GET['page']) ) {
+		return;
+	}
+
+	$restricted_pages = [
+		'theme-settings',
+		'yak-options-colors',
+		'yak-options-typography',
+		'yak-options-layouts',
+		'yak-options-login',
+	];
+
+	if ( ! in_array($_GET['page'], $restricted_pages, true) ) {
+		return;
+	}
+
+	$current_user_id = get_current_user_id();
+	$allowed_users   = get_field('yak_allowed_users', 'option');
+
+	$authorized = (
+		$current_user_id === 1 ||
+		( is_array($allowed_users) && in_array($current_user_id, $allowed_users, true) )
+	);
+
+	if ( ! $authorized ) {
+		wp_die(
+			__('You do not have permission to access this page.', 'yak'),
+			__('Access Denied', 'yak'),
+			['response' => 403]
+		);
+	}
+}
+
+add_action('admin_menu', 'yak_hide_theme_settings_menu_for_unauthorized', 99);
+function yak_hide_theme_settings_menu_for_unauthorized() {
+	$current_user_id = get_current_user_id();
+
+	if ( $current_user_id === 1 ) {
+		return;
+	}
+
+	$allowed_users = get_field('yak_allowed_users', 'option');
+
+	if ( empty($allowed_users) || ! in_array($current_user_id, $allowed_users, true) ) {
+		remove_menu_page('theme-settings');
+		remove_submenu_page('theme-settings', 'yak-options-colors');
+		remove_submenu_page('theme-settings', 'yak-options-typography');
+		remove_submenu_page('theme-settings', 'yak-options-layouts');
+		remove_submenu_page('theme-settings', 'yak-options-login');
+	}
+}
+
+// 🛠 Debugging
+// add_action('admin_init', function() {
+// 	if ( is_user_logged_in() ) {
+// 		error_log('[YakPermissions] Current user ID: ' . get_current_user_id());
+// 		error_log('[YakPermissions] yak_allowed_users: ' . print_r(get_field('yak_allowed_users', 'option'), true));
+// 	}
+// });
+
+add_filter('acf/get_field_group', 'yak_hide_permissions_panel_for_non_admin_1');
+function yak_hide_permissions_panel_for_non_admin_1($group) {
+	if ($group['key'] === 'group_yak_settings_permissions' && get_current_user_id() !== 1) {
+		$group['active'] = false;
+	}
+	return $group;
+}

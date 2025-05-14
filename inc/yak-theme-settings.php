@@ -37,6 +37,34 @@ if ( function_exists( 'acf_add_local_field_group' ) ) :
 		'description' => '',
 	] );
 
+	acf_add_local_field_group(array(
+		'key' => 'group_yak_settings_permissions',
+		'title' => 'Yak Theme Settings Access',
+		'fields' => array(
+			array(
+				'key' => 'field_yak_allowed_users',
+				'label' => 'Authorized Users',
+				'name' => 'yak_allowed_users',
+				'type' => 'user',
+				'instructions' => 'Only these users can access the Yak Theme Settings page. Admin user #1 is always allowed.',
+				'multiple' => 1,
+				'role' => array('administrator', 'editor'),
+				'return_format' => 'id',
+			),
+		),
+		'location' => array(
+			array(
+				array(
+					'param' => 'options_page',
+					'operator' => '==',
+					'value' => 'theme-settings',
+				),
+			),
+		),
+		'menu_order' => 2,
+	));
+	
+
 	acf_add_local_field_group( [
 		'key' => 'group_yak_theme_settings_logo',
 		'title' => 'Yak Theme: Logo & Branding',
@@ -131,108 +159,6 @@ if ( function_exists( 'acf_add_local_field_group' ) ) :
 	endif;
 	
 
-
-	acf_add_local_field_group(array(
-		'key' => 'group_site_notice_bar',
-		'title' => 'Top Notice Bar Settings',
-		'fields' => array(
-			array( 
-				'key' => 'field_hello_bar_text', 
-				'label' => 'Notice Text', 
-				'name' => 'hello_bar_text', 
-				'type' => 'text', 
-			),
-			array(
-				'key' => 'field_hello_bar_start_date',
-				'label' => 'Start Date',
-				'name' => 'hello_bar_start_date',
-				'type' => 'date_picker',
-				'display_format' => 'Y-m-d',
-				'return_format' => 'Y-m-d',
-				'first_day' => 1,
-				'wrapper' => [
-                    'width' => '33',
-                ],
-			),
-			array(
-				'key' => 'field_hello_bar_end_date',
-				'label' => 'End Date',
-				'name' => 'hello_bar_end_date',
-				'type' => 'date_picker',
-				'display_format' => 'Y-m-d',
-				'return_format' => 'Y-m-d',
-				'first_day' => 1,
-				'wrapper' => [
-                    'width' => '33',
-                ],
-			),
-			array(
-				'key' => 'field_hello_bar_link',
-				'label' => 'Link URL',
-				'name' => 'hello_bar_link',
-				'type' => 'url',
-				'wrapper' => [
-                    'width' => '33',
-                ],
-			),
-			array(
-				'key' => 'field_link_format',
-				'label' => 'Link Format',
-				'name' => 'link_format',
-				'type' => 'radio',
-				'choices' => array(
-					'No Button' => 'No Button',
-					'Button' => 'Button',
-				),
-				'default_value' => 'No Button',
-				'layout' => 'horizontal',
-			),
-			array(
-				'key' => 'field_button_text',
-				'label' => 'Button Text',
-				'name' => 'button_text',
-				'type' => 'text',
-				'conditional_logic' => array(
-					array(
-						array(
-							'field' => 'field_link_format',
-							'operator' => '==',
-							'value' => 'Button',
-						),
-					),
-				),
-			),
-			array(
-				'key' => 'field_link_target',
-				'label' => 'Link Target',
-				'name' => 'link_target',
-				'type' => 'select',
-				'choices' => array(
-					'Same Tab' => 'Same Tab',
-					'New Tab' => 'New Tab',
-				),
-				'default_value' => 'Same Tab',
-				'allow_null' => 0,
-				'multiple' => 0,
-				'ui' => 1,
-			),
-		),
-		'location' => array(
-			array(
-				array(
-					'param' => 'options_page',
-					'operator' => '==',
-					'value' => 'theme-settings',
-				),
-			),
-		),
-		'menu_order' => 3,
-		'style' => 'default',
-		'label_placement' => 'top',
-		'instruction_placement' => 'label',
-		'active' => true,
-		'description' => '',
-	));
 
 	
 
@@ -553,51 +479,6 @@ function yak_add_sticky_header_class( $classes ) {
 
 
 
-
-
-
-// Add Hello Bar
-add_action('genesis_before_header', 'clb_ironwood_publish_hello_bar');
-function clb_ironwood_publish_hello_bar() {
-
-    $hello_bar_to_publish = null;
-
-    $hello_bar_text = get_field('hello_bar_text', 'option');
-    $current = strtotime("now");
-    $hello_bar_start_date = get_field('hello_bar_start_date', 'option');
-    $hello_bar_end_date = get_field('hello_bar_end_date', 'option');
-
-    $hello_bar_link = get_field('hello_bar_link', 'option');
-    $link_format = get_field('link_format', 'option');
-    $hello_bar_link_target = get_field('link_target', 'option');
-    $target = ' target="_self"';
-    if( $hello_bar_link_target == 'New Tab' ) { $target = ' target="_blank"'; }
-
-    if( !$hello_bar_link ) {
-        $hello_bar_to_publish = $hello_bar_text;
-    } elseif( $hello_bar_link && $link_format == 'No Button' ) {
-        $hello_bar_to_publish = '<a href="' . $hello_bar_link . '"' . $target . '>' . $hello_bar_text . '</a>';
-    } elseif( $hello_bar_link && $link_format == 'Button' ) {
-        $button_text = get_field('button_text', 'option');
-        if( !$button_text ) { $button_text = 'Learn More'; }
-        $hello_bar_to_publish = '<span class="clb-hello-bar-text-wrapper">' . $hello_bar_text . '</span><span class="clb-hello-bar-button-wrapper"><a href="' . $hello_bar_link . '" class="button" ' . $target . '>' . $button_text . '</a></span>';
-    }
-
-    //echo strtotime($hello_bar_start_date);
-
-    if( $hello_bar_start_date ) {
-        if( strtotime($hello_bar_start_date) > $current ) { return; }
-    }
-
-    if( $hello_bar_end_date ) {
-        if( strtotime($hello_bar_end_date) < $current ) { return; }
-    }
-
-    if( $hello_bar_text ) {
-        echo '<div class="clb-hello-bar-wrapper">' . $hello_bar_to_publish . '</div>';
-    }
-
-}
 
 
 
