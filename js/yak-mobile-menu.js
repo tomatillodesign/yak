@@ -237,3 +237,42 @@ function debounce(fn, delay = 100) {
 
 window.addEventListener('DOMContentLoaded', setYakMobileHeaderHeightVar);
 window.addEventListener('resize', debounce(setYakMobileHeaderHeightVar, 150));
+
+
+
+// inline search
+document.addEventListener('DOMContentLoaded', () => {
+	const trigger = document.querySelector('#yak-mobile-nav .yak-search-trigger > a');
+	if (!trigger) return;
+
+	trigger.addEventListener('click', (e) => {
+		e.preventDefault();
+
+		const li = trigger.closest('li');
+		if (!li) return;
+
+		// Check if form already exists
+		let form = li.querySelector('.yak-inline-search-form');
+		if (form) {
+			form.classList.toggle('is-visible');
+
+			// Show/hide the anchor link based on form visibility
+			trigger.style.display = form.classList.contains('is-visible') ? 'none' : '';
+
+			form.querySelector('input[type="search"]')?.focus();
+			return;
+		}
+
+		// Grab WP template
+		const template = document.getElementById('yak-inline-search-template');
+		if (!template) return;
+
+		const clonedForm = template.querySelector('form')?.cloneNode(true);
+		if (!clonedForm) return;
+
+		clonedForm.classList.add('yak-inline-search-form', 'is-visible');
+		li.appendChild(clonedForm);
+		trigger.style.display = 'none';
+		clonedForm.querySelector('input[type="search"]')?.focus();
+	});
+});

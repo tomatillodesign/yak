@@ -616,9 +616,11 @@ function gutenberg_sections_register_acf_color_palette() {
 
 
 //* Customize search form input box text
-add_filter( 'genesis_search_text', 'sp_search_text' );
-function sp_search_text( $text ) {
-	return esc_attr( 'Search this website...' );
+add_filter( 'genesis_search_text', 'yak_custom_search_placeholder' );
+function yak_custom_search_placeholder( $text ) {
+
+	$site_name = get_bloginfo( 'name' );
+	return esc_attr__( 'Search ' . $site_name . '...', 'yak' );
 }
 
 
@@ -649,19 +651,21 @@ add_action( 'genesis_after_loop', 'yak_close_archive_wrapper', 6 );
  * Open custom wrapper around the archive loop based on blog format setting.
  */
 function yak_open_archive_wrapper() {
-	if ( ! is_home() && ! is_archive() && ! is_search() ) return;
+	
+	if ( ! is_home() && ! is_archive() ) return;
 
 	$format = get_field( 'yak_blog_format', 'option' );
 	$format_class = $format === 'cards' ? 'yak-blog-format-cards' : 'yak-blog-format-list';
 
 	echo '<div class="entry-content"><div class="yak-archive-wrapper ' . esc_attr( $format_class ) . ' alignwide">';
+
 }
 
 /**
  * Close wrapper div after archive loop.
  */
 function yak_close_archive_wrapper() {
-	if ( ! is_home() && ! is_archive() && ! is_search() ) return;
+	if ( ! is_home() && ! is_archive() ) return;
 
 	echo '</div></div>';
 }
@@ -697,6 +701,8 @@ function yak_clean_archive_entry_markup() {
 
 
 function yak_custom_archive_entry_markup() {
+
+	if( is_search() ) { return; }
 
 	if( !has_post_thumbnail() ) { $class = ' yak-missing-thumbnail'; }
 	else { $class = ' yak-has-thumbnail'; }
@@ -934,10 +940,12 @@ add_action( 'wp_footer', 'yak_output_global_search_modal', 20 );
 function yak_output_global_search_modal() {
 	if ( is_admin() ) return;
 
+	$site_name = get_bloginfo( 'name' );
+
 	yak_output_modal( [
 		'id'    => 'yak-search-modal',
-		'title' => 'Search',
-		'content' => yak_get_search_form_html(),
+		'title' => 'Search ' . $site_name,
+		'content' => get_search_form( false ),
 		'classes' => 'yak-search-modal',
 	] );
 }
@@ -956,5 +964,81 @@ function yak_get_search_form_html() {
 	</form>
 	<?php
 	return ob_get_clean();
+}
+
+
+
+// mobile menu WP search form
+add_action('wp_head', 'yak_output_mobile_wp_search_form');
+function yak_output_mobile_wp_search_form() {
+
+	?>
+
+	<div id="yak-inline-search-template" style="display: none;">
+		<?php get_search_form(); ?>
+	</div>
+
+	<?php
+
+}
+
+
+add_action( 'genesis_entry_content', 'clb_searchwp_custom_excerpt' );
+
+add_action( 'genesis_before_loop', function () {
+	if ( is_search() ) {
+		remove_action( 'genesis_entry_header', 'genesis_do_post_title' );
+		remove_action( 'genesis_entry_content', 'genesis_do_post_content' );
+		remove_action( 'genesis_entry_content', 'genesis_do_post_image' );
+	}
+});
+
+
+
+
+function clb_searchwp_custom_excerpt() {
+	
+	global $post;
+
+	if ( ! is_search() || ! $post ) return;
+
+	// === Post Type Badge ===
+	$post_type_badge = null;
+	$post_type = get_post_type_object( get_post_type() );
+	if ( $post_type ) {
+		$post_type_badge = '<span class="search-result-type badge">' . esc_html( ucfirst( $post_type->labels->singular_name ) ) . '</span>';
+	}
+
+	// === Title ===
+	$title = get_the_title();
+	$permalink = get_permalink();
+	echo '<div class="yak-search-results-title-wrapper"><h2 class="search-result-title"><a href="' . esc_url($permalink) . '">' . esc_html($title) . '</a></h2>' . $post_type_badge . '</div>';
+
+	// === Pretty Permalink ===
+	$parsed = wp_parse_url($permalink);
+	$pretty_link = trim($parsed['host'] . $parsed['path'], '/');
+	echo '<div class="search-result-url"><a href="' . esc_url($permalink) . '">' . esc_html($pretty_link) . '</a></div>';
+
+	// === Date ===
+	$date = get_the_date();
+	echo '<div class="search-result-date">' . esc_html($date) . '</div>';
+
+	
+
+	// === Excerpt ===
+	echo '<div class="search-result-excerpt">';
+	if ( function_exists( 'searchwp_term_highlight_the_excerpt_global' ) ) {
+		searchwp_term_highlight_the_excerpt_global();
+	} elseif ( class_exists( '\\SearchWP\\Entry' ) ) {
+		$source = \SearchWP\Utils::get_post_type_source_name( $post->post_type );
+		$entry = new \SearchWP\Entry( $source, $post->ID, false, false );
+		$excerpt = \SearchWP\Sources\Post::get_global_excerpt( $entry, get_search_query() );
+		$highlighter = new \SearchWP\Highlighter();
+		$excerpt = $highlighter::apply( $excerpt, explode( ' ', get_search_query() ) );
+		echo wp_kses_post( $excerpt );
+	} else {
+		the_excerpt();
+	}
+	echo '</div>';
 }
 
