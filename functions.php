@@ -262,41 +262,6 @@ add_action('wp_enqueue_scripts', function () {
 }, 20); // Ensure it's dead last
 
 
-// updated custom theme menu pages
-// add_action( 'admin_menu', 'yak_register_theme_settings_menu' );
-
-// function yak_register_theme_settings_menu() {
-// 	add_menu_page(
-// 		'Theme Settings',
-// 		'Theme Settings',
-// 		'manage_options',
-// 		'theme-settings',
-// 		'yak_render_theme_settings_page',
-// 		'dashicons-superhero',
-// 		88
-// 	);
-
-// 	add_submenu_page(
-// 		'theme-settings',
-// 		'Recommended Plugins',
-// 		'Plugins',
-// 		'manage_options',
-// 		'yak-recommended-plugins',
-// 		'yak_render_plugins_page'
-// 	);
-// }
-
-
-// add_action( 'load-toplevel_page_theme-settings', function () {
-// 	require_once get_stylesheet_directory() . '/inc/yak-theme-settings.php';
-// } );
-
-// function yak_render_plugins_page() {
-// 	echo '<div class="wrap"><h1>Yak Recommended Plugins</h1>';
-// 	// Your custom plugin list logic here
-// }
-
-
 
 
 // Update CSS within in Admin
@@ -321,9 +286,6 @@ function clb_enqueue_custom_scripts_styles() {
 		true
 	);
 
-	// custom front-end CSS
-	// wp_enqueue_style( 'clb-custom-yak-styles', get_stylesheet_directory_uri() . '/css/clb-custom-yak-styles.css', array(), '1.0.0', 'all');
-
 }
 
 
@@ -339,6 +301,8 @@ add_action('enqueue_block_editor_assets', function () {
 });
 
 // remove Gutenberg injected styling and replace everything with my own custom styles (many copied directly, but better controlled)
+// see /css/yak-blocks.css
+///////////////////////////////////////////
 add_action('wp_enqueue_scripts', function () {
 	wp_dequeue_style('wp-block-library');
 	wp_dequeue_style('wp-block-library-theme');
@@ -428,14 +392,6 @@ function yak_unregister_default_sidebars() {
 
 
 
-
-
-
-
-
-
-
-
 /**
  * Append user role to body class when logged in.
  *
@@ -469,61 +425,6 @@ add_action('acf/init', 'my_acf_init');
 
 
 
-
-
-if( function_exists('acf_add_local_field_group') ):
-
-    acf_add_local_field_group(array(
-        'key' => 'group_62ec1e6c24973',
-        'title' => 'Featured Image Height',
-        'fields' => array(
-            array(
-                'key' => 'field_62ec1e8026938',
-                'label' => 'Featured Image Height',
-                'name' => 'featured_image_height',
-                'aria-label' => '',
-                'type' => 'number',
-                'instructions' => '',
-                'required' => 0,
-                'conditional_logic' => 0,
-                'wrapper' => array(
-                    'width' => '',
-                    'class' => '',
-                    'id' => '',
-                ),
-                'default_value' => 400,
-                'placeholder' => '',
-                'prepend' => '',
-                'append' => 'px',
-                'min' => '',
-                'max' => '',
-                'step' => 1,
-            ),
-        ),
-        'location' => array(
-            array(
-                array(
-                    'param' => 'post_type',
-                    'operator' => '==',
-                    'value' => 'page',
-                ),
-            ),
-        ),
-        'menu_order' => 0,
-        'position' => 'side',
-        'style' => 'default',
-        'label_placement' => 'top',
-        'instruction_placement' => 'label',
-        'hide_on_screen' => '',
-        'active' => true,
-        'description' => '',
-        'show_in_rest' => 0,
-    ));
-    
-    endif;		
-
-
-
 // Remove Genesis Blocks Pro Portfolio Items CPT from Dashboard from Phil Johnston
 
 function clb_ironwood_disable_gpb_portfolio_post_type() {
@@ -535,21 +436,6 @@ add_action( 'init', 'clb_ironwood_disable_gpb_portfolio_post_type', 9 );
 
 /** Remove the edit link */
 add_filter ( 'genesis_edit_post_link' , '__return_false' );
-
-
-
-/**
- * Add a body class if the current post has a featured image, or not.
- */
-// function clb_featured_image_body_class( $classes ) {
-//     if ( is_singular() && has_post_thumbnail() ) {
-//         $classes[] = 'clb-has-featured-image';
-//     } else {
-//         $classes[] = 'clb-missing-featured-image';
-//     }
-//     return $classes;
-// }
-// add_filter( 'body_class', 'clb_featured_image_body_class' );
 
 
 
