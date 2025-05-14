@@ -822,6 +822,14 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 	}
 	
 
+	.yak-featured-image-wrapper {
+		width: 100%;
+		max-width: 100%;
+		margin-bottom: 2rem;
+		border-radius: var(--yak-radius);
+		overflow: hidden;
+	}
+	
 	
 
 }
@@ -1550,6 +1558,35 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 		text-decoration: underline;
 	}
 	
+	.yak-featured-image-top-wrapper {
+		position: relative;
+		overflow: hidden;
+		width: 100%;
+	}
+	
+	.yak-featured-image-bg {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+	}
+	
+	.yak-featured-image-title {
+		position: absolute;
+		bottom: 3rem;
+		left: 0;
+		right: 0;
+		padding: 0 2rem;
+		text-align: center;
+		color: white;
+		text-shadow: 0 0px 20px rgba(0,0,0,0.8);
+	}
+	
+	.yak-featured-image-title h1 {
+		font-size: var(--yak-font-3xl);
+		line-height: var(--yak-lh-3xl);
+		margin: 0;
+	}
 	
 	
 }

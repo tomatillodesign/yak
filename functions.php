@@ -1167,3 +1167,39 @@ function yak_hide_permissions_panel_for_non_admin_1($group) {
 	}
 	return $group;
 }
+
+
+
+
+add_action( 'genesis_after_header', 'yak_output_featured_image_top' );
+function yak_output_featured_image_top() {
+	if ( ! is_singular() || ! get_field( 'yak_show_featured_image', 'option' ) ) {
+		return;
+	}
+
+	$image_url = get_the_post_thumbnail_url( get_the_ID(), 'full' );
+	if ( ! $image_url ) {
+		return;
+	}
+
+	$custom_height = get_field( 'yak_featured_image_height' );
+	$custom_height = is_numeric( $custom_height ) ? max( 100, min( $custom_height, 800 ) ) : 400;
+
+	echo '<div class="yak-featured-image-top-wrapper" style="height: ' . esc_attr( $custom_height ) . 'px;">';
+	echo '  <img class="yak-featured-image-bg" src="' . esc_url( $image_url ) . '" alt="' . esc_attr( get_the_title() ) . '" />';
+	echo '  <div class="yak-featured-image-title">';
+	echo '    <h1>' . esc_html( get_the_title() ) . '</h1>';
+	echo '  </div>';
+	echo '</div>';
+}
+
+add_action( 'genesis_before', function() {
+	if ( ! is_singular() ) {
+		return;
+	}
+
+	// Only remove if the global option is enabled AND the featured image is present
+	if ( get_field( 'yak_show_featured_image', 'option' ) && has_post_thumbnail() ) {
+		remove_action( 'genesis_entry_header', 'genesis_do_post_title' );
+	}
+}, 15 );

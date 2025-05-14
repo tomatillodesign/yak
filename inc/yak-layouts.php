@@ -109,6 +109,38 @@ if (function_exists('acf_add_local_field_group')) {
 
 
 
+acf_add_local_field_group(array(
+	'key' => 'group_yak_layouts_featured_image',
+	'title' => 'Single Post/Page Layout',
+	'fields' => array(
+		array(
+			'key' => 'field_yak_show_featured_image',
+			'label' => 'Show Featured Image at Top',
+			'name' => 'yak_show_featured_image',
+			'type' => 'true_false',
+			'instructions' => 'If enabled, by default the featured image will appear at the top of single posts and pages.',
+			'default_value' => 1,
+			'ui' => 1,
+		),
+	),
+	'location' => array(
+		array(
+			array(
+				'param' => 'options_page',
+				'operator' => '==',
+				'value' => 'yak-options-layouts',
+			),
+		),
+	),
+	'menu_order' => 10,
+	'style' => 'default',
+	'label_placement' => 'top',
+	'instruction_placement' => 'label',
+	'active' => true,
+));
+
+
+
 
 add_action('wp_head', 'yak_output_layout_css_vars');
 add_action('admin_head', 'yak_output_layout_css_vars');
@@ -149,3 +181,85 @@ function yak_add_sticky_header_body_class($classes) {
 	}
 	return $classes;
 }
+
+
+
+
+acf_add_local_field_group(array(
+	'key' => 'group_yak_post_featured_image_settings',
+	'title' => 'Featured Image Display',
+	'fields' => array(
+
+		array(
+			'key' => 'field_yak_remove_featured_image',
+			'label' => 'Remove Top Featured Image?',
+			'name' => 'yak_remove_featured_image',
+			'type' => 'true_false',
+			'ui' => 1,
+			'default_value' => 0,
+			'wrapper' => [
+				'width' => '100',
+			],
+		),
+
+		array(
+			'key' => 'field_yak_featured_image_height',
+			'label' => 'Featured Image Height',
+			'name' => 'yak_featured_image_height',
+			'type' => 'number',
+			'default_value' => 400,
+			'append' => 'px',
+			'min' => 100,
+            'max' => 800,
+            'step' => 1,
+			'wrapper' => [
+				'width' => '100',
+			],
+		),
+
+	),
+	'location' => array(
+		array(
+			array(
+				'param' => 'post_type',
+				'operator' => '!=',
+				'value' => 'acf-field-group', // avoids displaying in ACF UI
+			),
+		),
+	),
+	'position' => 'side',
+	'style' => 'default',
+	'label_placement' => 'top',
+	'instruction_placement' => 'label',
+	'active' => true,
+    // ✅ ADD THIS
+	'class' => 'yak-featured-image-display-panel',
+));
+
+
+// Hide "Remove Top Featured Image" field if global option is off
+add_filter('acf/prepare_field/key=field_yak_remove_featured_image', function($field) {
+	if (!get_field('yak_show_featured_image', 'option')) {
+		return false;
+	}
+	return $field;
+});
+
+// Hide "Featured Image Height" field if global option is off
+add_filter('acf/prepare_field/key=field_yak_featured_image_height', function($field) {
+	if (!get_field('yak_show_featured_image', 'option')) {
+		return false;
+	}
+	return $field;
+});
+
+
+add_action('admin_head', function () {
+	if (!is_admin() || get_current_screen()?->base !== 'post') {
+		return;
+	}
+
+	if (!get_field('yak_show_featured_image', 'option')) {
+		echo '<style>#acf-group_yak_post_featured_image_settings { display: none !important; }</style>';
+	}
+});
