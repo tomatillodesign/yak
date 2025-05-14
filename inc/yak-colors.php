@@ -345,10 +345,16 @@ function yak_output_editor_palette_css_vars() {
 // Frontend
 add_action('wp_head', 'yak_output_editor_palette_css_vars');
 
+
 // Block editor (iframe-safe)
-add_action('enqueue_block_editor_assets', function () {
-	add_action('admin_print_footer_scripts', 'yak_output_editor_palette_css_vars');
+add_action( 'enqueue_block_editor_assets', function () {
+	// Enqueue a dummy or real editor stylesheet
+	wp_enqueue_style( 'yak-editor-palette', false );
+
+	// Inject your CSS variables into the editor iframe
+	wp_add_inline_style( 'yak-editor-palette', ':root { ' . yak_output_all_color_swatches_css_vars() . ' }' );
 });
+
 
 
 
@@ -662,6 +668,7 @@ add_action('acf/input/admin_enqueue_scripts', function() {
 		true
 	);
 });
+
 
 
 

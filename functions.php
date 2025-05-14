@@ -109,6 +109,8 @@ function yak_theme_setup_features() {
 	add_theme_support( 'wp-block-styles' );              // Enables default WP block styles
 	add_theme_support( 'align-wide' );                   // Allows wide/full block alignments
 	add_theme_support( 'responsive-embeds' );            // Makes embeds (e.g., YouTube) mobile-friendly
+	add_theme_support( 'editor-filter-duotone' );
+
 
 	// Media & markup
 	add_theme_support( 'post-thumbnails' );              // Enables featured image support
@@ -463,53 +465,6 @@ function my_acf_init() {
 }
 add_action('acf/init', 'my_acf_init');
 
-
-
-
-
-
-// Add Hello Bar
-add_action('genesis_before_header', 'clb_ironwood_publish_hello_bar');
-function clb_ironwood_publish_hello_bar() {
-
-    $hello_bar_to_publish = null;
-
-    $hello_bar_text = get_field('hello_bar_text', 'option');
-    $current = strtotime("now");
-    $hello_bar_start_date = get_field('hello_bar_start_date', 'option');
-    $hello_bar_end_date = get_field('hello_bar_end_date', 'option');
-
-    $hello_bar_link = get_field('hello_bar_link', 'option');
-    $link_format = get_field('link_format', 'option');
-    $hello_bar_link_target = get_field('link_target', 'option');
-    $target = ' target="_self"';
-    if( $hello_bar_link_target == 'New Tab' ) { $target = ' target="_blank"'; }
-
-    if( !$hello_bar_link ) {
-        $hello_bar_to_publish = $hello_bar_text;
-    } elseif( $hello_bar_link && $link_format == 'No Button' ) {
-        $hello_bar_to_publish = '<a href="' . $hello_bar_link . '"' . $target . '>' . $hello_bar_text . '</a>';
-    } elseif( $hello_bar_link && $link_format == 'Button' ) {
-        $button_text = get_field('button_text', 'option');
-        if( !$button_text ) { $button_text = 'Learn More'; }
-        $hello_bar_to_publish = '<span class="clb-hello-bar-text-wrapper">' . $hello_bar_text . '</span><span class="clb-hello-bar-button-wrapper"><a href="' . $hello_bar_link . '" class="button" ' . $target . '>' . $button_text . '</a></span>';
-    }
-
-    //echo strtotime($hello_bar_start_date);
-
-    if( $hello_bar_start_date ) {
-        if( strtotime($hello_bar_start_date) > $current ) { return; }
-    }
-
-    if( $hello_bar_end_date ) {
-        if( strtotime($hello_bar_end_date) < $current ) { return; }
-    }
-
-    if( $hello_bar_text ) {
-        echo '<div class="clb-hello-bar-wrapper">' . $hello_bar_to_publish . '</div>';
-    }
-
-}
 
 
 

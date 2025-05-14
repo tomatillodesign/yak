@@ -1127,6 +1127,7 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 			gap: 5px;
 			width: 24px;
 			height: 18px;
+			color: var(--yak-color-black);
 		}
 	
 		.yak-menu-bar {
@@ -1424,7 +1425,23 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 		opacity: 1;
 	}
 
-	
+	.clb-hello-bar-wrapper {
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		padding: 0.5rem 1rem;
+		background: var(--yak-color-primary);
+		color: var(--yak-color-white);
+	}
+
+	.clb-hello-bar-wrapper a {
+		color: var(--yak-color-white);
+		text-decoration: none;
+	}
+
+	.clb-hello-bar-wrapper a:hover {
+		text-decoration: underline;
+	}
 	
 	
 	
@@ -1484,6 +1501,31 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 @layer yak-overrides {
   /* put one-off overrides here */
 
+  .ctd-tabs {
+	margin-top: 3rem;
+  }
 
+  h2.ctd-tab-heading {
+	margin-top: 0;
+  }
+
+  .ctd-tabs__toc [role="tab"][aria-selected="true"] {
+    border-left: 4px solid var(--yak-color-primary) !important;
+	}
+
+	.ctd-single-tab button:focus {
+		outline: none;
+		box-shadow: none;
+		background: yellow;
+		font-weight: 700;
+		text-decoration: underline;
+		text-underline-offset: 4px;
+	}
+	
+	.ctd-single-tab button:focus:not(:focus-visible) {
+		outline: none;
+		box-shadow: none;
+	}
+	
 
 }

@@ -1,0 +1,20 @@
+{
+    "version": 2,
+    "settings": {
+      "color": {
+        "duotone": [
+          {
+            "slug": "yak-deep-blue",
+            "name": "Yak Deep Blue",
+            "colors": [ "#2f5e98", "#f5f5f5" ]
+          },
+          {
+            "slug": "yak-crimson-wash",
+            "name": "Yak Crimson Wash",
+            "colors": [ "#911e1e", "#fff5f5" ]
+          }
+        ]
+      }
+    }
+  }
+  

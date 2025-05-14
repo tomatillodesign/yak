@@ -15,12 +15,110 @@
     --yak-admin-border: #e0e2e7;
     --yak-admin-text: #ffffff;
 
-    /* Font family */
-    --yak-font-primary: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    
+	/* -------------------------------
+		🎨 Color Palette (WP Presets + Yak)
+	-------------------------------- */
+	--wp--preset--color--black: #000;
+	--wp--preset--color--white: #fff;
+	--wp--preset--color--primary: var(--yak-color-primary);
+	--wp--preset--color--secondary: #666;
+	--wp--preset--color--tertiary: #ccc;
+	--wp--preset--color--foreground: var(--yak-color-black);
+	--wp--preset--color--background: var(--yak-color-white);
+	--wp--preset--color--contrast: var(--yak-color-muted);
 
-    /* WP admin integration colors */
-    --wp-admin-theme-color: var(--yak-primary-color);
-    --wp-admin-theme-color-darker-10: var(--yak-primary-color-20);
+	/* -------------------------------
+		🔤 Typography (WP Presets + Yak)
+	-------------------------------- */
+	--wp--preset--font-size--small: 0.875rem; /* ~14px */
+	--wp--preset--font-size--medium: var(--yak-font-md);
+	--wp--preset--font-size--large: var(--yak-font-lg);
+	--wp--preset--font-size--x-large: var(--yak-font-xl);
+	--wp--preset--font-size--xx-large: var(--yak-font-2xl);
+
+	--wp--preset--font-family--system-font: system-ui, sans-serif;
+	--wp--preset--font-family--serif: Georgia, serif;
+	--wp--preset--font-family--sans-serif: Helvetica, Arial, sans-serif;
+	--wp--preset--font-family--monospace: Menlo, monospace;
+
+	/* -------------------------------
+		📏 Spacing
+	-------------------------------- */
+	--wp--preset--spacing--10: 0.625rem;
+	--wp--preset--spacing--20: 1rem;
+	--wp--preset--spacing--30: 1.5rem;
+	--wp--preset--spacing--40: 2rem;
+	--wp--preset--spacing--50: 3rem;
+	--wp--preset--spacing--60: 4rem;
+	--wp--preset--spacing--70: 6rem;
+	--wp--preset--spacing--80: 8rem;
+	--wp--preset--spacing--90: 12rem;
+	--wp--preset--spacing--100: 16rem;
+
+	--wp--style--block-gap: var(--wp--preset--spacing--30);
+
+	/* -------------------------------
+		🖼️ Gallery
+	-------------------------------- */
+	--wp--style--gallery-gap-default: var(--wp--preset--spacing--20);
+	--wp--style--unstable-gallery-gap: var(--wp--style--gallery-gap-default);
+
+	/* -------------------------------
+		🧱 Layout
+	-------------------------------- */
+	--wp--style--global--content-size: var(--yak-content-max-width);
+	--wp--style--global--wide-size: min(90rem, 100vw);
+
+    /* Font family variables */
+	--yak-primary-font: system-ui, sans-serif;
+	--yak-secondary-font: var(--yak-primary-font);
+	--yak-accent-font: var(--yak-primary-font);
+
+	/* Base font size: user-controlled via ACF (fallback = 18px) */
+	--yak-font-base-px: 18;                          /* ACF-driven, in pixels */
+	--yak-font-base: calc(var(--yak-font-base-px) * 1px); /* usable in rem/rem-adjacent logic */
+
+	/* Modular scale: Minor Third (1.25x) */
+	--yak-type-ratio: 1.25;
+
+	/* Font sizes (relative, rem-based) */
+	--yak-font-xs: calc(var(--yak-font-base) / (var(--yak-type-ratio) * var(--yak-type-ratio)));  /* smallest */
+	--yak-font-sm: calc(var(--yak-font-base) / var(--yak-type-ratio));                            /* smaller than base */
+	--yak-font-md: var(--yak-font-base);                                                          /* base */
+	--yak-font-lg: calc(var(--yak-font-md) * var(--yak-type-ratio));                              /* larger */
+	--yak-font-xl: calc(var(--yak-font-lg) * var(--yak-type-ratio));
+	--yak-font-2xl: calc(var(--yak-font-xl) * var(--yak-type-ratio));
+	--yak-font-3xl: calc(var(--yak-font-2xl) * var(--yak-type-ratio));
+	--yak-font-4xl: calc(var(--yak-font-3xl) * var(--yak-type-ratio));
+	--yak-font-5xl: calc(var(--yak-font-4xl) * var(--yak-type-ratio));
+	--yak-font-6xl: calc(var(--yak-font-5xl) * var(--yak-type-ratio));
+
+
+	/* Dynamic line-heights — larger sizes get tighter */
+	--yak-lh-xs: 1.84;     /* small body text */
+	--yak-lh-sm: 1.78;
+	--yak-lh-md: 1.65;     /* base body size */
+	--yak-lh-lg: 1.45;
+	--yak-lh-xl: 1.32;
+	--yak-lh-2xl: 1.22;
+	--yak-lh-3xl: 1.15;
+	--yak-lh-4xl: 1.1;
+	--yak-lh-5xl: 1.05;
+	--yak-lh-6xl: 1;
+
+	/* Colors */
+	--yak-color-black: #000;
+	--yak-color-white: #fff;
+	--yak-color-primary: #2363e0;
+	--yak-color-muted: #f5f5f5;
+
+	/* Spacing & layout */
+	--yak-radius: 6px;
+	--yak-content-max-width: 75ch;
+	--yak-padding-block: 2rem;
+    --yak-padding-block-mobile: 1.5rem;
+
 }
 
 
@@ -30,7 +128,7 @@ body.wp-admin,
 #wpadminbar,
 #adminmenu,
 .wrap {
-    font-family: var(--yak-font-primary, sans-serif);
+    font-family: var(--yak-primary-font, sans-serif);
     font-size: 14px;
     line-height: 1.5;
     color: #1d1d1d;
@@ -155,7 +253,7 @@ body.wp-admin,
 /* =GUTENBERG / BLOCK EDITOR (optional)
   -------------------------------------------------------------------------- */
 .edit-post-visual-editor {
-    font-family: var(--yak-font-primary, sans-serif);
+    font-family: var(--yak-primary-font, sans-serif);
     background-color: var(--yak-light-gray, #f9f9f9);
 }
 

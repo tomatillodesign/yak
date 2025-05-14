@@ -111,29 +111,49 @@ add_action('wp_head', function () {
 }, 5); // Output early so fonts load before styles
 
 
+add_action('wp_head', 'yak_output_font_vars', 20);
+add_action('admin_head', 'yak_output_font_vars', 20);
+// add_action('enqueue_block_editor_assets', function () {
+// 	// Attach inside the editor iframe
+// 	wp_enqueue_style('yak-editor-font-vars', false);
+// 	wp_add_inline_style('yak-editor-font-vars', yak_get_font_var_css());
+// }, 20);
 
-add_action('wp_head', function () {
-    if (!function_exists('get_field')) return;
+/**
+ * Outputs font variables in classic admin and frontend <head>.
+ */
+function yak_output_font_vars() {
+	if (!function_exists('get_field')) return;
 
-    // Get values from ACF, or fallback to system stack
-    $primary   = trim(get_field('yak_primary_font', 'option')) ?: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
-    $secondary = trim(get_field('yak_secondary_font', 'option')) ?: $primary;
-    $accent    = trim(get_field('yak_accent_font', 'option')) ?: $primary;
+	echo '<style id="yak-font-vars">' . PHP_EOL;
+	echo yak_get_font_var_css();
+	echo '</style>' . PHP_EOL;
+}
 
-    $font_px = intval(get_field('yak_font_base_px', 'option'));
+/**
+ * Returns the CSS :root declaration for yak font variables.
+ */
+function yak_get_font_var_css() {
+	if (!function_exists('get_field')) return '';
+
+	$primary   = trim(get_field('yak_primary_font', 'option')) ?: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
+	$secondary = trim(get_field('yak_secondary_font', 'option')) ?: $primary;
+	$accent    = trim(get_field('yak_accent_font', 'option')) ?: $primary;
+
+	$font_px = intval(get_field('yak_font_base_px', 'option'));
 	if ($font_px < 10 || $font_px > 32) {
-		$font_px = 18; // fallback to default
+		$font_px = 18;
 	}
 
-    echo '<style id="yak-font-vars">' . PHP_EOL;
-    echo ':root {' . PHP_EOL;
-    echo "    --yak-primary-font: {$primary};" . PHP_EOL;
-    echo "    --yak-secondary-font: {$secondary};" . PHP_EOL;
-    echo "    --yak-accent-font: {$accent};" . PHP_EOL;
-    echo "  --yak-font-base-px: {$font_px};" . PHP_EOL;
-    echo '}' . PHP_EOL;
-    echo '</style>' . PHP_EOL;
-}, 20);
+	return <<<CSS
+:root {
+    --yak-primary-font: {$primary};
+    --yak-secondary-font: {$secondary};
+    --yak-accent-font: {$accent};
+    --yak-font-base-px: {$font_px};
+}
+CSS;
+}
 
 
 add_theme_support('disable-custom-font-sizes');
