@@ -201,6 +201,10 @@
 		.has-background {
 			padding: var(--yak-padding-block-mobile);
 		}
+
+		.wp-block-image {
+			margin-bottom: 1.75rem;
+		}
 	}
 
 /* ===============================

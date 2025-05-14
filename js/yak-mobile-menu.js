@@ -176,3 +176,64 @@
 ////////////////////////////////////////////////////////////
 // END Mobile Menu
 ////////////////////////////////////////////////////////////
+
+
+
+
+(function () {
+	const body = document.body;
+	let lastScrollY = window.scrollY;
+	const TRIGGER_DISTANCE = 400;
+
+	function onScroll() {
+		const currentY = window.scrollY;
+		const scrollingUp = currentY < lastScrollY;
+	
+		if (window.innerWidth >= 960) {
+			body.classList.remove('yak-show-mobile-header', 'yak-at-top');
+			lastScrollY = currentY;
+			return;
+		}
+	
+		if (currentY <= 0) {
+			// At top of page: let header fall into normal layout
+			body.classList.remove('yak-show-mobile-header');
+			body.classList.add('yak-at-top');
+		} else if (scrollingUp) {
+			// Scrolling up: show header as overlay
+			body.classList.add('yak-show-mobile-header');
+			body.classList.remove('yak-at-top');
+		} else {
+			// Scrolling down: hide header
+			body.classList.remove('yak-show-mobile-header', 'yak-at-top');
+		}
+	
+		lastScrollY = currentY;
+	}
+	
+
+	window.addEventListener('scroll', onScroll, { passive: true });
+})();
+
+
+
+
+function setYakMobileHeaderHeightVar() {
+	const header = document.querySelector('.site-header');
+	if (!header) return;
+
+	const height = Math.round(header.getBoundingClientRect().height);
+	document.documentElement.style.setProperty('--yak-mobile-header-height', `${height}px`);
+	document.documentElement.style.setProperty('--yak-mobile-header-height-neg', `-${height}px`);
+}
+
+function debounce(fn, delay = 100) {
+	let timeout;
+	return () => {
+		clearTimeout(timeout);
+		timeout = setTimeout(fn, delay);
+	};
+}
+
+window.addEventListener('DOMContentLoaded', setYakMobileHeaderHeightVar);
+window.addEventListener('resize', debounce(setYakMobileHeaderHeightVar, 150));
