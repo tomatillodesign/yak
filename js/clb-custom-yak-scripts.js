@@ -309,3 +309,30 @@ document.addEventListener('DOMContentLoaded', () => {
 	// Run on load
 	updateScrollState();
 })();
+
+
+
+// find title area width
+function setTitleAreaWidthVariable() {
+	const titleArea = document.querySelector('.title-area');
+	if (!titleArea) return;
+
+	const width = Math.round(titleArea.getBoundingClientRect().width);
+	document.documentElement.style.setProperty('--yak-title-area-width', `${width}`);
+}
+
+// Debounce helper
+function debounce(fn, delay) {
+	let timeout;
+	return () => {
+		clearTimeout(timeout);
+		timeout = setTimeout(fn, delay);
+	};
+}
+
+// Run on DOM ready
+window.addEventListener('DOMContentLoaded', setTitleAreaWidthVariable);
+
+// Run on resize (debounced)
+window.addEventListener('resize', debounce(setTitleAreaWidthVariable, 100));
+

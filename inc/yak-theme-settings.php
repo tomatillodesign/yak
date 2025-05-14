@@ -1,68 +1,41 @@
 <?php
 
-add_action( 'admin_enqueue_scripts', function( $hook ) {
-	if ( isset( $_GET['page'] ) && $_GET['page'] === 'theme-settings' ) {
-		// Load all ACF field JS + input behavior
-		do_action( 'acf/input/admin_enqueue_scripts' );
-
-		// 💡 Manually enqueue ACF's input styles (this is what styles the field boxes)
-		wp_enqueue_style( 'acf-input' );
-	}
-}, 20 );
-
-
-// 2. Add acf_form_head early
-add_action( 'load-toplevel_page_theme-settings', function () {
-	acf_form_head();
-} );
-
-
-function yak_render_theme_settings_page() {
-	?>
-	<div class="wrap">
-		<h1>Yak Theme Settings</h1>
-
-		<form method="post">
-			<?php
-			// Required hidden fields
-			acf_form([
-				'post_id' => 'options',
-				'form'    => false, // still needed to output hidden fields
-				// no field_groups or fields here
-			]);
-			
-
-			// Optional: pull the field group title from the group
-			$group = acf_get_field_group( 'group_yak_theme_settings_logo' );
-			$group_title = $group['title'] ?? 'Theme Settings';
-			?>
-
-			<div id="yak-settings-box" class="postbox">
-				<div class="postbox-header">
-					<h2 class="hndle"><?php echo esc_html( $group_title ); ?></h2>
-				</div>
-				<div class="inside">
-					<div class="acf-fields -left">
-						<?php
-						$fields = acf_get_fields( 'group_yak_theme_settings_logo' );
-						if ( $fields ) {
-							acf_render_fields( 'options', $fields );
-						}
-						?>
-					</div>
-				</div>
-			</div>
-
-			<?php submit_button( 'Save Settings' ); ?>
-		</form>
-	</div>
-	<?php
-}
-
-
-
 
 if ( function_exists( 'acf_add_local_field_group' ) ) :
+
+	acf_add_local_field_group( [
+		'key' => 'group_yak_theme_recommended_plugins',
+		'title' => 'Yak Theme: Recommended Plugins',
+		'fields' => [
+			[
+				'key' => 'field_yak_recommended_plugins',
+				'label' => '',
+				'name' => 'yak_recommended_plugins',
+				'type' => 'message',
+				'message' => yak_get_recommended_plugins_message(),
+				'wrapper' => [
+					'width' => '',
+					'class' => 'yak-recommended-plugins-admin-panel',
+					'id' => '',
+				],
+			],
+		],
+		'location' => [
+			[
+				[
+					'param' => 'options_page',
+					'operator' => '==',
+					'value' => 'theme-settings',
+				],
+			],
+		],
+		'menu_order' => 1,
+		'style' => 'default',
+		'label_placement' => 'top',
+		'instruction_placement' => 'label',
+		'active' => true,
+		'description' => '',
+	] );
 
 	acf_add_local_field_group( [
 		'key' => 'group_yak_theme_settings_logo',
@@ -121,7 +94,22 @@ if ( function_exists( 'acf_add_local_field_group' ) ) :
 				'ui' => 1,
 				'default_value' => 0,
 				'instructions' => 'Toggle to show or hide the site description in your header.',
+				'wrapper' => [
+                    'width' => '50',
+                ],
 			],
+			[
+                'key' => 'yak_sticky_header_desktop',
+                'label' => 'Sticky Header (Desktop)',
+                'name' => 'yak_sticky_header_desktop',
+                'type' => 'true_false',
+                'instructions' => 'Enable sticky header on large screens?',
+                'default_value' => 1,
+                'ui' => 1,
+                'wrapper' => [
+                    'width' => '50',
+                ],
+            ],
 		],
 		'location' => [
 			[
@@ -132,7 +120,7 @@ if ( function_exists( 'acf_add_local_field_group' ) ) :
 				],
 			],
 		],
-		'menu_order' => 0,
+		'menu_order' => 2,
 		'style' => 'default',
 		'label_placement' => 'top',
 		'instruction_placement' => 'label',
@@ -143,6 +131,71 @@ if ( function_exists( 'acf_add_local_field_group' ) ) :
 	endif;
 	
 
+
+function yak_get_recommended_plugins_message() {
+	if ( ! function_exists( 'is_plugin_active' ) ) {
+		require_once ABSPATH . 'wp-admin/includes/plugin.php';
+	}
+
+	$plugins = [
+		[
+			'slugs' => ['acf/acf.php', 'advanced-custom-fields-pro/acf.php'],
+			'label' => 'ACF or ACF Pro (required)',
+			'link'  => 'https://www.advancedcustomfields.com/',
+		],
+		[
+			'slugs' => ['safe-svg/safe-svg.php'],
+			'label' => 'Safe SVG',
+			'link'  => 'https://wordpress.org/plugins/safe-svg/',
+		],
+		[
+			'slugs' => ['disable-comments/disable-comments.php'],
+			'label' => 'Disable Comments',
+			'link'  => 'https://wordpress.org/plugins/disable-comments/',
+		],
+		[
+			'slugs' => ['yak-card-deck/yak-card-deck.php'],
+			'label' => 'Tomatillo Design ~ Yak Card Deck',
+			'link'  => 'https://github.com/tomatillodesign/yak-card-deck', // Example link
+		],
+		[
+			'slugs' => ['tomatillo-design-simple-collapse/tomatillo-design-simple-collapse.php'],
+			'label' => 'Tomatillo Design ~ Simple Collapse',
+			'link'  => 'https://github.com/tomatillodesign/tomatillo-design-simple-collapse', // Example link
+		],
+	];
+
+	ob_start();
+	echo '<p><strong>Yak recommends the following plugins, optimized for this theme:</strong></p><ul>';
+
+	foreach ( $plugins as $plugin ) {
+		$active = false;
+
+		foreach ( $plugin['slugs'] as $slug ) {
+			if ( is_plugin_active( $slug ) ) {
+				$active = true;
+				break;
+			}
+		}
+
+		$status = $active ? '✅' : '❌';
+
+		$label = esc_html( $plugin['label'] );
+		if ( ! empty( $plugin['link'] ) ) {
+			$url = esc_url( $plugin['link'] );
+			$label = "<a href=\"{$url}\" target=\"_blank\" rel=\"noopener noreferrer\">{$label}</a>";
+		}
+
+		echo "<li>{$status} {$label}</li>";
+	}
+
+	echo '</ul>';
+	return ob_get_clean();
+}
+	
+	
+	
+	
 
 
 
@@ -365,4 +418,24 @@ function yak_remove_default_genesis_header_markup() {
 
 	remove_action( 'genesis_site_title', 'genesis_seo_site_title' );
 	remove_action( 'genesis_site_description', 'genesis_seo_site_description' );
+}
+
+
+
+
+add_filter( 'body_class', 'yak_add_sticky_header_class' );
+function yak_add_sticky_header_class( $classes ) {
+	if ( is_admin() ) {
+		return $classes;
+	}
+
+	$enabled = get_field( 'yak_sticky_header_desktop', 'option' );
+
+	if ( $enabled ) {
+		$classes[] = 'yak-sticky-header-enabled';
+	} else {
+		$classes[] = 'yak-sticky-header-disabled';
+	}
+
+	return $classes;
 }

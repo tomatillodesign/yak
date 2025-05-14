@@ -194,7 +194,17 @@ function yak_custom_admin_footer_text($footer_text) {
 add_action('acf/init', function () {
 	if (function_exists('acf_add_options_page')) {
 
-		acf_add_options_sub_page([
+		acf_add_options_page([
+			'page_title' => 'Theme Settings',
+			'menu_title' => 'Theme Settings',
+			'menu_slug'  => 'theme-settings',
+            'icon_url' => 'dashicons-superhero',
+			'capability' => 'manage_options',
+			'redirect'   => false,
+		]);
+
+		acf_add_options_sub_page(
+			[
 			'page_title'  => 'Colors',
 			'menu_title'  => 'Colors',
 			'menu_slug'   => 'yak-options-colors', // ✅ this prevents the acf-options- prefix
@@ -251,38 +261,38 @@ add_action('wp_enqueue_scripts', function () {
 
 
 // updated custom theme menu pages
-add_action( 'admin_menu', 'yak_register_theme_settings_menu' );
+// add_action( 'admin_menu', 'yak_register_theme_settings_menu' );
 
-function yak_register_theme_settings_menu() {
-	add_menu_page(
-		'Theme Settings',
-		'Theme Settings',
-		'manage_options',
-		'theme-settings',
-		'yak_render_theme_settings_page',
-		'dashicons-superhero',
-		88
-	);
+// function yak_register_theme_settings_menu() {
+// 	add_menu_page(
+// 		'Theme Settings',
+// 		'Theme Settings',
+// 		'manage_options',
+// 		'theme-settings',
+// 		'yak_render_theme_settings_page',
+// 		'dashicons-superhero',
+// 		88
+// 	);
 
-	add_submenu_page(
-		'theme-settings',
-		'Recommended Plugins',
-		'Plugins',
-		'manage_options',
-		'yak-recommended-plugins',
-		'yak_render_plugins_page'
-	);
-}
+// 	add_submenu_page(
+// 		'theme-settings',
+// 		'Recommended Plugins',
+// 		'Plugins',
+// 		'manage_options',
+// 		'yak-recommended-plugins',
+// 		'yak_render_plugins_page'
+// 	);
+// }
 
 
-add_action( 'load-toplevel_page_theme-settings', function () {
-	require_once get_stylesheet_directory() . '/inc/yak-theme-settings.php';
-} );
+// add_action( 'load-toplevel_page_theme-settings', function () {
+// 	require_once get_stylesheet_directory() . '/inc/yak-theme-settings.php';
+// } );
 
-function yak_render_plugins_page() {
-	echo '<div class="wrap"><h1>Yak Recommended Plugins</h1>';
-	// Your custom plugin list logic here
-}
+// function yak_render_plugins_page() {
+// 	echo '<div class="wrap"><h1>Yak Recommended Plugins</h1>';
+// 	// Your custom plugin list logic here
+// }
 
 
 
@@ -372,27 +382,6 @@ add_action('widgets_init', function () {
     }
 });
 
-<<<<<<< HEAD
-add_action('genesis_before_footer', 'yak_output_footer_widgets', 10);
-function yak_output_footer_widgets() {
-    $count = (int) get_field('yak_number_of_footer_widgets', 'option');
-    $count = max(0, min($count, 4));
-
-    if ($count === 0) {
-        return;
-    }
-
-	echo '<div class="yak-footer-widgets-outer-wrapper">';
-    echo '<div class="yak-footer-widgets yak-footer-widgets-' . esc_attr($count) . '">';
-
-    for ($i = 1; $i <= $count; $i++) {
-        echo '<div class="yak-footer-widget-column yak-footer-widget-' . esc_attr($i) . '">';
-        dynamic_sidebar("yak-footer-widget-{$i}");
-        echo '</div>';
-    }
-
-    echo '</div></div>';
-=======
 add_action( 'genesis_before_footer', 'yak_output_footer_widgets', 10 );
 function yak_output_footer_widgets() {
 	$count = (int) get_field( 'yak_number_of_footer_widgets', 'option' );
@@ -427,7 +416,6 @@ function yak_output_footer_widgets() {
 	}
 
 	echo '</div></div>';
->>>>>>> 5b48711 (working yakstrap (bootstrap alternative))
 }
 
 
@@ -526,8 +514,6 @@ function clb_ironwood_publish_hello_bar() {
 
 
 
-
-// Search Bar modal
 
 
 if( function_exists('acf_add_local_field_group') ):
@@ -800,8 +786,6 @@ function yak_custom_site_footer() {
 	echo '&copy; ' . date('Y') . ' &middot <a href="/">' . $site_title . '</a> &middot All rights reserved &middot Website by <a href="http://www.tomatillodesign.com" title="Amazing, Affordable Websites for Nonprofits" target="_blank">Tomatillo Design</a>';
 
 }
-<<<<<<< HEAD
-=======
 
 
 // Roll my own Main Menu Search Icon
@@ -1019,4 +1003,3 @@ function yak_get_search_form_html() {
 	return ob_get_clean();
 }
 
->>>>>>> 5b48711 (working yakstrap (bootstrap alternative))

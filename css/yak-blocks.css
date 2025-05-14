@@ -327,4 +327,65 @@
         background-color: var(--yak-color-black);
     }
 
+
+	.wp-block-gallery[class*="columns-"] {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--wp--style--gallery-gap-default, 1rem);
+		margin: 2rem 0;
+		padding: 0;
+	}
+
+	.wp-block-gallery[class*="columns-"] > figure {
+		margin: 0;
+		padding: 0;
+		flex-grow: 0;
+		flex-shrink: 0;
+	}
+
+	.wp-block-gallery.columns-2 > figure {
+		flex-basis: calc((100% - 1rem) / 2); /* 1 gap */
+	}
+	
+	.wp-block-gallery.columns-3 > figure {
+		flex-basis: calc((100% - 2rem) / 3); /* 2 gaps */
+	}
+	
+	.wp-block-gallery.columns-4 > figure {
+		flex-basis: calc((100% - 3rem) / 4); /* 3 gaps */
+	}
+	
+	.wp-block-gallery.columns-5 > figure {
+		flex-basis: calc((100% - 4rem) / 5);
+	}
+	
+	.wp-block-gallery.columns-6 > figure {
+		flex-basis: calc((100% - 5rem) / 6);
+	}
+
+	/* Columns-2: if last item starts a new row, stretch */
+	.wp-block-gallery.columns-2 > figure:nth-child(2n+1):last-child {
+		flex-basis: 100%;
+	}
+
+	/* Columns-3: 3n+1 = 4th, 7th, 10th, etc. */
+	.wp-block-gallery.columns-3 > figure:nth-child(3n+1):last-child {
+		flex-basis: 100%;
+	}
+
+	/* Columns-4: 4n+1 = 5th, 9th, etc. */
+	.wp-block-gallery.columns-4 > figure:nth-child(4n+1):last-child {
+		flex-basis: 100%;
+	}
+
+
+	/* Optional: cropped image styling */
+	.wp-block-gallery.is-cropped img {
+		width: 100%;
+		height: auto;
+		object-fit: cover;
+		aspect-ratio: 4 / 3;
+		display: block;
+	}
+
 }

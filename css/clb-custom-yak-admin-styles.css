@@ -132,8 +132,6 @@ body.wp-admin,
     max-width: 1200px;
   }
 
-<<<<<<< HEAD
-=======
   h2.hndle {
     font-size: 14px;
     padding: 8px 12px;
@@ -141,7 +139,18 @@ body.wp-admin,
     line-height: 1.4;
 }
 
->>>>>>> 5b48711 (working yakstrap (bootstrap alternative))
+.yak-recommended-plugins-admin-panel {
+  /* background: palegoldenrod; */
+}
+
+.yak-recommended-plugins-admin-panel a {
+  color: #000;
+}
+
+.yak-recommended-plugins-admin-panel a:hover {
+  text-decoration: none;
+}
+
 
 /* =GUTENBERG / BLOCK EDITOR (optional)
   -------------------------------------------------------------------------- */

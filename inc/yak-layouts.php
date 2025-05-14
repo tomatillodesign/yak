@@ -93,18 +93,6 @@ if (function_exists('acf_add_local_field_group')) {
                     'width' => '50',
                 ],
             ],
-            [
-                'key' => 'yak_sticky_header_desktop',
-                'label' => 'Sticky Header (Desktop)',
-                'name' => 'yak_sticky_header_desktop',
-                'type' => 'true_false',
-                'instructions' => 'Enable sticky header on large screens?',
-                'default_value' => 1,
-                'ui' => 1,
-                'wrapper' => [
-                    'width' => '50',
-                ],
-            ],
         ],
         'location' => [
             [
