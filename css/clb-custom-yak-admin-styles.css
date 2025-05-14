@@ -132,6 +132,16 @@ body.wp-admin,
     max-width: 1200px;
   }
 
+<<<<<<< HEAD
+=======
+  h2.hndle {
+    font-size: 14px;
+    padding: 8px 12px;
+    margin: 0;
+    line-height: 1.4;
+}
+
+>>>>>>> 5b48711 (working yakstrap (bootstrap alternative))
 
 /* =GUTENBERG / BLOCK EDITOR (optional)
   -------------------------------------------------------------------------- */

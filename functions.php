@@ -372,6 +372,7 @@ add_action('widgets_init', function () {
     }
 });
 
+<<<<<<< HEAD
 add_action('genesis_before_footer', 'yak_output_footer_widgets', 10);
 function yak_output_footer_widgets() {
     $count = (int) get_field('yak_number_of_footer_widgets', 'option');
@@ -391,6 +392,42 @@ function yak_output_footer_widgets() {
     }
 
     echo '</div></div>';
+=======
+add_action( 'genesis_before_footer', 'yak_output_footer_widgets', 10 );
+function yak_output_footer_widgets() {
+	$count = (int) get_field( 'yak_number_of_footer_widgets', 'option' );
+	$count = max( 0, min( $count, 4 ) );
+
+	if ( $count === 0 ) {
+		return;
+	}
+
+	// Check if at least one widget area is active
+	$has_active = false;
+	for ( $i = 1; $i <= $count; $i++ ) {
+		if ( is_active_sidebar( "yak-footer-widget-{$i}" ) ) {
+			$has_active = true;
+			break;
+		}
+	}
+
+	if ( ! $has_active ) {
+		return;
+	}
+
+	echo '<div class="yak-footer-widgets-outer-wrapper">';
+	echo '<div class="yak-footer-widgets yak-footer-widgets-' . esc_attr( $count ) . '">';
+
+	for ( $i = 1; $i <= $count; $i++ ) {
+		if ( is_active_sidebar( "yak-footer-widget-{$i}" ) ) {
+			echo '<div class="yak-footer-widget-column yak-footer-widget-' . esc_attr( $i ) . '">';
+			dynamic_sidebar( "yak-footer-widget-{$i}" );
+			echo '</div>';
+		}
+	}
+
+	echo '</div></div>';
+>>>>>>> 5b48711 (working yakstrap (bootstrap alternative))
 }
 
 
@@ -763,3 +800,223 @@ function yak_custom_site_footer() {
 	echo '&copy; ' . date('Y') . ' &middot <a href="/">' . $site_title . '</a> &middot All rights reserved &middot Website by <a href="http://www.tomatillodesign.com" title="Amazing, Affordable Websites for Nonprofits" target="_blank">Tomatillo Design</a>';
 
 }
+<<<<<<< HEAD
+=======
+
+
+// Roll my own Main Menu Search Icon
+add_action( 'admin_head-nav-menus.php', function() {
+	add_meta_box(
+		'posttype-yak_custom',               // ✅ Use this special ID
+		'Yak Custom Items',                 
+		'yak_render_custom_menu_metabox',   
+		'nav-menus',                        
+		'side',                             
+		'default'                           
+	);
+} );
+
+
+function yak_render_custom_menu_metabox() {
+	$item_id = 99934529; // Just a unique dummy ID
+	?>
+	<div id="posttype-yak_custom" class="posttypediv">
+		<div id="tabs-panel-yak-custom" class="tabs-panel tabs-panel-active">
+			<ul id="yak-custom-checklist" class="categorychecklist form-no-clear">
+				<li>
+					<label class="menu-item-title">
+						<input type="checkbox"
+							class="menu-item-checkbox"
+							name="menu-item[<?php echo esc_attr( $item_id ); ?>][menu-item-object-id]"
+							value="<?php echo esc_attr( $item_id ); ?>">
+						Add Search Modal
+					</label>
+
+					<input type="hidden" name="menu-item[<?php echo $item_id; ?>][menu-item-type]" value="custom">
+					<input type="hidden" name="menu-item[<?php echo $item_id; ?>][menu-item-url]" value="#yak-search-modal">
+					<input type="hidden" name="menu-item[<?php echo $item_id; ?>][menu-item-classes]" value="yak-search-trigger">
+					<input type="hidden" name="menu-item[<?php echo $item_id; ?>][menu-item-title]" value="__yak-icon-search__">
+				</li>
+			</ul>
+		</div>
+		<p class="button-controls">
+			<span class="add-to-menu">
+				<input type="submit"
+					class="button yak-add-custom-menu-item"
+					value="<?php esc_attr_e( 'Add to Menu' ); ?>"
+					name="add-post-type-menu-item"
+					id="submit-posttype-yak_custom">
+				<span class="spinner"></span>
+			</span>
+		</p>
+	</div>
+	<?php
+}
+
+
+add_action( 'admin_footer-nav-menus.php', function() {
+	?>
+	<script>
+		jQuery(function($) {
+			$('.yak-add-custom-menu-item').on('click', function(e) {
+				e.preventDefault();
+
+				const $checkboxes = $('#yak-custom-checklist input.menu-item-checkbox:checked');
+				if ($checkboxes.length === 0) return;
+
+				$checkboxes.each(function() {
+					const $li = $(this).closest('li');
+					const iconHTML = '<i class="fa-light fa-magnifying-glass fa-lg"></i>';
+
+					const postData = {
+						action: 'add-menu-item',
+						menu: $('#menu').val(),
+						'menu-settings-column-nonce': $('#menu-settings-column-nonce').val(),
+						'menu-item[-1][menu-item-type]': $li.find('input[name$="[menu-item-type]"]').val(),
+						'menu-item[-1][menu-item-url]': $li.find('input[name$="[menu-item-url]"]').val(),
+						'menu-item[-1][menu-item-classes]': $li.find('input[name$="[menu-item-classes]"]').val(),
+						'menu-item[-1][menu-item-object-id]': $(this).val(),
+						'menu-item[-1][menu-item-title]': iconHTML,
+						'menu-item[-1][menu-item-parent-id]': 0
+					};
+
+					$.post(ajaxurl, postData, function(response) {
+						if (response && response.trim()) {
+							$('#menu-to-edit').append(response);
+							wpNavMenu.refreshMenuTabs(true);
+						}
+					});
+				});
+			});
+		});
+	</script>
+	<?php
+} );
+
+
+
+// Add FontAwesome JS
+add_action( 'wp_enqueue_scripts', 'yak_enqueue_fontawesome' );
+add_action( 'admin_enqueue_scripts', 'yak_enqueue_fontawesome' );
+function yak_enqueue_fontawesome() {
+	wp_enqueue_script(
+		'yak-fontawesome',
+		'https://kit.fontawesome.com/9d148ae9d1.js',
+		[],
+		null,
+		false // Load in <head>
+	);
+}
+
+add_filter( 'script_loader_tag', 'yak_add_crossorigin_to_fontawesome', 10, 3 );
+function yak_add_crossorigin_to_fontawesome( $tag, $handle, $src ) {
+	if ( $handle === 'yak-fontawesome' ) {
+		return str_replace( '<script', '<script crossorigin="anonymous"', $tag );
+	}
+	return $tag;
+}
+
+
+
+
+////// roll my own BS -> YAKSTRAP
+
+
+add_action( 'wp_enqueue_scripts', 'yak_enqueue_yakstrap' );
+function yak_enqueue_yakstrap() {
+	wp_enqueue_script(
+		'yakstrap',
+		get_stylesheet_directory_uri() . '/js/yakstrap.js',
+		[],
+		'1.0',
+		true
+	);
+}
+
+function yak_output_modal( $args = [] ) {
+	$defaults = [
+		'id'              => 'yak-modal',
+		'title'           => '',
+		'content'         => '',
+		'classes'         => '',
+		'aria_labelledby' => '', // optional override
+	];
+	$args = wp_parse_args( $args, $defaults );
+
+	$modal_id  = esc_attr( $args['id'] );
+	$title_id  = $args['aria_labelledby'] ?: $modal_id . '-title';
+	$has_title = trim( $args['title'] ) !== '';
+	?>
+
+	<div id="<?php echo $modal_id; ?>"
+		class="yak-modal modal fade <?php echo esc_attr( $args['classes'] ); ?>"
+		tabindex="-1"
+		role="dialog"
+		aria-hidden="true"
+		inert
+		<?php if ( $has_title ) : ?>
+			aria-labelledby="<?php echo esc_attr( $title_id ); ?>"
+		<?php endif; ?>>
+
+		<div class="yak-modal-dialog modal-dialog" role="document">
+			<div class="yak-modal-content modal-content">
+
+				<?php if ( $has_title ) : ?>
+				<div class="yak-modal-header modal-header">
+					<h5 class="yak-modal-title modal-title" id="<?php echo esc_attr( $title_id ); ?>">
+						<?php echo esc_html( $args['title'] ); ?>
+					</h5>
+					<button type="button" class="yak-modal-close close" data-bs-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<?php else : ?>
+				<div class="yak-modal-header modal-header">
+					<button type="button" class="yak-modal-close close ml-auto" data-bs-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<?php endif; ?>
+
+				<div class="yak-modal-body modal-body">
+					<?php echo $args['content']; ?>
+				</div>
+
+			</div>
+		</div>
+	</div>
+	<?php
+}
+
+
+
+// search
+add_action( 'wp_footer', 'yak_output_global_search_modal', 20 );
+function yak_output_global_search_modal() {
+	if ( is_admin() ) return;
+
+	yak_output_modal( [
+		'id'    => 'yak-search-modal',
+		'title' => 'Search',
+		'content' => yak_get_search_form_html(),
+		'classes' => 'yak-search-modal',
+	] );
+}
+
+
+function yak_get_search_form_html() {
+	ob_start();
+	?>
+	<form role="search" method="get" class="yak-modal-search-form search-form" action="<?php echo esc_url( home_url( '/' ) ); ?>">
+		<label class="screen-reader-text" for="yak-search-field"><?php esc_html_e( 'Search for:', 'yak' ); ?></label>
+		<input type="search" id="yak-search-field" class="search-field" placeholder="<?php echo esc_attr_x( 'Search…', 'placeholder', 'yak' ); ?>" value="<?php echo get_search_query(); ?>" name="s" />
+		<button type="submit" class="search-submit">
+			<span class="yak-search-icon" aria-hidden="true">&#x1F50D;</span>
+			<span class="screen-reader-text"><?php esc_html_e( 'Search', 'yak' ); ?></span>
+		</button>
+	</form>
+	<?php
+	return ob_get_clean();
+}
+
+>>>>>>> 5b48711 (working yakstrap (bootstrap alternative))

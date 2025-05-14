@@ -677,6 +677,156 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 
 @layer yak-components {
 
+<<<<<<< HEAD
+=======
+	/* ========== Buttons ========== */
+
+	.button,
+	.wp-block-button__link,
+	input[type="submit"],
+	input[type="button"],
+	button {
+		display: inline-block;
+		padding: 0.6em 1.2em;
+		font-family: var(--yak-primary-font);
+		font-size: var(--yak-font-md);
+		line-height: var(--yak-lh-md);
+		font-weight: 600;
+		border: none;
+		border-radius: var(--yak-radius);
+		background-color: var(--yak-color-primary);
+		color: var(--yak-color-white);
+		text-decoration: none;
+		cursor: pointer;
+		transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+		text-align: center;
+	}
+
+	.button:hover,
+	.wp-block-button__link:hover,
+	input[type="submit"]:hover,
+	input[type="button"]:hover,
+	button:hover {
+		background-color: color-mix(in srgb, var(--yak-color-primary) 85%, black);
+		color: var(--yak-color-white);
+	}
+
+	.button:focus,
+	.wp-block-button__link:focus,
+	input[type="submit"]:focus,
+	input[type="button"]:focus,
+	button:focus {
+		outline: 2px solid var(--yak-color-muted);
+		outline-offset: 2px;
+	}
+
+	.button:disabled,
+	.wp-block-button__link:disabled,
+	input[type="submit"]:disabled,
+	input[type="button"]:disabled,
+	button:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
+
+	/* ========== YAKSTRAP STYLES ========== */
+	/* ========== MODAL ========== */
+	.yak-modal {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		height: 100vh;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		background-color: rgba(0, 0, 0, 0.85);
+
+		z-index: 1000;
+
+		opacity: 0;
+		visibility: hidden;
+		transform: translateY(30px);
+		transition:
+			opacity 0.3s ease,
+			transform 0.3s ease,
+			visibility 0s linear 0.3s;
+	}
+
+	.site-container {
+		transition: filter 0.3s ease;
+		will-change: filter;
+	}
+
+	body.yak-modal-open .site-container {
+		filter: blur(12px);
+	}
+
+	.yak-modal.show {
+		display: flex;
+		opacity: 1;
+		visibility: visible;
+		transform: translateY(0);
+		transition-delay: 0s;
+	}
+
+	.yak-modal-dialog {
+		background: var(--yak-color-white);
+		border-radius: var(--yak-radius);
+		max-width: 600px;
+		width: 90%;
+		box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.2);
+		overflow: hidden;
+	}
+
+	.yak-modal-content {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.yak-modal-header,
+	.yak-modal-body {
+		padding: var(--yak-padding-block-mobile);
+	}
+
+	.yak-modal-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		border-bottom: 1px solid #eee;
+	}
+
+	.yak-modal-title {
+		font-size: var(--yak-font-lg);
+		margin: 0;
+	}
+
+	.yak-modal-close {
+		background: none;
+		border: none;
+		font-size: 1.5rem;
+		line-height: 1;
+		cursor: pointer;
+	}
+
+	/* ========== COLLAPSE ========== */
+	.yak-collapse {
+		overflow: hidden;
+		height: 0;
+		transition: height 0.3s ease;
+	}
+
+	.yak-collapse.show {
+		height: auto;
+	}
+
+	.yak-collapse--animating {
+		transition: height 0.3s ease;
+	}
+
+
+
+>>>>>>> 5b48711 (working yakstrap (bootstrap alternative))
 	/* ========== Desktop Navigation Structure ========== */
 
 	.yak-main-nav {
