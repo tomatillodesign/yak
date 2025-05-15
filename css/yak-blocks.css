@@ -1,3 +1,35 @@
+/* ========================================================================== */
+/* 🧱 yak-blocks — Reproduction of Core Gutenberg Block Styles
+/* ========================================================================== */
+
+/**
+ * This layer re-implements baseline Gutenberg block styles (e.g., images, buttons, headings)
+ * using our own cascade layer system. It mirrors core defaults for layout, spacing, and structure
+ * to ensure predictable styling across both front-end and editor environments.
+ *
+ * Why:
+ * - Avoids relying on WordPress-injected styles
+ * - Keeps styling under full theme control
+ * - Forms the base for later project-specific adjustments in yak-gutenberg-overrides.css
+ *
+ * To make global changes to block styling, edit this file.
+ * For site- or project-specific tweaks, use yak-gutenberg-overrides.css instead.
+ *
+ * This file should closely match unopinionated core Gutenberg output.
+ * Included blocks: image, paragraph, heading, list, buttons, quote, pullquote, table, separator, columns, group.
+ *
+ * CSS Cascade Layer Loading Order:
+ *   1. reset
+ *   2. yak-base
+ *   3. yak-layout
+ *   4. yak-components
+ *   5. yak-blocks  ← (this file)
+ *   6. yak-utilities
+ *   7. yak-overrides
+ */
+
+
+
 
 
 

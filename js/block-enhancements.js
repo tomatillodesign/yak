@@ -1,4 +1,37 @@
-console.log('Yak enhancements loaded 1032');
+/**
+ * ===============================================================
+ * 🧱 Yak Block Enhancements – Custom Gutenberg Block Extensions
+ * ===============================================================
+ *
+ * This file extends native and custom Gutenberg blocks with Yak-specific
+ * editing capabilities and visual behavior. Enhancements are applied globally
+ * to all relevant blocks using WordPress filter hooks and higher-order components.
+ *
+ * Included Enhancements:
+ *
+ * 1. ✅ Mobile/Desktop Visibility Toggles:
+ *    - Adds two custom attributes (`yakMobileOnly`, `yakDesktopOnly`) to every block
+ *    - Adds toggle controls to the block inspector sidebar
+ *    - Applies frontend classes (`yak-mobile-only`, `yak-desktop-only`) during block rendering
+ *    - Enables block-specific responsive visibility without relying on layout wrappers
+ *
+ * 2. ✅ Pull Left/Right Alignment Options:
+ *    - Adds `yakPullAlign` and `yakPullAmount` to selected blocks (`image`, `quote`, `group`)
+ *    - Injects toolbar buttons for "Pull Left" and "Pull Right" desktop alignment
+ *    - Adds Inspector input to adjust pull distance (default: 150px)
+ *    - Applies CSS class (`yak-pull-left` / `yak-pull-right`) and data attribute for distance
+ *    - Supports custom layout effects via negative margins
+ *
+ * Notes:
+ * - All changes are editor-safe and use WP's official hook system (`wp.hooks`)
+ * - Block output remains semantic and minimal, relying on class-based targeting
+ * - Styling for these features should live in yak-blocks.css and yak-overrides.css
+ *
+ * Location: /js/block-enhancements.js
+ */
+
+
+
 
 ////////////////////////////////////////////////////////////
 // *** Mobile/Desktop Only Settings Toggle

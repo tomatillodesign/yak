@@ -1,3 +1,48 @@
+/**
+ * ============================================================================
+ * 📱 Yak Mobile Menu & Header Behavior
+ * ============================================================================
+ *
+ * This script powers the Yak mobile navigation experience. It enhances accessibility,
+ * ensures layout flexibility, and adds responsive behavior for small-screen devices.
+ *
+ * Features:
+ *
+ * 1. ✅ Custom Mobile Menu Setup
+ *    - Dynamically injects a mobile nav panel based on the desktop `.yak-main-nav`
+ *    - Adds a toggle button with animated icon and a closable overlay panel
+ *    - Clones all submenus and adds accessible toggles with proper ARIA attributes
+ *
+ * 2. ✅ Mobile Menu Behavior
+ *    - Handles opening, closing, ESC key handling, and overlay click dismissal
+ *    - Traps keyboard focus within the open mobile menu
+ *    - Tracks and restores focus when menu closes
+ *
+ * 3. ✅ Header Visibility on Scroll
+ *    - Hides the header while scrolling down
+ *    - Reveals the header when scrolling up or at the top of the page
+ *    - Controlled via `<body>` classes: `yak-show-mobile-header`, `yak-at-top`
+ *
+ * 4. ✅ CSS Variable for Header Height
+ *    - Calculates the mobile header height and sets two variables:
+ *      `--yak-mobile-header-height`, `--yak-mobile-header-height-neg`
+ *    - Used in CSS for precise layout offsetting
+ *
+ * 5. ✅ Inline Mobile Search Support
+ *    - Adds expandable inline search to the mobile nav if a template exists
+ *    - Preserves focus and toggles visibility of the search form and trigger
+ *
+ * Notes:
+ * - This script runs on `DOMContentLoaded`
+ * - Styles and transitions should be handled in yak-layout.css and yak-components.css
+ * - Future extensions (e.g., accordion nav, mobile account panel) should build on this
+ *
+ * Location: /js/yak-mobile-menu.js
+ */
+
+
+
+
 ////////////////////////////////////////////////////////////
 // *** Mobile Menu
 ////////////////////////////////////////////////////////////

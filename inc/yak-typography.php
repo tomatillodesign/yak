@@ -1,8 +1,27 @@
 <?php
 
+/**
+ * ============================================================================
+ * 🅨 Yak Theme – Typography Settings and CSS Variable Output
+ * ============================================================================
+ *
+ * This file defines ACF fields and output logic for customizing fonts
+ * within the Yak theme. It supports user-defined font stacks, base font size,
+ * and <link> or @import embed codes for external fonts (Google, Adobe, etc.).
+ *
+ * Features:
+ * - ACF-powered typography panel (font family and base size)
+ * - Font embed support (e.g., Google Fonts <link> tag)
+ * - CSS variable injection via <style>: --yak-primary-font, etc.
+ * - Optional admin/editor output support
+ *
+ * This module integrates with the Yak type system and global :root variables.
+ */
 
 
-
+// -----------------------------------------------------------------------------
+// Register ACF field group for external font embed code
+// -----------------------------------------------------------------------------
 if (function_exists('acf_add_local_field_group')) {
     acf_add_local_field_group([
         'key' => 'group_yak_typography_embeds',
@@ -14,27 +33,25 @@ if (function_exists('acf_add_local_field_group')) {
                 'name' => 'yak_font_embed_code',
                 'type' => 'textarea',
                 'instructions' => 'Paste your <link> or @import code from Google Fonts or Adobe Fonts. This will be output in the <head> of your theme.',
-                'default_value' => '',
                 'placeholder' => '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">',
                 'rows' => 4,
                 'new_lines' => 'wpautop',
             ],
         ],
         'location' => [
-            [
-                [
-                    'param' => 'options_page',
-                    'operator' => '==',
-                    'value' => 'yak-options-typography',
-                ],
-            ],
+            [[
+                'param' => 'options_page',
+                'operator' => '==',
+                'value' => 'yak-options-typography',
+            ]],
         ],
-        'menu_order' => 0,
     ]);
 }
 
 
-
+// -----------------------------------------------------------------------------
+// Register ACF field group for assigning font stacks and base size
+// -----------------------------------------------------------------------------
 if (function_exists('acf_add_local_field_group')) {
     acf_add_local_field_group([
         'key' => 'group_yak_font_assignments',
@@ -80,27 +97,24 @@ if (function_exists('acf_add_local_field_group')) {
                 'min' => 10,
                 'max' => 32,
                 'step' => 1,
-                'prepend' => '',
                 'append' => 'px',
-                'required' => 0,
                 'wrapper' => ['width' => '33%'],
-            ]            
-        ],
-        'location' => [
-            [
-                [
-                    'param' => 'options_page',
-                    'operator' => '==',
-                    'value' => 'yak-options-typography',
-                ],
             ],
         ],
-        'menu_order' => 1,
+        'location' => [
+            [[
+                'param' => 'options_page',
+                'operator' => '==',
+                'value' => 'yak-options-typography',
+            ]],
+        ],
     ]);
 }
 
 
-
+// -----------------------------------------------------------------------------
+// Output <link> or @import embed code into the site <head>
+// -----------------------------------------------------------------------------
 add_action('wp_head', function () {
     if (function_exists('get_field')) {
         $embed_code = get_field('yak_font_embed_code', 'option');
@@ -108,44 +122,43 @@ add_action('wp_head', function () {
             echo $embed_code;
         }
     }
-}, 5); // Output early so fonts load before styles
+}, 5); // output early for max performance
 
 
+// -----------------------------------------------------------------------------
+// Output dynamic font CSS variables in both frontend and admin
+// -----------------------------------------------------------------------------
 add_action('wp_head', 'yak_output_font_vars', 20);
 add_action('admin_head', 'yak_output_font_vars', 20);
-// add_action('enqueue_block_editor_assets', function () {
-// 	// Attach inside the editor iframe
-// 	wp_enqueue_style('yak-editor-font-vars', false);
-// 	wp_add_inline_style('yak-editor-font-vars', yak_get_font_var_css());
-// }, 20);
 
 /**
- * Outputs font variables in classic admin and frontend <head>.
+ * Echoes <style> tag with :root font variables.
  */
 function yak_output_font_vars() {
-	if (!function_exists('get_field')) return;
-
-	echo '<style id="yak-font-vars">' . PHP_EOL;
-	echo yak_get_font_var_css();
-	echo '</style>' . PHP_EOL;
+    if (!function_exists('get_field')) return;
+    echo '<style id="yak-font-vars">' . PHP_EOL;
+    echo yak_get_font_var_css();
+    echo '</style>' . PHP_EOL;
 }
 
 /**
- * Returns the CSS :root declaration for yak font variables.
+ * Returns :root CSS variable declarations for font settings.
+ *
+ * @return string CSS block for font family and base size
  */
 function yak_get_font_var_css() {
-	if (!function_exists('get_field')) return '';
+    if (!function_exists('get_field')) return '';
 
-	$primary   = trim(get_field('yak_primary_font', 'option')) ?: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
-	$secondary = trim(get_field('yak_secondary_font', 'option')) ?: $primary;
-	$accent    = trim(get_field('yak_accent_font', 'option')) ?: $primary;
+    $primary   = trim(get_field('yak_primary_font', 'option')) ?: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
+    $secondary = trim(get_field('yak_secondary_font', 'option')) ?: $primary;
+    $accent    = trim(get_field('yak_accent_font', 'option')) ?: $primary;
 
-	$font_px = intval(get_field('yak_font_base_px', 'option'));
-	if ($font_px < 10 || $font_px > 32) {
-		$font_px = 18;
-	}
+    $font_px = intval(get_field('yak_font_base_px', 'option'));
+    if ($font_px < 10 || $font_px > 32) {
+        $font_px = 18;
+    }
 
-	return <<<CSS
+    return <<<CSS
 :root {
     --yak-primary-font: {$primary};
     --yak-secondary-font: {$secondary};
@@ -156,4 +169,7 @@ CSS;
 }
 
 
+// -----------------------------------------------------------------------------
+// Disable WordPress default custom font size UI in block editor
+// -----------------------------------------------------------------------------
 add_theme_support('disable-custom-font-sizes');

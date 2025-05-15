@@ -1,3 +1,38 @@
+/**
+ * ============================================================================
+ * 🎛 yakstrap.js — Lightweight Modal + Collapse Behavior (No Bootstrap Required)
+ * ============================================================================
+ *
+ * This script provides Bootstrap-like interactivity for modals and collapsible
+ * sections using native JavaScript. It powers Yak’s custom UI components without
+ * requiring Bootstrap’s full JS bundle or jQuery dependency.
+ *
+ * Features:
+ *
+ * 1. ✅ Modal Behavior
+ *    - Activates modals via `[data-bs-toggle="modal"]`
+ *    - Supports ARIA attributes, focus management, and ESC key to close
+ *    - Dismisses modals via `[data-bs-dismiss="modal"]` or clicking outside
+ *    - Adds `yak-modal-open` body class to manage scroll lock or overlay styling
+ *
+ * 2. ✅ Collapse Toggle
+ *    - Adds smooth animated expand/collapse via `[data-bs-toggle="collapse"]`
+ *    - Handles height transitions manually for fluid open/close
+ *    - Applies `.show` and `.yak-collapse--animating` classes for control
+ *
+ * 3. ✅ Search Enhancements
+ *    - Enhances `.yak-search-trigger` links to auto-wire modals for search UX
+ *
+ * Notes:
+ * - This script mimics Bootstrap’s data-attribute behavior with a much smaller footprint
+ * - Integrates directly with Yak’s custom markup and CSS animation layers
+ * - Ensure that `.yak-modal`, `.yak-collapse`, and related styles are defined in CSS
+ *
+ * Location: /js/yakstrap.js
+ */
+
+
+
 document.addEventListener('DOMContentLoaded', () => {
 
     // ===== Enhance .yak-search-trigger menu item =====

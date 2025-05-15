@@ -55,7 +55,7 @@ require_once get_stylesheet_directory() . '/lib/helper-functions.php';
 require_once get_stylesheet_directory() . '/lib/customize.php';
 
 // Includes Customizer CSS.
-require_once get_stylesheet_directory() . '/lib/output.php';
+// require_once get_stylesheet_directory() . '/lib/output.php';
 
 // Adds WooCommerce support.
 require_once get_stylesheet_directory() . '/lib/woocommerce/woocommerce-setup.php';
@@ -144,7 +144,7 @@ add_action( 'wp_dashboard_setup', 'yak_register_dashboard_widget' );
 function yak_register_dashboard_widget() {
 	add_meta_box(
 		'yak_dashboard_widget',
-		get_bloginfo( 'name' ), // Site title as heading
+		'Welcome to ' . get_bloginfo( 'name' ), // Site title as heading
 		'yak_render_dashboard_widget',
 		'dashboard',
 		'normal',
@@ -160,8 +160,7 @@ function yak_render_dashboard_widget() {
 
 	echo '<div style="overflow:hidden;">';
 	echo '<img src="' . $img_url . '" alt="Chris Liu-Beers" style="float:right; margin-left:1rem; width:90px; height:90px; border-radius:50%; object-fit:cover;" loading="lazy">';
-	echo '<p><strong>Welcome to ' . $site_name . '</strong></p>';
-	echo '<p>Congratulations on launching your new website!</p>';
+	echo '<p>Congratulations on your new website!</p>';
 	echo '<p>If you have any questions, please contact me:<br>';
 	echo '<a href="mailto:' . antispambot( $contact_email ) . '">' . antispambot( $contact_email ) . '</a><br>';
 	echo '919.576.0180<br>';
@@ -1203,3 +1202,6 @@ add_action( 'genesis_before', function() {
 		remove_action( 'genesis_entry_header', 'genesis_do_post_title' );
 	}
 }, 15 );
+
+
+

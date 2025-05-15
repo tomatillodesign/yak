@@ -1,3 +1,6 @@
+// Yak Color Swatch Copy Utility  
+// Copies the swatch HEX value to clipboard on click  
+// Displays a temporary "Copied!" badge for user feedback  
 
 
 document.addEventListener('DOMContentLoaded', () => {

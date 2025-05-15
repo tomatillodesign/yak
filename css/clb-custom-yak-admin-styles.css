@@ -1,7 +1,29 @@
-/* ==========================================================================
-   YAK Admin Theme – WordPress Custom Admin Styles
-   Author: Chris Liu-Beers, Tomatillo Design
-   ========================================================================== */
+/* ========================================================================== */
+/* 🛠 yak-admin-styles — WordPress Admin Customization Layer
+/* ========================================================================== */
+
+/**
+ * This file applies custom styling to the WordPress admin area to support and
+ * visually align with the Yak theme's internal design system. It overrides and
+ * enhances the default wp-admin UI with Yak-specific colors, fonts, and layout rules.
+ *
+ * Core Features:
+ * - Defines Yak admin color variables and font scale using :root custom properties
+ * - Restyles the admin menu, top toolbar, and dashboard widgets for better clarity
+ * - Enhances ACF panels, plugin settings pages, and Gutenberg button styles
+ * - Adds visual polish to custom tools like the color palette swatch selector
+ * - Optional Gutenberg editor tweaks (e.g., Spacer block labeling)
+ *
+ * Use this file when:
+ * - You want to unify admin styling with Yak’s frontend typography and color system
+ * - You need to style ACF options pages or admin-only features consistently
+ * - You’re adding small admin tools, preview UIs, or branding touches for clients
+ *
+ * Notes:
+ * - This file is loaded only in the admin via `admin_enqueue_scripts`
+ * - Keep rules specific to `body.wp-admin`, `#wpadminbar`, `.edit-post-visual-editor`, etc.
+ * - Avoid using global selectors that could affect the frontend inadvertently
+ */
 
 
 /* =VARIABLES

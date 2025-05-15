@@ -1,3 +1,46 @@
+/**
+ * ============================================================================
+ * 🧠 Yak Theme – Frontend Utility Scripts
+ * ============================================================================
+ *
+ * This file includes a collection of JavaScript enhancements and layout helpers
+ * that improve frontend block behavior, layout rendering, and responsive interactivity.
+ * These utilities are designed to work alongside Yak’s custom CSS and block enhancements.
+ *
+ * Included Features:
+ *
+ * 1. ✅ Alignwide/Alignfull Wrappers:
+ *    - Dynamically wraps `.alignwide` and `.alignfull` blocks in structural divs
+ *    - Enables consistent horizontal padding and alignment control across devices
+ *
+ * 2. ✅ Dim Opacity Fix for WP Cover Block:
+ *    - Applies precise opacity to `.has-background-dim-*` cover blocks
+ *    - Converts class-based values to inline opacity on background spans
+ *
+ * 3. ✅ Pull Alignment Runtime Logic:
+ *    - Evaluates whether `.yak-pull-left` / `.yak-pull-right` blocks have enough space
+ *    - Applies negative margins only if layout can support it (with safety checks)
+ *    - Adds `yak-pull-active` class when pull is visually viable
+ *
+ * 4. ✅ Mega Menu Enhancements:
+ *    - Detects nested submenus and adds `.yak-has-mega` to parent items
+ *    - Adds `.yak-mega-column` class to second-level menu items for grid-based layout
+ *
+ * 5. ✅ Scroll-Based Header Behavior:
+ *    - Tracks scroll position and adds `yak-scrolled` class to `<body>`
+ *    - Uses `data-scroll` attribute and debounced updates for smooth transitions
+ *
+ * 6. ✅ Dynamic Title Width Variable:
+ *    - Measures `.title-area` on load and resize
+ *    - Sets CSS variable `--yak-title-area-width` on `<html>` for layout sync
+ *
+ * Notes:
+ * - Runs on `DOMContentLoaded`, with debounce and resize listeners where needed
+ * - Designed for performance and non-intrusive frontend behavior
+ * - Works alongside Yak’s CSS layers and block-enhancements.js for full effect
+ *
+ * Location: /js/clb-custom-yak-scripts.js
+ */
 
 
 

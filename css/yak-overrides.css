@@ -1,0 +1,64 @@
+
+/* ========================================================================== */
+/* 🎯 yak-overrides — Project-Specific Theme Customizations
+/* ========================================================================== */
+
+/**
+ * This layer is reserved for site-specific or project-level CSS overrides.
+ * Use it to tweak, patch, or extend any styles from earlier Yak layers
+ * (yak-base, yak-layout, yak-blocks, etc.) **without modifying core files**.
+ *
+ * Ideal for:
+ * - Adjusting spacing, colors, or layout for a specific site or content pattern
+ * - Overriding block or component behavior in response to client requests
+ * - Adding temporary fixes or experimental styles during development
+ *
+ * Best practices:
+ * - Keep overrides tightly scoped (e.g., `.page-id-123 .entry-header { ... }`)
+ * - Comment any overrides that relate to bugs or temporary workarounds
+ * - If a rule becomes universally useful, consider promoting it upstream
+ *
+ * This file is loaded *last* in the CSS cascade:
+ *   1. reset
+ *   2. yak-base
+ *   3. yak-layout
+ *   4. yak-components
+ *   5. yak-blocks
+ *   6. yak-utilities
+ *   7. yak-overrides ← (this file)
+ */
+
+
+
+
+@layer yak-overrides {
+    /* put one-off overrides here */
+  
+    .ctd-tabs {
+      margin-top: 3rem;
+    }
+  
+    h2.ctd-tab-heading {
+      margin-top: 0;
+    }
+  
+    .ctd-tabs__toc [role="tab"][aria-selected="true"] {
+      border-left: 4px solid var(--yak-color-primary) !important;
+      }
+  
+      .ctd-single-tab button:focus {
+          outline: none;
+          box-shadow: none;
+          background: yellow;
+          font-weight: 700;
+          text-decoration: underline;
+          text-underline-offset: 4px;
+      }
+      
+      .ctd-single-tab button:focus:not(:focus-visible) {
+          outline: none;
+          box-shadow: none;
+      }
+      
+  
+  }
