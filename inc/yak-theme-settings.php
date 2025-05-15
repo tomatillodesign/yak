@@ -33,12 +33,12 @@ if ( function_exists( 'acf_add_local_field_group' ) ) :
 		'fields' => [
 			[
 				'key' => 'field_yak_allowed_users',
-				'label' => 'Authorized Users',
+				'label' => 'Additional Authorized Users',
 				'name' => 'yak_allowed_users',
 				'type' => 'user',
-				'instructions' => 'Only these users can access the Yak Theme Settings page. Admin user #1 is always allowed.',
+				'instructions' => 'These additional users can access the Yak Theme Settings page. All Admin users are already allowed.',
 				'multiple' => 1,
-				'role' => [ 'administrator', 'site-manager', 'editor' ],
+				'role' => [ 'site-manager', 'editor' ],
 				'return_format' => 'id',
 			],
 		],
