@@ -1,160 +1,191 @@
-/*
-Theme Name: Yak
-Theme URI: http://www.tomatillodesign.com/yak
-Author: Tomatillo Design
-Author URI: http://www.tomatillodesign.com
-Description: Custom Genesis child theme with modern CSS architecture and full block editor support.
-Version: 1.0
-Template: genesis
-License: GNU General Public License v2 or later
-License URI: https://www.gnu.org/licenses/gpl-2.0.html
-Text Domain: yak
-Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featured-images, full-site-editing, threaded-comments, translation-ready
+/* ==========================================================================
+   Yak Theme - Main Stylesheet
+   ==========================================================================
+
+   Theme Name: Yak
+   Theme URI: http://www.tomatillodesign.com/yak
+   Author: Tomatillo Design
+   Description: Custom Genesis child theme with modern CSS architecture and full block editor support.
+   Version: 1.0
+   Template: genesis
+   Text Domain: yak
+
+   ==========================================================================
+   📁 Table of Contents
+   ==========================================================================
+
+   1. RESET — Normalize browser defaults
+   2. BASE — Root variables, typography, spacing, defaults
+      2.1 CSS Variables
+      2.2 Typography & Body
+      2.3 Accessibility (skip links)
+      2.4 Entry Content Defaults
+      2.5 Visibility Helpers
+   3. BLOCKS — Gutenberg Block Styling (external file)
+   4. LAYOUT — Page structure & layout helpers
+      4.1 Global Containers
+      4.2 Header & Footer
+      4.3 Pull-Left / Pull-Right
+      4.4 Archive Layouts: List & Card
+      4.5 Featured Image Overlays
+      4.6 Container Queries
+      4.7 Responsive Breakpoints
+      4.8 Search Results
+   5. COMPONENTS — UI elements (buttons, nav, modals)
+      5.1 Buttons
+      5.2 Modal
+      5.3 Collapse
+      5.4 Desktop Navigation
+      5.5 Mega Menu
+      5.6 Mobile Navigation
+      5.7 Header Toggle / Highlight Links
+      5.8 Featured Image Title / Hello Bar / Separator
+   6. UTILITIES — Utility classes
+      6.1 Visually Hidden / SR Text
+      6.2 Font Sizes
+      6.3 Text Alignment
+   7. OVERRIDES — Optional last-layer custom overrides
 */
 
 @layer reset, yak-base, yak-blocks, yak-layout, yak-components, yak-utilities, yak-overrides;
 
+@import url('css/yak-overrides.css') layer(yak-overrides);
+
+/* ==========================================================================
+   1. RESET — Normalize browser defaults
+   ========================================================================== */
 @layer reset {
-  *, *::before, *::after { box-sizing: border-box; }
-  * { margin: 0; }
-  html, body { height: 100%; }
-  body { line-height: 1.5; -webkit-font-smoothing: antialiased; }
-  img, picture, video, canvas, svg { display: block; max-width: 100%; }
-  input, button, textarea, select { font: inherit; }
-  p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
-  #root, #__next { isolation: isolate; }
+	*, *::before, *::after { box-sizing: border-box; }
+	* { margin: 0; }
+	html, body { height: 100%; }
+	body { line-height: 1.5; -webkit-font-smoothing: antialiased; }
+	img, picture, video, canvas, svg { display: block; max-width: 100%; }
+	input, button, textarea, select { font: inherit; }
+	p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
+	#root, #__next { isolation: isolate; }
 }
 
+/* ==========================================================================
+   2. BASE — Root variables, typography, spacing, defaults
+   ========================================================================== */
 @layer yak-base {
-  :root {
+/* ----------------------------------------
+	 2.1 CSS Variables (Colors, Fonts, Spacing)
+---------------------------------------- */
+	:root {
 
+		/* 🎨 WP Color Presets */
+		--wp--preset--color--black: #000;
+		--wp--preset--color--white: #fff;
+		--wp--preset--color--primary: var(--yak-color-primary);
+		--wp--preset--color--secondary: #666;
+		--wp--preset--color--tertiary: #ccc;
+		--wp--preset--color--foreground: var(--yak-color-black);
+		--wp--preset--color--background: var(--yak-color-white);
+		--wp--preset--color--contrast: var(--yak-color-muted);
 
-	/* -------------------------------
-		🎨 Color Palette (WP Presets + Yak)
-	-------------------------------- */
-	--wp--preset--color--black: #000;
-	--wp--preset--color--white: #fff;
-	--wp--preset--color--primary: var(--yak-color-primary);
-	--wp--preset--color--secondary: #666;
-	--wp--preset--color--tertiary: #ccc;
-	--wp--preset--color--foreground: var(--yak-color-black);
-	--wp--preset--color--background: var(--yak-color-white);
-	--wp--preset--color--contrast: var(--yak-color-muted);
+		/* 🔤 WP Font Presets */
+		--wp--preset--font-size--small: 0.875rem;
+		--wp--preset--font-size--medium: var(--yak-font-md);
+		--wp--preset--font-size--large: var(--yak-font-lg);
+		--wp--preset--font-size--x-large: var(--yak-font-xl);
+		--wp--preset--font-size--xx-large: var(--yak-font-2xl);
 
-	/* -------------------------------
-		🔤 Typography (WP Presets + Yak)
-	-------------------------------- */
-	--wp--preset--font-size--small: 0.875rem; /* ~14px */
-	--wp--preset--font-size--medium: var(--yak-font-md);
-	--wp--preset--font-size--large: var(--yak-font-lg);
-	--wp--preset--font-size--x-large: var(--yak-font-xl);
-	--wp--preset--font-size--xx-large: var(--yak-font-2xl);
+		--wp--preset--font-family--system-font: system-ui, sans-serif;
+		--wp--preset--font-family--serif: Georgia, serif;
+		--wp--preset--font-family--sans-serif: Helvetica, Arial, sans-serif;
+		--wp--preset--font-family--monospace: Menlo, monospace;
 
-	--wp--preset--font-family--system-font: system-ui, sans-serif;
-	--wp--preset--font-family--serif: Georgia, serif;
-	--wp--preset--font-family--sans-serif: Helvetica, Arial, sans-serif;
-	--wp--preset--font-family--monospace: Menlo, monospace;
+		/* 📏 WP Spacing Presets */
+		--wp--preset--spacing--10: 0.625rem;
+		--wp--preset--spacing--20: 1rem;
+		--wp--preset--spacing--30: 1.5rem;
+		--wp--preset--spacing--40: 2rem;
+		--wp--preset--spacing--50: 3rem;
+		--wp--preset--spacing--60: 4rem;
+		--wp--preset--spacing--70: 6rem;
+		--wp--preset--spacing--80: 8rem;
+		--wp--preset--spacing--90: 12rem;
+		--wp--preset--spacing--100: 16rem;
+		--wp--style--block-gap: var(--wp--preset--spacing--30);
 
-	/* -------------------------------
-		📏 Spacing
-	-------------------------------- */
-	--wp--preset--spacing--10: 0.625rem;
-	--wp--preset--spacing--20: 1rem;
-	--wp--preset--spacing--30: 1.5rem;
-	--wp--preset--spacing--40: 2rem;
-	--wp--preset--spacing--50: 3rem;
-	--wp--preset--spacing--60: 4rem;
-	--wp--preset--spacing--70: 6rem;
-	--wp--preset--spacing--80: 8rem;
-	--wp--preset--spacing--90: 12rem;
-	--wp--preset--spacing--100: 16rem;
+		/* 🖼️ Gallery Defaults */
+		--wp--style--gallery-gap-default: var(--wp--preset--spacing--20);
+		--wp--style--unstable-gallery-gap: var(--wp--style--gallery-gap-default);
 
-	--wp--style--block-gap: var(--wp--preset--spacing--30);
+		/* 🧱 Global Layout */
+		--wp--style--global--content-size: var(--yak-content-max-width);
+		--wp--style--global--wide-size: min(90rem, 100vw);
 
-	/* -------------------------------
-		🖼️ Gallery
-	-------------------------------- */
-	--wp--style--gallery-gap-default: var(--wp--preset--spacing--20);
-	--wp--style--unstable-gallery-gap: var(--wp--style--gallery-gap-default);
+		/* Yak Font Settings */
+		--yak-primary-font: system-ui, sans-serif;
+		--yak-secondary-font: var(--yak-primary-font);
+		--yak-accent-font: var(--yak-primary-font);
+		--yak-font-base-px: 18;
+		--yak-font-base: calc(var(--yak-font-base-px) * 1px);
+		--yak-type-ratio: 1.25;
+		--yak-font-xs: calc(var(--yak-font-base) / (var(--yak-type-ratio) * var(--yak-type-ratio)));
+		--yak-font-sm: calc(var(--yak-font-base) / var(--yak-type-ratio));
+		--yak-font-md: var(--yak-font-base);
+		--yak-font-lg: calc(var(--yak-font-md) * var(--yak-type-ratio));
+		--yak-font-xl: calc(var(--yak-font-lg) * var(--yak-type-ratio));
+		--yak-font-2xl: calc(var(--yak-font-xl) * var(--yak-type-ratio));
+		--yak-font-3xl: calc(var(--yak-font-2xl) * var(--yak-type-ratio));
+		--yak-font-4xl: calc(var(--yak-font-3xl) * var(--yak-type-ratio));
+		--yak-font-5xl: calc(var(--yak-font-4xl) * var(--yak-type-ratio));
+		--yak-font-6xl: calc(var(--yak-font-5xl) * var(--yak-type-ratio));
 
-	/* -------------------------------
-		🧱 Layout
-	-------------------------------- */
-	--wp--style--global--content-size: var(--yak-content-max-width);
-	--wp--style--global--wide-size: min(90rem, 100vw);
+		/* Dynamic Line Heights */
+		--yak-lh-xs: 1.84;
+		--yak-lh-sm: 1.78;
+		--yak-lh-md: 1.65;
+		--yak-lh-lg: 1.45;
+		--yak-lh-xl: 1.32;
+		--yak-lh-2xl: 1.22;
+		--yak-lh-3xl: 1.15;
+		--yak-lh-4xl: 1.1;
+		--yak-lh-5xl: 1.05;
+		--yak-lh-6xl: 1;
 
-    /* Font family variables */
-	--yak-primary-font: system-ui, sans-serif;
-	--yak-secondary-font: var(--yak-primary-font);
-	--yak-accent-font: var(--yak-primary-font);
+		/* Yak Color Tokens */
+		--yak-color-black: #000;
+		--yak-color-white: #fff;
+		--yak-color-primary: #2363e0;
+		--yak-color-muted: #f5f5f5;
 
-	/* Base font size: user-controlled via ACF (fallback = 18px) */
-	--yak-font-base-px: 18;                          /* ACF-driven, in pixels */
-	--yak-font-base: calc(var(--yak-font-base-px) * 1px); /* usable in rem/rem-adjacent logic */
+		/* Layout Utilities */
+		--yak-radius: 6px;
+		--yak-content-max-width: 75ch;
+		--yak-padding-block: 2rem;
+		--yak-padding-block-mobile: 1.5rem;
+	}
 
-	/* Modular scale: Minor Third (1.25x) */
-	--yak-type-ratio: 1.25;
+	/* ----------------------------------------
+	 2.2 Typography & Body
+	---------------------------------------- */
+	html {
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		scroll-behavior: smooth;
+	}
 
-	/* Font sizes (relative, rem-based) */
-	--yak-font-xs: calc(var(--yak-font-base) / (var(--yak-type-ratio) * var(--yak-type-ratio)));  /* smallest */
-	--yak-font-sm: calc(var(--yak-font-base) / var(--yak-type-ratio));                            /* smaller than base */
-	--yak-font-md: var(--yak-font-base);                                                          /* base */
-	--yak-font-lg: calc(var(--yak-font-md) * var(--yak-type-ratio));                              /* larger */
-	--yak-font-xl: calc(var(--yak-font-lg) * var(--yak-type-ratio));
-	--yak-font-2xl: calc(var(--yak-font-xl) * var(--yak-type-ratio));
-	--yak-font-3xl: calc(var(--yak-font-2xl) * var(--yak-type-ratio));
-	--yak-font-4xl: calc(var(--yak-font-3xl) * var(--yak-type-ratio));
-	--yak-font-5xl: calc(var(--yak-font-4xl) * var(--yak-type-ratio));
-	--yak-font-6xl: calc(var(--yak-font-5xl) * var(--yak-type-ratio));
+	body {
+		font-family: var(--yak-primary-font);
+		font-size: var(--yak-font-md);
+		line-height: var(--yak-lh-md);
+		font-weight: 400;
+		color: var(--yak-color-black);
+		background-color: var(--yak-color-white);
+		letter-spacing: 0.01em;
+		text-rendering: optimizeLegibility;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
 
-
-	/* Dynamic line-heights — larger sizes get tighter */
-	--yak-lh-xs: 1.84;     /* small body text */
-	--yak-lh-sm: 1.78;
-	--yak-lh-md: 1.65;     /* base body size */
-	--yak-lh-lg: 1.45;
-	--yak-lh-xl: 1.32;
-	--yak-lh-2xl: 1.22;
-	--yak-lh-3xl: 1.15;
-	--yak-lh-4xl: 1.1;
-	--yak-lh-5xl: 1.05;
-	--yak-lh-6xl: 1;
-
-	/* Colors */
-	--yak-color-black: #000;
-	--yak-color-white: #fff;
-	--yak-color-primary: #2363e0;
-	--yak-color-muted: #f5f5f5;
-
-	/* Spacing & layout */
-	--yak-radius: 6px;
-	--yak-content-max-width: 75ch;
-	--yak-padding-block: 2rem;
-    --yak-padding-block-mobile: 1.5rem;
-
-  }
-
-  html {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    scroll-behavior: smooth;
-  }
-
-  body {
-	font-family: var(--yak-primary-font);
-	font-size: var(--yak-font-md);        /* based on ACF value */
-	line-height: var(--yak-lh-md);        /* scales with it */
-	font-weight: 400;
-	color: var(--yak-color-black);
-	background-color: var(--yak-color-white);
-
-	letter-spacing: 0.01em;
-	text-rendering: optimizeLegibility;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-  }
-
-  	.genesis-skip-link,
+	/* ----------------------------------------
+	 2.3 Accessibility (skip links)
+	---------------------------------------- */
+	.genesis-skip-link,
 	.yak-hide-site-description p.site-description {
 		position: absolute;
 		left: -9999px;
@@ -180,116 +211,108 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 		white-space: normal;
 	}
 
-
-  .entry-content {
-	position: relative;
-	z-index: 0;
-	text-wrap: pretty;
+	/* ----------------------------------------
+	 2.4 Entry Content Defaults
+	---------------------------------------- */
+	.entry-content {
+		position: relative;
+		z-index: 0;
+		text-wrap: pretty;
 	}
 
+	a {
+		color: var(--yak-color-primary);
+		text-decoration: underline;
+		transition: all 0.2s ease-in-out;
+	}
+	a:hover,
+	a:focus {
+		text-decoration: none;
+	}
 
-  a {
-    color: var(--yak-color-primary);
-    text-decoration: underline;
-    transition: all 0.2s ease-in-out;
-  }
+	h1, h2, h3, h4, h5, h6 {
+		font-family: var(--yak-secondary-font);
+		font-weight: 700;
+		line-height: 1.2;
+		margin-bottom: 1rem;
+	}
+	h1 {
+		font-size: var(--yak-font-3xl);
+	}
 
-  a:hover,
-  a:focus {
-    text-decoration: none;
-  }
+	.wp-singular h1.entry-title {
+		text-align: center;
+	}
 
-  h1, h2, h3, h4, h5, h6 {
-    font-family: var(--yak-secondary-font);
-    font-weight: 700;
-    line-height: 1.2;
-    margin-bottom: 1rem;
-  }
+	p {
+		margin-bottom: 1.5rem;
+	}
 
-  h1 {
-	font-size: var(--yak-font-3xl);
-  }
+	img {
+		display: block;
+		max-width: 100%;
+		height: auto;
+	}
 
-  .wp-singular h1.entry-title {
-	text-align: center;
-  }
+	.site-title {
+		font-family: var(--yak-secondary-font);
+		font-size: 1.75rem;
+		margin: 0;
+	}
+	.site-title a {
+		text-decoration: none;
+		color: inherit;
+	}
+	.site-description {
+		font-size: 1rem;
+		color: #666;
+		margin: 0;
+	}
 
-  p {
-    margin-bottom: 1.5rem;
-  }
+	.entry-content > *:first-child { margin-top: 0; }
+	.entry-content > *:last-child { margin-bottom: 0; }
 
-  img {
-    display: block;
-    max-width: 100%;
-    height: auto;
-  }
+	.entry-content h1,
+	.entry-content h2,
+	.entry-content h3,
+	.entry-content h4,
+	.entry-content h5,
+	.entry-content h6 {
+		margin-top: 2.5rem;
+		margin-bottom: 1rem;
+		line-height: 1.25;
+	}
 
-  .site-title {
-    font-family: var(--yak-secondary-font);
-    font-size: 1.75rem;
-    margin: 0;
-  }
+	.entry-content p,
+	.entry-content ul,
+	.entry-content ol,
+	.entry-content blockquote,
+	.entry-content pre,
+	.entry-content table,
+	.entry-content figure {
+		margin-bottom: 1.75rem;
+	}
 
-  .site-title a {
-    text-decoration: none;
-    color: inherit;
-  }
+	.entry-content ul,
+	.entry-content ol {
+		padding-left: 1.5rem;
+	}
 
-  .site-description {
-    font-size: 1rem;
-    color: #666;
-	margin: 0;
-  }
+	.entry-content blockquote {
+		padding-left: 1rem;
+		border-left: 4px solid var(--yak-color-primary);
+		color: #444;
+		font-style: italic;
+	}
 
-  .entry-content > *:first-child {
-    margin-top: 0;
-  }
-
-  .entry-content > *:last-child {
-    margin-bottom: 0;
-  }
-
-  .entry-content h1,
-  .entry-content h2,
-  .entry-content h3,
-  .entry-content h4,
-  .entry-content h5,
-  .entry-content h6 {
-    margin-top: 2.5rem;
-    margin-bottom: 1rem;
-    line-height: 1.25;
-  }
-
-  .entry-content p,
-  .entry-content ul,
-  .entry-content ol,
-  .entry-content blockquote,
-  .entry-content pre,
-  .entry-content table,
-  .entry-content figure {
-    margin-bottom: 1.75rem;
-  }
-
-  .entry-content ul,
-  .entry-content ol {
-    padding-left: 1.5rem;
-  }
-
-  .entry-content blockquote {
-    padding-left: 1rem;
-    border-left: 4px solid var(--yak-color-primary);
-    color: #444;
-    font-style: italic;
-  }
-
-  .entry-content code,
-  .entry-content pre {
-    font-family: monospace;
-    font-size: 0.95em;
-    background-color: #f0f0f0;
-    padding: 0.2em 0.4em;
-    border-radius: 4px;
-  }
+	.entry-content code,
+	.entry-content pre {
+		font-family: monospace;
+		font-size: 0.95em;
+		background-color: #f0f0f0;
+		padding: 0.2em 0.4em;
+		border-radius: 4px;
+	}
 
 	.entry-content > p:last-child,
 	.yak-box > p:last-child,
@@ -303,110 +326,69 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 		margin-bottom: 0;
 	}
 
+	/* ----------------------------------------
+	 2.5 Visibility Helpers
+	---------------------------------------- */
 	@media (max-width: 960px) {
-
 		.yak-desktop-only {
 			display: none !important;
 		}
-
 	}
 
 	@media (min-width: 960px) {
-
 		.yak-mobile-only {
 			display: none !important;
 		}
-
 	}
-
 }
 
+/* ==========================================================================
+   3. BLOCKS — Gutenberg Block Styling (external file)
+   ========================================================================== */
+/* yak-blocks layer is defined in a separate file to override core block editor styles.
+	see /css/yak-blocks.css
+	detailed comment and explanation at the top of that file
+*/
 
-/*   @layer yak-blocks
-/* 
-/* are located in a separate file
-/* styles there REPLACE all default gutenberg/block editor styles
-/* maintains order and ability to overwrite without customizer */
+/* ==========================================================================
+   4. LAYOUT — Page structure & layout helpers
+   ========================================================================== */
+   @layer yak-layout {
 
-
-@layer yak-layout {
-
-  .site-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-  }
-
-  .site-header,
-  .site-footer {
-    padding: 2rem 1rem;
-    background: var(--yak-color-muted);
-  }
-
-  .site-footer {
-	background: var(--yak-color-primary);
-	text-align: center;
-	font-size: var(--yak-font-sm);
-	color: var(--yak-color-white);
-
-	a {
-		color: var(--yak-color-white);
-		text-decoration: none;
+	/* ----------------------------------------
+		4.1 Global Containers
+	---------------------------------------- */
+	.site-container {
+		display: flex;
+		flex-direction: column;
+		min-height: 100vh;
 	}
 
-	a:hover {
-		text-decoration: underline;
+	.site-inner {
+		flex-grow: 1;
+		padding-block: 2rem;
 	}
 
-  }
-
-
-	/* Neutral state for measuring */
-	.yak-pull-left.yak-pull-measuring,
-	.yak-pull-right.yak-pull-measuring {
-		float: none !important;
-		margin: 0 !important;
+	.content-sidebar-wrap {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 2rem;
+		max-width: var(--yak-content-max-width, 75ch);
+		margin-inline: auto;
+		padding-inline: 2rem;
 	}
 
-	/* Left-pulled items */
-	.yak-pull-left.yak-pull-active {
-		float: left;
-		margin-inline-start: -150px;
-		margin-inline-end: 2em;
-		max-width: min(66%, 500px);
+	.content {
+		flex: 1 1 100%;
 	}
 
-	/* Right-pulled items */
-	.yak-pull-right.yak-pull-active {
-		float: right;
-		margin-inline-end: -150px;
-		margin-inline-start: 2em;
-		max-width: min(66%, 500px);
-	}
-
-
-  .site-inner {
-    flex-grow: 1;
-    padding-block: 2rem;
-  }
-
-  .content-sidebar-wrap {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2rem;
-    max-width: var(--yak-content-max-width, 75ch);
-    margin-inline: auto;
-    padding-inline: 2rem;
-  }
-
-  .content {
-    flex: 1 1 100%;
-  }
-
+	/* ----------------------------------------
+		4.2 Header & Footer
+	---------------------------------------- */
 	.site-header {
 		background: #fff;
 		padding: 1rem 2rem;
-		box-shadow: 0 0 12px rgba(0,0,0,.1);
+		box-shadow: 0 0 12px rgba(0, 0, 0, .1);
 	}
 
 	.site-header > .wrap {
@@ -421,13 +403,15 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 		display: flex;
 		align-items: center;
 		gap: 1rem;
+		transform-origin: left center;
+		transition: transform 0.3s ease;
 	}
-	
+
 	.yak-site-logo {
 		display: inline-block;
 		flex-shrink: 0;
 	}
-	
+
 	.yak-title-text {
 		display: flex;
 		flex-direction: column;
@@ -452,6 +436,22 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 		margin-top: 0.3em;
 	}
 
+	.site-footer {
+		padding: 2rem 1rem;
+		background: var(--yak-color-primary);
+		text-align: center;
+		font-size: var(--yak-font-sm);
+		color: var(--yak-color-white);
+	}
+
+	.site-footer a {
+		color: var(--yak-color-white);
+		text-decoration: none;
+	}
+	.site-footer a:hover {
+		text-decoration: underline;
+	}
+
 	.yak-footer-widgets-outer-wrapper {
 		width: 100%;
 		background: var(--yak-color-muted);
@@ -464,11 +464,36 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 		gap: 2rem;
 		padding: 2rem;
 		max-width: 1280px;
-		margin-left: auto;
-		margin-right: auto;
+		margin-inline: auto;
 		width: 100%;
 	}
 
+	/* ----------------------------------------
+		4.3 Pull-Left / Pull-Right
+	---------------------------------------- */
+	.yak-pull-left.yak-pull-measuring,
+	.yak-pull-right.yak-pull-measuring {
+		float: none !important;
+		margin: 0 !important;
+	}
+
+	.yak-pull-left.yak-pull-active {
+		float: left;
+		margin-inline-start: -150px;
+		margin-inline-end: 2em;
+		max-width: min(66%, 500px);
+	}
+
+	.yak-pull-right.yak-pull-active {
+		float: right;
+		margin-inline-end: -150px;
+		margin-inline-start: 2em;
+		max-width: min(66%, 500px);
+	}
+
+	/* ----------------------------------------
+		4.4 Archive Layouts: List & Card
+	---------------------------------------- */
 	h1.archive-title {
 		text-align: center;
 	}
@@ -478,7 +503,7 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 	}
 
 	.yak-archive-wrapper article {
-		box-shadow: 0 0 20px rgba(0,0,0,.1);
+		box-shadow: 0 0 20px rgba(0, 0, 0, .1);
 		border-radius: var(--yak-radius);
 	}
 
@@ -486,10 +511,7 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 		padding: 2rem;
 	}
 
-	.yak-archive-wrapper .yak-archive-body h2 {
-		margin: 0 0 1rem 0;
-	}
-
+	.yak-archive-wrapper .yak-archive-body h2,
 	.yak-archive-wrapper .yak-entry-date {
 		margin: 0 0 1rem 0;
 	}
@@ -498,144 +520,145 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 		margin-bottom: 0;
 	}
 
-	/* --- List Format --- */
+	/* List Format */
 	.yak-archive-wrapper.yak-blog-format-list {
 		display: flex;
 		flex-direction: column;
 		gap: 2rem;
-
-		.yak-archive-entry.yak-has-thumbnail {
-			display: grid;
-			grid-template-columns: 1fr 4fr;
-			gap: 1rem;
-			align-items: stretch; /* Stretch image wrapper to match text content */
-		}
-
-		.yak-archive-image a {
-			height: 100%;
-			width: 100%;
-		}
-
-		/* 👇 Prevent default img aspect ratio from pushing height */
-		.yak-archive-image {
-			display: flex;
-			align-items: stretch;
-			overflow: hidden;
-		}
-
-		.yak-archive-image a,
-		.yak-archive-image img {
-			width: 100%;
-			height: auto;         /* <- switch from 100% to auto */
-			aspect-ratio: 4 / 3;  /* <- force consistent height visually */
-			object-fit: cover;
-			display: block;
-		}
-  
-	   .yak-archive-body {
-			align-self: start; /* Ensure it doesn't stretch */
-	   }
-
-	   .yak-archive-image {
-			height: auto;
-		}
-		
-		.yak-archive-image img {
-			border-top-right-radius: 0;
-			border-bottom-right-radius: 0;
-			height: 100%;
-		}
-
 	}
 
-	/* --- Card Format --- */
-	.yak-archive-wrapper.yak-blog-format-cards {
+	.yak-archive-wrapper.yak-blog-format-list .yak-archive-entry.yak-has-thumbnail {
+		display: grid;
+		grid-template-columns: 1fr 4fr;
+		gap: 1rem;
+		align-items: stretch;
+	}
 
+	.yak-archive-image a {
+		height: 100%;
+		width: 100%;
+	}
+
+	.yak-archive-image {
+		display: flex;
+		align-items: stretch;
+		overflow: hidden;
+		height: auto;
+	}
+
+	.yak-archive-image a,
+	.yak-archive-image img {
+		width: 100%;
+		height: auto;
+		aspect-ratio: 4 / 3;
+		object-fit: cover;
+		display: block;
+	}
+
+	.yak-archive-image img {
+		border-top-right-radius: 0;
+		border-bottom-right-radius: 0;
+		height: 100%;
+	}
+
+	.yak-archive-wrapper.yak-blog-format-cards {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
 		gap: 30px;
 		justify-content: center;
-
-		.yak-archive-wrapper.yak-blog-format-cards > * {
-			max-width: 380px;
-			width: 100%;
-			margin-left: auto;
-			margin-right: auto;
-		}
-
-		.yak-archive-image {
-			aspect-ratio: 1 / 1;
-			overflow: hidden;
-	   }
-	   
-	   .yak-archive-image img {
-			width: 100%;
-			height: 100%;
-			object-fit: cover;
-			display: block;
-	   }
-
-	   .yak-archive-image img {
-			border-bottom-left-radius: 0;
-			border-bottom-right-radius: 0;
-		}
-
-		/* Card view, hide the excerpt for consistency ---- */
-		.yak-entry-excerpt {
-			display: none;
-		}
-
 	}
 
-	.yak-archive-wrapper.yak-blog-format-list article {
-		display: block;
+	.yak-archive-wrapper.yak-blog-format-cards > * {
+		max-width: 380px;
+		width: 100%;
+		margin-inline: auto;
+	}
+
+	.yak-archive-wrapper.yak-blog-format-cards .yak-archive-image {
+		aspect-ratio: 1 / 1;
+		overflow: hidden;
+	}
+
+	.yak-archive-wrapper.yak-blog-format-cards .yak-archive-image img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		border-bottom-left-radius: 0;
+		border-bottom-right-radius: 0;
+	}
+
+	.yak-entry-excerpt {
+		display: none;
+	}
+
+	.yak-archive-card {
 		container-type: inline-size;
 		container-name: yakCard;
+		display: block;
 	}
 
+	/* ----------------------------------------
+		4.5 Featured Image Overlays
+	---------------------------------------- */
+	.yak-featured-image-wrapper {
+		width: 100%;
+		max-width: 100%;
+		margin-bottom: 2rem;
+		border-radius: var(--yak-radius);
+		overflow: hidden;
+	}
+
+	h1.entry-title {
+		margin-bottom: 0;
+	}
+
+	.entry-header {
+		margin-top: 2rem;
+		margin-bottom: 4rem;
+	}
+
+	.error404 h1.entry-title {
+		margin-top: 2rem;
+	}
+
+	/* ----------------------------------------
+		4.6 Container Queries
+	---------------------------------------- */
 	@container yakCard (max-width: 700px) {
-		.yak-archive-entry {
+		.yak-archive-wrapper.yak-blog-format-list .yak-archive-card > .yak-archive-entry.yak-has-thumbnail {
 			display: flex;
 			flex-direction: column;
 		}
-	
-		.yak-archive-image {
+
+		.yak-archive-wrapper.yak-blog-format-list .yak-archive-card > .yak-archive-entry .yak-archive-image {
 			order: 1;
 			width: 100%;
 			height: auto;
 		}
-	
-		.yak-archive-image img {
-			width: 100%;
-			height: auto;
-			object-fit: cover;
-			aspect-ratio: 4 / 3;
-		}
-	
-		.yak-archive-body {
+
+		.yak-archive-wrapper.yak-blog-format-list .yak-archive-card > .yak-archive-entry .yak-archive-body {
 			order: 2;
 			padding: 1.5rem;
 		}
-		
 	}
-	
-	
 
-  @media (min-width: 960px) {
-
+	/* ----------------------------------------
+		4.7 Responsive Breakpoints
+	---------------------------------------- */
+	@media (min-width: 960px) {
 		.content {
 			flex: 1 1 70%;
 		}
-	
+
 		.nav-primary {
 			flex-grow: 1;
 		}
-	
+
 		.nav-primary .wrap {
 			display: flex;
 			justify-content: flex-end;
 		}
-	
+
 		.genesis-nav-menu {
 			display: flex;
 			gap: 2rem;
@@ -644,7 +667,7 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 			list-style: none;
 			align-items: center;
 		}
-	
+
 		.genesis-nav-menu a {
 			text-decoration: none;
 			font-weight: 500;
@@ -654,19 +677,18 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 			border-bottom: 2px solid transparent;
 			transition: border-color 0.2s ease;
 		}
-	
+
 		.genesis-nav-menu a:hover,
 		.genesis-nav-menu a:focus,
 		.genesis-nav-menu .current-menu-item > a {
 			border-bottom-color: currentColor;
-		}	
+		}
 
-	
 		.yak-footer-widgets-1 { grid-template-columns: 1fr; }
 		.yak-footer-widgets-2 { grid-template-columns: 1fr 1fr; }
 		.yak-footer-widgets-3 { grid-template-columns: 1fr 1fr 1fr; }
 		.yak-footer-widgets-4 { grid-template-columns: repeat(4, 1fr); }
-	
+
 		.yak-footer-widget-column {
 			padding: 0 1rem;
 		}
@@ -676,7 +698,7 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 			top: 0;
 			transition: all ease-in-out .5s;
 			z-index: 100;
-			background: var(--yak-color-header-bg, #fff); /* fallback */
+			background: var(--yak-color-header-bg, #fff);
 		}
 
 		body.yak-has-sticky-header.yak-scrolled .site-header {
@@ -688,21 +710,12 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 			top: 32px;
 		}
 
-		.title-area {
-			transform-origin: left center;
-			transition: transform 0.3s ease;
-		}
-		
 		body.yak-scrolled.yak-sticky-header-enabled .title-area {
 			transform: scale(0.85);
 		}
-		
-		
-  
 	}
 
 	@media (max-width: 959px) {
-
 		.site-header {
 			position: sticky !important;
 			left: 0 !important;
@@ -711,7 +724,7 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 			top: var(--yak-mobile-header-height-neg);
 			transition: all 0.5s ease;
 		}
-		
+
 		.yak-show-mobile-header .site-header {
 			top: 0;
 		}
@@ -721,7 +734,7 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 			display: flex;
 			gap: 4px;
 		}
-		
+
 		.yak-inline-search-form input[type="search"] {
 			width: 100%;
 			font-size: 1rem;
@@ -729,12 +742,11 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 			border: 1px solid #ccc;
 			border-radius: var(--yak-radius);
 		}
-
-		
-		
-
 	}
 
+	/* ----------------------------------------
+		4.8 Search Results
+	---------------------------------------- */
 	.search-form {
 		display: flex;
 		gap: 1rem;
@@ -793,19 +805,19 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 	.yak-search-results-title-wrapper h2 {
 		margin: 0;
 	}
-	
+
 	.search-result-url {
 		color: #666;
 		font-size: var(--yak-font-sm);
 		margin-bottom: 0.25rem;
 	}
-	
+
 	.search-result-date {
 		color: #999;
 		font-size: var(--yak-font-sm);
 		margin-bottom: 0.5rem;
 	}
-	
+
 	.search-result-type.badge {
 		display: inline-block;
 		background: #e2e2e2;
@@ -815,41 +827,22 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 		text-transform: uppercase;
 		margin-bottom: 0.5rem;
 	}
-	
+
 	.search-result-excerpt {
 		margin-top: 0.75rem;
 		font-size: var(--yak-font-sm);
 	}
-	
-
-	.yak-featured-image-wrapper {
-		width: 100%;
-		max-width: 100%;
-		margin-bottom: 2rem;
-		border-radius: var(--yak-radius);
-		overflow: hidden;
-	}
-	
-	h1.entry-title {
-		margin-bottom: 0;
-	}
-
-	.entry-header {
-		margin-top: 2rem;
-		margin-bottom: 4rem;
-	}
-
-	.error404 h1.entry-title {
-		margin-top: 2rem;
-	}
-
 }
 
 
-@layer yak-components {
+/* ==========================================================================
+   5. COMPONENTS — UI elements (buttons, nav, modals)
+   ========================================================================== */
+   @layer yak-components {
 
-	/* ========== Buttons ========== */
-
+	/* ----------------------------------------
+		5.1 Buttons
+	---------------------------------------- */
 	.button,
 	.wp-block-button__link,
 	input[type="submit"],
@@ -876,7 +869,7 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 	input[type="submit"]:hover,
 	input[type="button"]:hover,
 	button:hover {
-		background-color: color-mix(in srgb, var(--yak-color-primary) 85%, black);
+		background-color: var(--yak-color-black);
 		color: var(--yak-color-white);
 	}
 
@@ -904,10 +897,9 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 		padding: 0.25rem 0.5rem;
 	}
 
-	
-
-	/* ========== YAKSTRAP STYLES ========== */
-	/* ========== MODAL ========== */
+	/* ----------------------------------------
+		5.2 Modal
+	---------------------------------------- */
 	.yak-modal {
 		position: fixed;
 		top: 0;
@@ -999,7 +991,9 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 		cursor: pointer;
 	}
 
-	/* ========== COLLAPSE ========== */
+	/* ----------------------------------------
+		5.3 Collapse
+	---------------------------------------- */
 	.yak-collapse {
 		overflow: hidden;
 		height: 0;
@@ -1014,10 +1008,9 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 		transition: height 0.3s ease;
 	}
 
-
-
-	/* ========== Desktop Navigation Structure ========== */
-
+	/* ----------------------------------------
+		5.4 Desktop Navigation
+	---------------------------------------- */
 	.yak-main-nav {
 		display: flex;
 		gap: 2rem;
@@ -1031,10 +1024,39 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 		position: relative;
 	}
 
-	/* === Top-level Links === */
+	.yak-main-nav > li.menu-item-has-children:not(.yak-has-mega) > .sub-menu {
+		position: absolute;
+		top: 100%;
+		left: 0;
+		min-width: 220px;
+		background: #fff;
+		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+		visibility: hidden;
+		opacity: 0;
+		transform: translateY(0.5rem);
+		transition: opacity 0.2s ease, transform 0.2s ease;
+		z-index: 9999;
+		padding: 0;
+		list-style: none; /* ✅ critical to remove bullets */
+	}
+
+	.yak-main-nav > li.menu-item-has-children:hover > .sub-menu,
+	.yak-main-nav > li.menu-item-has-children:focus-within > .sub-menu {
+		visibility: visible;
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	.yak-main-nav .sub-menu {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
 	.yak-main-nav a {
 		font-family: var(--yak-primary-font);
 		display: inline-block;
+		width: 100%;
 		padding: 0.75rem 0.5rem;
 		text-decoration: none;
 		color: var(--yak-color-black);
@@ -1049,7 +1071,6 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 		outline: none;
 	}
 
-	/* === Dropdown Arrow for Has-Children === */
 	.yak-main-nav > li.menu-item-has-children > a::after {
 		content: '';
 		display: inline-block;
@@ -1063,54 +1084,15 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 		margin-top: -0.3em;
 	}
 
-	/* ========== Submenu Dropdown (Default) ========== */
+	.genesis-nav-menu .sub-menu .current-menu-item > a,
+	.genesis-nav-menu .sub-menu a:hover {
+        border-bottom-color: transparent;
+    }
 
-	/* Only hide sub-menus for regular dropdowns */
-	.yak-main-nav > li.menu-item-has-children:not(.yak-has-mega) > .sub-menu {
-		position: absolute;
-		top: 100%;
-		left: 0;
-		min-width: 220px;
-		background: #fff;
-		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-		visibility: hidden;
-		opacity: 0;
-		transform: translateY(0.5rem);
-		transition: opacity 0.2s ease, transform 0.2s ease;
-		z-index: 9999;
-		padding: 0;
-		list-style: none;
-	}
-
-	.yak-main-nav .sub-menu li {
-		position: relative;
-	}
-
-	.yak-main-nav .sub-menu a {
-		display: block;
-		padding: 0.5rem 1rem;
-		color: var(--yak-color-black);
-		font-weight: 400;
-		text-decoration: none;
-		background: transparent;
-		font-size: 0.95rem;
-	}
-
-	.yak-main-nav .sub-menu a:hover,
-	.yak-main-nav .sub-menu a:focus {
-		background-color: var(--yak-color-muted);
-	}
-
-	/* === Show submenu on hover/focus === */
-	/* On hover/focus, reveal regular dropdowns (non-mega only) */
-	.yak-main-nav > li.menu-item-has-children:not(.yak-has-mega):hover > .sub-menu,
-	.yak-main-nav > li.menu-item-has-children:not(.yak-has-mega):focus-within > .sub-menu {
-		visibility: visible;
-		opacity: 1;
-		transform: translateY(0);
-	}
-
-
+	/* ----------------------------------------
+		5.5 Mega Menu
+	---------------------------------------- */
+	
 	/* ========== Mega Menu Enhancement (3-level nav with .yak-mega-column wrappers) ========== */
 
 	@media (min-width: 960px) {
@@ -1220,11 +1202,11 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 		}
 
 	}
+	
 
-
-
-
-
+	/* ----------------------------------------
+		5.6 Mobile Navigation
+	---------------------------------------- */
 	@media (max-width: 959px) {
 
 		.site-header .nav-primary {
@@ -1528,9 +1510,10 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 		
 
 	}
-	
-		
 
+	/* ----------------------------------------
+		5.7 Header Toggle / Highlight Links
+	---------------------------------------- */
 	/* ========== Toggle & Highlight ========== */
 
 	@media (min-width: 960px) {
@@ -1562,20 +1545,12 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 			color: var(--yak-color-white);
 			outline: none;
 		}
+	
 	}
 
-	.wp-block-separator.has-alpha-channel-opacity {
-		display: block;
-		width: 100%;
-		max-width: 10rem;
-		height: 3px;
-		margin: 2em auto;
-		border: none;
-		background: linear-gradient(to right, #ddd, #999, #ddd);
-		border-radius: 999px;
-		opacity: 1;
-	}
-
+	/* ----------------------------------------
+		5.8 Featured Image Title / Hello Bar / Separator
+	---------------------------------------- */
 	.clb-hello-bar-wrapper {
 		width: 100%;
 		display: flex;
@@ -1593,20 +1568,20 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 	.clb-hello-bar-wrapper a:hover {
 		text-decoration: underline;
 	}
-	
+
 	.yak-featured-image-top-wrapper {
 		position: relative;
 		overflow: hidden;
 		width: 100%;
 	}
-	
+
 	.yak-featured-image-bg {
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
 		display: block;
 	}
-	
+
 	.yak-featured-image-title {
 		position: absolute;
 		bottom: 3rem;
@@ -1617,29 +1592,45 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 		color: white;
 		text-shadow: 0 0px 20px rgba(0,0,0,0.8);
 	}
-	
+
 	.yak-featured-image-title h1 {
 		font-size: var(--yak-font-3xl);
 		line-height: var(--yak-lh-3xl);
 		margin: 0;
 	}
-	
-	
+
+	.wp-block-separator.has-alpha-channel-opacity {
+		display: block;
+		width: 100%;
+		max-width: 10rem;
+		height: 3px;
+		margin: 2em auto;
+		border: none;
+		background: linear-gradient(to right, #ddd, #999, #ddd);
+		border-radius: 999px;
+		opacity: 1;
+	}
+
 }
 
 
+/* ==========================================================================
+   6. UTILITIES — Utility classes
+   ========================================================================== */
+   @layer yak-utilities {
 
-@layer yak-utilities {
-
-  .visually-hidden {
-    position: absolute !important;
-    height: 1px;
-    width: 1px;
-    overflow: hidden;
-    clip: rect(1px, 1px, 1px, 1px);
-    white-space: nowrap;
-    border: 0;
-  }
+	/* ----------------------------------------
+		6.1 Visually Hidden / Screen Reader Text
+	---------------------------------------- */
+	.visually-hidden {
+		position: absolute !important;
+		height: 1px;
+		width: 1px;
+		overflow: hidden;
+		clip: rect(1px, 1px, 1px, 1px);
+		white-space: nowrap;
+		border: 0;
+	}
 
 	.screen-reader-text {
 		position: absolute;
@@ -1667,7 +1658,9 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 		z-index: 100000; /* High enough to show above other content */
 	}
 
-
+	/* ----------------------------------------
+		6.2 Font Size Utilities
+	---------------------------------------- */
 	.has-small-font-size {
 		font-size: var(--yak-font-sm);
 		line-height: var(--yak-lh-sm);
@@ -1688,6 +1681,9 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 		line-height: var(--yak-lh-4xl);
 	}
 
+	/* ----------------------------------------
+		6.3 Text Alignment
+	---------------------------------------- */
 	.has-text-align-center {
 		text-align: center;
 	}
@@ -1703,5 +1699,14 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 	.has-text-align-justify {
 		text-align: justify;
 	}
-
 }
+
+
+/* ==========================================================================
+   Stop pencils down
+   ========================================================================== */
+
+/* ==========================================================================
+   7. OVERRIDES — Optional last-layer custom overrides
+   ========================================================================== */
+/* See /css/yak-overrides.css to make overriding changes

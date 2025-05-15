@@ -29,9 +29,6 @@
  */
 
 
-
-
-@layer yak-overrides {
     /* put one-off overrides here */
   
     .ctd-tabs {
@@ -61,4 +58,3 @@
       }
       
   
-  }

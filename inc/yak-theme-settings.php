@@ -27,9 +27,9 @@ if ( function_exists( 'acf_add_local_field_group' ) ) :
 	] );
 
 	// Limit Yak theme settings page access to specific users
-	acf_add_local_field_group(array(
+	acf_add_local_field_group([
 		'key' => 'group_yak_settings_permissions',
-		'title' => 'Yak Theme Settings Access',
+		'title' => 'Yak Theme: Settings Access',
 		'fields' => [
 			[
 				'key' => 'field_yak_allowed_users',
@@ -38,12 +38,20 @@ if ( function_exists( 'acf_add_local_field_group' ) ) :
 				'type' => 'user',
 				'instructions' => 'Only these users can access the Yak Theme Settings page. Admin user #1 is always allowed.',
 				'multiple' => 1,
-				'role' => ['administrator', 'editor'],
+				'role' => [ 'administrator', 'site-manager', 'editor' ],
 				'return_format' => 'id',
 			],
 		],
-		'location' => [[['param' => 'options_page','operator' => '==','value' => 'theme-settings']]],
-	] );
+		'location' => [
+			[
+				[
+					'param'    => 'options_page',
+					'operator' => '==',
+					'value'    => 'theme-settings',
+				],
+			],
+		],
+	]);
 
 	// Branding settings: logo image, favicon, and display options
 	acf_add_local_field_group( [
@@ -78,9 +86,10 @@ function yak_get_recommended_plugins_message() {
 	$plugins = [
 		// Core plugin dependencies
 		[ 'slugs' => ['acf/acf.php', 'advanced-custom-fields-pro/acf.php'], 'label' => 'ACF or ACF Pro (required)', 'link' => 'https://www.advancedcustomfields.com/' ],
-		[ 'slugs' => ['yak-card-deck/yak-card-deck.php'], 'label' => 'Tomatillo Design ~ Yak Card Deck', 'link' => 'https://github.com/tomatillodesign/yak-card-deck' ],
+		[ 'slugs' => ['yak-card-deck/yak-card-deck.php'], 'label' => 'Tomatillo Design ~ Yak Card Deck (Info Cards)', 'link' => 'https://github.com/tomatillodesign/yak-card-deck' ],
 		[ 'slugs' => ['yak-events-calendar/yak-events-calendar.php'], 'label' => 'Tomatillo Design ~ Events Calendar (if applicable)', 'link' => 'https://github.com/tomatillodesign/yak-events-calendar' ],
 		[ 'slugs' => ['tomatillo-design-simple-collapse/tomatillo-design-simple-collapse.php'], 'label' => 'Tomatillo Design ~ Simple Collapse', 'link' => 'https://github.com/tomatillodesign/tomatillo-design-simple-collapse' ],
+		[ 'slugs' => ['tomatillo-design-site-manager/tomatillo-design-site-manager.php'], 'label' => 'Tomatillo Design ~ Site Manager', 'link' => 'https://github.com/tomatillodesign/site-manager' ],
 		[ 'slugs' => ['yakstretch-cover-block/yakstretch-cover-block.php'], 'label' => 'Tomatillo Design ~ Yakstretch', 'link' => 'https://github.com/tomatillodesign/yakstretch-cover-block' ],
 	];
 

@@ -1,8 +1,8 @@
 <?php
-
-/////////////////////////////////////////////////////////////////////////////////
-// *** Custom Login 
-/////////////////////////////////////////////////////////////////////////////////
+/**
+ * Yak Login Screen Customization
+ * Supports background image or radial gradient, custom logo, and optional message.
+ */
 
 add_action('login_enqueue_scripts', 'yak_custom_login_styles');
 function yak_custom_login_styles() {
@@ -13,37 +13,45 @@ function yak_custom_login_styles() {
 		filemtime(get_stylesheet_directory() . '/login/login-style.css')
 	);
 
-	$bg_url = get_field('login_background_image', 'option');
-	$logo_url = get_field('login_logo', 'option');
+	$type    = get_field('login_background_type', 'option');
+	$image   = get_field('login_background_image', 'option');
+	$center  = get_field('login_gradient_center', 'option') ?: '#ffffff';
+	$edge    = get_field('login_gradient_edge', 'option') ?: '#cccccc';
+	$logo    = get_field('login_logo', 'option');
 
-	if ($bg_url || $logo_url) {
-		echo '<style>';
-		if ($bg_url) {
-			echo 'body.login { 
-				background-image: url(' . esc_url($bg_url) . ') !important; 
-				background-size: cover !important; 
-				background-position: center center !important;
-				background-repeat: no-repeat !important;
-			}';
-		}
-		if ($logo_url) {
-			echo 'body.login h1 a {
-				background-image: url(' . esc_url($logo_url) . ') !important;
-				background-size: contain !important;
-				background-repeat: no-repeat !important;
-				width: 320px !important;
-				height: 100px !important;
-				display: block !important;
-				text-indent: -9999px !important;
-				overflow: hidden !important;
-				margin: 0 auto 30px !important;
-			}';
-		}
-		
-		echo '</style>';
+	echo '<style>';
+
+	// Background output based on selection
+	if ($type === 'image' && $image) {
+		echo 'body.login {
+			background-image: url(' . esc_url($image) . ') !important;
+			background-size: cover !important;
+			background-position: center center !important;
+			background-repeat: no-repeat !important;
+		}';
+	} elseif ($type === 'gradient') {
+		echo 'body.login {
+			background: radial-gradient(circle, ' . esc_html($center) . ' 0%, ' . esc_html($edge) . ' 100%) !important;
+		}';
 	}
-}
 
+	// Custom logo styles
+	if ($logo) {
+		echo 'body.login h1 a {
+			background-image: url(' . esc_url($logo) . ') !important;
+			background-size: contain !important;
+			background-repeat: no-repeat !important;
+			width: 320px !important;
+			height: 100px !important;
+			display: block !important;
+			text-indent: -9999px !important;
+			overflow: hidden !important;
+			margin: 0 auto 30px !important;
+		}';
+	}
+
+	echo '</style>';
+}
 
 add_action('login_message', 'yak_custom_login_message');
 function yak_custom_login_message($message) {
@@ -54,14 +62,29 @@ function yak_custom_login_message($message) {
 	return $message;
 }
 
-
 if (function_exists('acf_add_local_field_group')) {
 	acf_add_local_field_group([
 		'key' => 'group_login_screen',
 		'title' => 'Login Screen Customization',
 		'fields' => [
+
+			// Background type selector
 			[
-				'key' => 'field_login_bg',
+				'key' => 'field_login_bg_type',
+				'label' => 'Background Type',
+				'name' => 'login_background_type',
+				'type' => 'button_group',
+				'choices' => [
+					'image' => 'Image',
+					'gradient' => 'Radial Gradient',
+				],
+				'default_value' => 'image',
+				'layout' => 'horizontal',
+			],
+
+			// Background image (conditional)
+			[
+				'key' => 'field_login_bg_image',
 				'label' => 'Background Image',
 				'name' => 'login_background_image',
 				'type' => 'image',
@@ -69,7 +92,52 @@ if (function_exists('acf_add_local_field_group')) {
 				'return_format' => 'url',
 				'preview_size' => 'medium',
 				'library' => 'all',
+				'conditional_logic' => [
+					[
+						[
+							'field' => 'field_login_bg_type',
+							'operator' => '==',
+							'value' => 'image',
+						],
+					],
+				],
 			],
+
+			// Gradient center color (conditional)
+			[
+				'key' => 'field_login_gradient_center',
+				'label' => 'Gradient Center Color',
+				'name' => 'login_gradient_center',
+				'type' => 'color_picker',
+				'conditional_logic' => [
+					[
+						[
+							'field' => 'field_login_bg_type',
+							'operator' => '==',
+							'value' => 'gradient',
+						],
+					],
+				],
+			],
+
+			// Gradient edge color (conditional)
+			[
+				'key' => 'field_login_gradient_edge',
+				'label' => 'Gradient Outer Edge Color',
+				'name' => 'login_gradient_edge',
+				'type' => 'color_picker',
+				'conditional_logic' => [
+					[
+						[
+							'field' => 'field_login_bg_type',
+							'operator' => '==',
+							'value' => 'gradient',
+						],
+					],
+				],
+			],
+
+			// Optional logo
 			[
 				'key' => 'field_login_logo',
 				'label' => 'Logo Image',
@@ -80,6 +148,8 @@ if (function_exists('acf_add_local_field_group')) {
 				'preview_size' => 'medium',
 				'library' => 'all',
 			],
+
+			// Optional message
 			[
 				'key' => 'field_login_message',
 				'label' => 'Custom Message',
@@ -109,9 +179,3 @@ if (function_exists('acf_add_local_field_group')) {
 		'hide_on_screen' => '',
 	]);
 }
-
-
-/////////////////////////////////////////////////////////////////////////////////
-// END Custom Login 
-/////////////////////////////////////////////////////////////////////////////////
-
