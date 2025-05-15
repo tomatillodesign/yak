@@ -76,8 +76,8 @@ if (function_exists('acf_add_local_field_group')) {
 				'sub_fields' => [
 					[
 						'key' => 'field_yak_selected_slug',
-						'label' => 'Slug',
-						'name' => 'slug',
+						'label' => 'Name',
+						'name' => 'name',
 						'type' => 'text',
 						'required' => 1,
 					],
@@ -85,7 +85,7 @@ if (function_exists('acf_add_local_field_group')) {
 						'key' => 'field_yak_selected_hex',
 						'label' => 'Color',
 						'name' => 'hex',
-						'type' => 'text',
+						'type' => 'color_picker',
 						'required' => 1,
 					],
 				],
@@ -205,7 +205,6 @@ function yak_maybe_disable_editor_customizations() {
 	$disable = get_field('yak_disable_custom_colors', 'option');
 	if ($disable) {
 		add_theme_support('disable-custom-colors');
-		add_theme_support('disable-custom-gradients');
 	}
 }
 
@@ -221,7 +220,6 @@ function yak_output_theme_palette_preview() {
 
 	echo '<div class="yak-color-palette-preview">
 		<div class="wrap">';
-
 
 	// --- Base color ---
 	if ($base && is_string($base)) {
@@ -303,14 +301,13 @@ function yak_register_editor_color_palette() {
 function yak_get_editor_palette_colors() {
 	$colors = [];
 
-	// Primary source: manually selected editor colors
 	$rows = get_field('yak_selected_editor_colors', 'option');
 	if (!empty($rows) && is_array($rows)) {
 		foreach ($rows as $row) {
-			if (empty($row['slug']) || empty($row['hex'])) continue;
+			if (empty($row['name']) || empty($row['hex'])) continue;
 
-			$slug = sanitize_title($row['slug']);
-			$name = ($slug === 'yak-black') ? 'Yak Black' : ucwords(str_replace(['-', '_'], ' ', $slug));
+			$name = trim($row['name']);
+			$slug = sanitize_title($name);
 
 			$colors[] = [
 				'name'  => $name,
@@ -697,7 +694,7 @@ function yak_render_color_card($slug, $hex, $highlight_label = null) {
 	};
 
 	// Outer wrapper, JS hooks via yak-color-swatch class
-	$html  = '<div class="yak-color-swatch" data-slug="' . esc_attr($slug) . '" data-hex="' . esc_attr($hex) . '">';
+	$html  = '<button type="button" class="yak-color-swatch" data-slug="' . esc_attr($slug) . '" data-hex="' . esc_attr($hex) . '" aria-label="Copy ' . esc_attr($slug) . ' (' . esc_attr($hex) . ')">';
 	
 	// Fill box (color square)
 	$html .= '<div class="yak-color-swatch-fill" style="background:' . esc_attr($hex) . ';height:120px;border-radius:6px 6px 0 0;"></div>';
@@ -719,7 +716,7 @@ function yak_render_color_card($slug, $hex, $highlight_label = null) {
 	$html .= '<div class="yak-swatch-check" style="position:absolute;top:6px;right:6px;font-size:16px;color:#0073aa;display:none;">✔</div>';
 
 	// Close wrapper
-	$html .= '</div>';
+	$html .= '</button>';
 
 	return $html;
 }
