@@ -28,7 +28,7 @@
 
 	/* --- Quotes --- */
 	.wp-block-quote {
-		border-left: 4px solid #ccc;
+		border-left: 4px solid var(--yak-color-black);
 		padding-left: 1.25em;
 		margin: 2em 0;
 		font-style: italic;

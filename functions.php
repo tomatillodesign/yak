@@ -1173,7 +1173,7 @@ function yak_hide_permissions_panel_for_non_admin_1($group) {
 
 add_action( 'genesis_after_header', 'yak_output_featured_image_top' );
 function yak_output_featured_image_top() {
-	if ( ! is_singular() || ! get_field( 'yak_show_featured_image', 'option' ) ) {
+	if ( ! is_singular() || ! get_field( 'yak_show_featured_image', 'option' ) || get_field('yak_remove_featured_image') ) {
 		return;
 	}
 
@@ -1194,7 +1194,7 @@ function yak_output_featured_image_top() {
 }
 
 add_action( 'genesis_before', function() {
-	if ( ! is_singular() ) {
+	if ( ! is_singular() || get_field('yak_remove_featured_image') ) {
 		return;
 	}
 

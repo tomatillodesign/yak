@@ -4,10 +4,6 @@
 // *** Theme Colors 
 /////////////////////////////////////////////////////////////////////////////////
 
-
-
-
-
 if (function_exists('acf_add_local_field_group')) {
 	acf_add_local_field_group([
 		'key' => 'group_yak_theme_colors',
@@ -116,6 +112,88 @@ if (function_exists('acf_add_local_field_group')) {
 		'instruction_placement' => 'label',
 		'hide_on_screen' => '',
 	]);
+
+	acf_add_local_field_group([
+		'key' => 'group_yak_gradients',
+		'title' => 'Yak Theme Gradients',
+		'fields' => [
+			[
+				'key' => 'field_yak_disable_custom_gradients',
+				'label' => 'Disable Custom Gradients',
+				'name' => 'yak_disable_custom_gradients',
+				'type' => 'true_false',
+				'ui' => 1,
+				'instructions' => 'Prevent users from creating custom gradients. Only theme-defined gradients will be available.',
+				'default_value' => 1,
+			],			
+			[
+				'key' => 'field_yak_gradients',
+				'label' => 'Custom Editor Gradients',
+				'name' => 'yak_gradients',
+				'type' => 'repeater',
+				'instructions' => 'Define gradients to appear in the editor gradient picker.',
+				'collapsed' => 'field_yak_gradient_name',
+				'layout' => 'row',
+				'button_label' => 'Add Gradient',
+				'sub_fields' => [
+					[
+						'key' => 'field_yak_gradient_name',
+						'label' => 'Gradient Name',
+						'name' => 'name',
+						'type' => 'text',
+						'required' => 1,
+					],
+					[
+						'key' => 'field_yak_gradient_color1',
+						'label' => 'Color 1',
+						'name' => 'color_1',
+						'type' => 'color_picker',
+						'required' => 1,
+					],
+					[
+						'key' => 'field_yak_gradient_color2',
+						'label' => 'Color 2',
+						'name' => 'color_2',
+						'type' => 'color_picker',
+						'required' => 1,
+					],
+					[
+						'key' => 'field_yak_gradient_direction',
+						'label' => 'Direction',
+						'name' => 'direction',
+						'type' => 'select',
+						'choices' => [
+							'to right'        => 'Left to Right',
+							'to left'         => 'Right to Left',
+							'to bottom'       => 'Top to Bottom',
+							'to top'          => 'Bottom to Top',
+							'45deg'           => 'Diagonal (↘)',
+							'135deg'          => 'Diagonal (↙)',
+							'radial'          => 'Radial (Color 1 in center)'
+						],
+						'default_value' => 'to right',
+						'ui' => 1,
+					],
+				],
+			],
+		],
+		'location' => [
+			[
+				[
+					'param' => 'options_page',
+					'operator' => '==',
+					'value' => 'yak-options-colors',
+				],
+			],
+		],
+		'menu_order' => 2,
+		'position' => 'normal',
+		'style' => 'default',
+		'label_placement' => 'top',
+		'instruction_placement' => 'label',
+		'hide_on_screen' => '',
+	]);
+		
 }
 
 
@@ -670,7 +748,102 @@ add_action('acf/input/admin_enqueue_scripts', function() {
 });
 
 
+// custom gradient work
+/**
+ * Yak Color and Gradient Support
+ *
+ * Registers custom editor gradients and disables WP defaults.
+ */
+add_action( 'after_setup_theme', 'yak_register_acf_gradients_from_theme_options' );
+
+function yak_register_acf_gradients_from_theme_options() {
+	if ( ! function_exists( 'get_field' ) ) {
+		return;
+	}
+
+	if ( get_field( 'yak_disable_custom_gradients', 'option' ) ) {
+		add_theme_support( 'disable-custom-gradients' );
+	}
+	
+
+	$gradients = get_field( 'yak_gradients', 'option' );
+
+	if ( empty( $gradients ) || ! is_array( $gradients ) ) {
+		return;
+	}
+
+	$registered = [];
+
+	foreach ( $gradients as $gradient ) {
+		$name      = trim( $gradient['name'] ?? '' );
+		$color1    = $gradient['color_1'] ?? '';
+		$color2    = $gradient['color_2'] ?? '';
+		$direction = $gradient['direction'] ?? 'to right';
+
+		if ( ! $name || ! $color1 || ! $color2 ) {
+			continue;
+		}
+
+		$slug = sanitize_title( $name );
+
+		// Handle radial separately
+		if ( $direction === 'radial' ) {
+			$css_gradient = "radial-gradient(circle, {$color1} 0%, {$color2} 100%)";
+		} else {
+			$css_gradient = "linear-gradient({$direction}, {$color1} 0%, {$color2} 100%)";
+		}
+
+		$registered[] = [
+			'name'     => $name,
+			'slug'     => $slug,
+			'gradient' => $css_gradient,
+		];
+	}
+
+	if ( ! empty( $registered ) ) {
+		add_theme_support( 'editor-gradient-presets', $registered );
+	}
+}
 
 
+add_action( 'wp_head', 'yak_output_gradient_styles_frontend', 100 );
+add_action( 'admin_head', 'yak_output_gradient_styles_editor', 100 );
 
+function yak_output_gradient_styles_frontend() {
+	yak_output_gradient_styles(); // Shared logic
+}
 
+function yak_output_gradient_styles_editor() {
+	// Only output inside the block editor
+	$screen = get_current_screen();
+	if ( $screen && $screen->is_block_editor() ) {
+		yak_output_gradient_styles();
+	}
+}
+
+function yak_output_gradient_styles() {
+	if ( ! function_exists( 'get_field' ) ) return;
+
+	$gradients = get_field( 'yak_gradients', 'option' );
+	if ( empty( $gradients ) || ! is_array( $gradients ) ) return;
+
+	echo "<style id='yak-gradient-presets'>\n";
+
+	foreach ( $gradients as $g ) {
+		$name      = trim( $g['name'] ?? '' );
+		$slug      = sanitize_title( $name );
+		$color1    = $g['color_1'] ?? '';
+		$color2    = $g['color_2'] ?? '';
+		$direction = $g['direction'] ?? 'to right';
+
+		if ( ! $slug || ! $color1 || ! $color2 ) continue;
+
+		$gradient = ( $direction === 'radial' )
+			? "radial-gradient(circle, {$color1} 0%, {$color2} 100%)"
+			: "linear-gradient({$direction}, {$color1} 0%, {$color2} 100%)";
+
+		echo ".has-{$slug}-gradient-background { background: {$gradient}; }\n";
+	}
+
+	echo "</style>\n";
+}

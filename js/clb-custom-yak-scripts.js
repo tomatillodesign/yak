@@ -126,36 +126,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-	console.log('✅ Mega menu script loaded');
 
 	// Step 1: Get top-level .yak-has-mega <li> items
 	const megaParents = document.querySelectorAll('.yak-main-nav > li.yak-has-mega');
-	console.log('Found mega parents:', megaParents.length);
 
 	megaParents.forEach((parent, index) => {
-		console.log(`🔍 Mega Parent ${index + 1}:`, parent);
 
 		// Step 2: Get its direct child submenu
 		const submenu = parent.querySelector(':scope > ul.sub-menu');
 		if (!submenu) {
-			console.warn(`⚠️ No submenu found for parent ${index + 1}`);
 			return;
 		}
-		console.log(`✅ Submenu found for parent ${index + 1}`, submenu);
 
 		// Step 3: Get direct <li> items inside that submenu
 		const columnItems = submenu.querySelectorAll(':scope > li');
-		console.log(`📦 Found ${columnItems.length} column items`);
 
 		columnItems.forEach((item, liIndex) => {
 			item.classList.add('yak-mega-column');
-			console.log(`🎯 Added yak-mega-column to item ${liIndex + 1}:`, item);
 		});
 	});
 });
 
 
+// add yak-scrolled body class
 (function () {
+	const threshold = 200;
+	const buffer = 20;
+
 	let lastScroll = -1;
 	let lastClassState = null;
 	let rafId;
@@ -164,7 +161,9 @@ document.addEventListener('DOMContentLoaded', () => {
 		const scrollY = Math.round(window.scrollY || window.pageYOffset);
 		document.body.setAttribute('data-scroll', scrollY);
 
-		const shouldAddClass = scrollY > 200;
+		const isOverThreshold = scrollY > threshold + buffer;
+		const isUnderThreshold = scrollY < threshold - buffer;
+		const shouldAddClass = isOverThreshold || (!isUnderThreshold && lastClassState);
 
 		if (shouldAddClass !== lastClassState) {
 			document.body.classList.toggle('yak-scrolled', shouldAddClass);

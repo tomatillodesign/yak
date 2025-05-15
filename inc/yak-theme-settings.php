@@ -198,10 +198,15 @@ function yak_get_recommended_plugins_message() {
 			'label' => 'Tomatillo Design ~ Simple Collapse',
 			'link'  => 'https://github.com/tomatillodesign/tomatillo-design-simple-collapse', // Example link
 		],
+		[
+			'slugs' => ['yakstretch-cover-block/yakstretch-cover-block.php'],
+			'label' => 'Tomatillo Design ~ Yakstretch',
+			'link'  => 'https://github.com/tomatillodesign/yakstretch-cover-block', // Example link
+		],
 	];
 
 	ob_start();
-	echo '<p><strong>Yak recommends the following plugins, optimized for this theme:</strong></p><ul>';
+	echo '<p><strong>Yak recommends the following custom plugins, optimized for this theme:</strong></p><ul>';
 
 	foreach ( $plugins as $plugin ) {
 		$active = false;

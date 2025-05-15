@@ -735,12 +735,12 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 
 	}
 
-	.yak-search-modal .search-form {
+	.search-form {
 		display: flex;
 		gap: 1rem;
 	}
 
-	.yak-search-modal input[type="search"] {
+	input[type="search"] {
 		width: 100%;
 		font-size: 1rem;
 		padding: 0.5rem;
@@ -830,7 +830,18 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 		overflow: hidden;
 	}
 	
-	
+	h1.entry-title {
+		margin-bottom: 0;
+	}
+
+	.entry-header {
+		margin-top: 2rem;
+		margin-bottom: 4rem;
+	}
+
+	.error404 h1.entry-title {
+		margin-top: 2rem;
+	}
 
 }
 
@@ -1423,6 +1434,31 @@ Tags: block-styles, custom-colors, custom-logo, custom-menu, editor-style, featu
 			max-height: 500px; /* enough to show ~5-6 items */
 			opacity: 1;
 		}
+
+		/* Hide focus outlines by default */
+		#yak-mobile-nav a,
+		#yak-mobile-nav button {
+			/* Remove default focus styles */
+			outline: none;
+			box-shadow: none;
+		}
+
+		/* Show gray outline only for keyboard users (Tab) */
+		#yak-mobile-nav a:focus-visible,
+		#yak-mobile-nav button:focus-visible {
+			outline: 2px solid #999; /* Medium gray */
+			outline-offset: 2px;
+			border-radius: 4px;
+		}
+
+		/* Optional: Disable hover feedback (if you don’t want it on mobile) */
+		#yak-mobile-nav a:hover,
+		#yak-mobile-nav button:hover {
+			background: none;
+			color: inherit;
+			text-decoration: none;
+		}
+
 
 		.yak-mobile-header {
 			display: flex;

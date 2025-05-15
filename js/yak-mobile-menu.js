@@ -3,17 +3,12 @@
 ////////////////////////////////////////////////////////////
 
 (function () {
-	/**
-	 * Setup: Injects toggle + mobile menu markup
-	 * Returns DOM references for behavior logic
-	 */
-	function yakMenuSetup() {
-		console.log("Menu setup 233");
+	let lastFocusedElement = null;
 
+	function yakMenuSetup() {
 		const siteHeader = document.querySelector('.site-header .wrap');
 		const desktopMenu = document.querySelector('.yak-main-nav');
 		const existing = document.getElementById('yak-mobile-nav');
-
 		if (!siteHeader || !desktopMenu || existing) return;
 
 		// === Toggle Button ===
@@ -37,6 +32,8 @@
 		const mobileNav = document.createElement('div');
 		mobileNav.id = 'yak-mobile-nav';
 		mobileNav.className = 'yak-mobile-nav';
+		mobileNav.setAttribute('role', 'dialog');
+		mobileNav.setAttribute('aria-modal', 'true');
 
 		const overlay = document.createElement('div');
 		overlay.className = 'yak-mobile-overlay';
@@ -49,13 +46,11 @@
 		const header = document.createElement('div');
 		header.className = 'yak-mobile-header';
 
-		// Try to get favicon from <link rel="icon">
 		const faviconLink = document.querySelector('link[rel="icon"]');
-		let faviconUrl = faviconLink ? faviconLink.getAttribute('href') : null;
+		const faviconUrl = faviconLink ? faviconLink.getAttribute('href') : null;
 
 		const title = document.createElement('span');
 		title.className = 'yak-mobile-title';
-
 		if (faviconUrl) {
 			const faviconImg = document.createElement('img');
 			faviconImg.src = faviconUrl;
@@ -63,7 +58,6 @@
 			faviconImg.className = 'yak-mobile-favicon';
 			title.appendChild(faviconImg);
 		}
-
 		title.appendChild(document.createTextNode('Menu'));
 
 		const closeBtn = document.createElement('button');
@@ -74,26 +68,33 @@
 		header.appendChild(title);
 		header.appendChild(closeBtn);
 
-
 		// === Clone Desktop Menu ===
 		const clonedMenu = desktopMenu.cloneNode(true);
 		clonedMenu.classList.add('yak-mobile-menu');
 
-		// === Add submenu toggles ===
+		// === Add submenu toggles with unique IDs and labels ===
+		let submenuCount = 0;
 		clonedMenu.querySelectorAll('li.menu-item-has-children').forEach((li) => {
 			const submenu = li.querySelector('ul');
 			if (!submenu) return;
 
+			submenuCount++;
+			const submenuId = `yak-submenu-${submenuCount}`;
+			submenu.id = submenuId;
+
+			const link = li.querySelector('a');
+			const labelText = link?.textContent?.trim() || 'submenu';
+
 			const btn = document.createElement('button');
 			btn.className = 'yak-submenu-toggle';
 			btn.setAttribute('aria-expanded', 'false');
-			btn.setAttribute('aria-label', 'Expand submenu');
+			btn.setAttribute('aria-controls', submenuId);
+			btn.setAttribute('aria-label', `Expand submenu for ${labelText}`);
 			btn.innerHTML = '<span class="yak-submenu-caret" aria-hidden="true">+</span>';
 
 			li.insertBefore(btn, submenu);
 		});
 
-		// === Build DOM structure ===
 		panel.appendChild(header);
 		panel.appendChild(clonedMenu);
 		overlay.appendChild(panel);
@@ -103,18 +104,39 @@
 		return { toggle, mobileNav, panel, closeBtn };
 	}
 
-	/**
-	 * Behavior: Adds interactivity to mobile nav
-	 */
 	function yakMenuBehavior({ toggle, mobileNav, panel, closeBtn }) {
 		if (!toggle || !mobileNav || !panel) return;
 
+		const focusableSelectors = 'a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])';
+
+		function trapFocus(e) {
+			const focusableEls = panel.querySelectorAll(focusableSelectors);
+			const first = focusableEls[0];
+			const last = focusableEls[focusableEls.length - 1];
+
+			if (e.key === 'Tab') {
+				if (e.shiftKey && document.activeElement === first) {
+					e.preventDefault();
+					last.focus();
+				} else if (!e.shiftKey && document.activeElement === last) {
+					e.preventDefault();
+					first.focus();
+				}
+			}
+		}
+
 		function openMenu() {
+			lastFocusedElement = document.activeElement;
 			mobileNav.classList.remove('is-closing');
 			toggle.setAttribute('aria-expanded', 'true');
 			requestAnimationFrame(() => {
 				mobileNav.classList.add('is-open');
+				setTimeout(() => {
+					const firstFocusable = panel.querySelector(focusableSelectors);
+					if (firstFocusable) firstFocusable.focus();
+				}, 50);
 			});
+			document.addEventListener('keydown', trapFocus);
 		}
 
 		function closeMenu() {
@@ -125,6 +147,8 @@
 				mobileNav.classList.remove('is-closing');
 				resetSubmenus();
 			}, 500);
+			document.removeEventListener('keydown', trapFocus);
+			if (lastFocusedElement) lastFocusedElement.focus();
 		}
 
 		function resetSubmenus() {
@@ -166,7 +190,6 @@
 		});
 	}
 
-	// === INIT ===
 	document.addEventListener('DOMContentLoaded', () => {
 		const refs = yakMenuSetup();
 		if (refs) yakMenuBehavior(refs);
@@ -174,7 +197,7 @@
 })();
 
 ////////////////////////////////////////////////////////////
-// END Mobile Menu
+// END Mobile Menu init setup
 ////////////////////////////////////////////////////////////
 
 
