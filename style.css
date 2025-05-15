@@ -1410,6 +1410,11 @@
 
 		.yak-mobile-menu .sub-menu li {
 			margin: 0;
+			padding-left: 1rem;
+		}
+
+		.yak-mobile-menu .sub-menu li a {
+			font-weight: 400;
 		}
 
 		.yak-mobile-menu .sub-menu.is-open {
