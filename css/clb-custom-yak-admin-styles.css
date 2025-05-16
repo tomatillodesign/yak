@@ -210,6 +210,28 @@ body.wp-admin,
   color: var(--yak-white, #fff);
 }
 
+/* Editor: Override page title font */
+h1.wp-block-post-title,
+h1.wp-block-post-title:empty::before {
+	font-family: var(--yak-secondary-font, sans-serif) !important;
+}
+
+/* Style the actual title */
+h1.wp-block-post-title {
+	font-family: var(--yak-secondary-font, sans-serif) !important;
+	text-align: center !important;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+/* Style the placeholder ("Add title") */
+h1.wp-block-post-title:empty::before {
+	font-family: var(--yak-secondary-font, sans-serif) !important;
+	text-align: center !important;
+	width: 100%;
+	display: block;
+}
+
 
 /* =DASHBOARD WIDGETS
   -------------------------------------------------------------------------- */
