@@ -251,3 +251,13 @@ window.addEventListener('DOMContentLoaded', setTitleAreaWidthVariable);
 // Run on resize (debounced)
 window.addEventListener('resize', debounce(setTitleAreaWidthVariable, 100));
 
+
+
+// Move all modal wrappers to website footer for best compatibility & function
+document.addEventListener('DOMContentLoaded', function () {
+	const modalWrappers = document.querySelectorAll('.clb-move-modals');
+
+	modalWrappers.forEach(function(wrapper) {
+		document.body.appendChild(wrapper);
+	});
+});

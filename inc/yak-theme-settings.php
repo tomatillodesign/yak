@@ -36,9 +36,9 @@ if ( function_exists( 'acf_add_local_field_group' ) ) :
 				'label' => 'Additional Authorized Users',
 				'name' => 'yak_allowed_users',
 				'type' => 'user',
-				'instructions' => 'These additional users can access the Yak Theme Settings page. All Admin users are already allowed.',
+				'instructions' => 'These additional users can access the Yak Theme Settings page.',
 				'multiple' => 1,
-				'role' => [ 'site-manager', 'editor' ],
+				'role' => [ 'administrator', 'site-manager', 'editor' ],
 				'return_format' => 'id',
 			],
 		],
@@ -104,7 +104,7 @@ function yak_get_recommended_plugins_message() {
 				break;
 			}
 		}
-		$status = $active ? '✅' : '❌';
+		$status = $active ? '✅' : '📦';
 		$label = esc_html( $plugin['label'] );
 		if ( ! empty( $plugin['link'] ) ) {
 			$url = esc_url( $plugin['link'] );

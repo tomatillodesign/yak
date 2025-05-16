@@ -900,21 +900,16 @@
 	/* ----------------------------------------
 		5.2 Modal
 	---------------------------------------- */
+	/* Modal overlay container */
 	.yak-modal {
 		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100vw;
-		height: 100vh;
-		display: flex;
-		justify-content: center;
-		align-items: center;
+		inset: 0;
+		z-index: 1050;
+		display: none;
+		overflow: hidden;
 		background-color: rgba(0, 0, 0, 0.85);
-
-		z-index: 1000;
-
 		opacity: 0;
-		visibility: hidden;
+		pointer-events: none;
 		transform: translateY(30px);
 		transition:
 			opacity 0.3s ease,
@@ -922,74 +917,122 @@
 			visibility 0s linear 0.3s;
 	}
 
-	.yak-modal .yak-modal-header {
-		padding-top: 0.5rem;
-		padding-bottom: 0.5rem;
-		padding-right: 0;
+	.yak-modal.show {
+		display: block;
+		opacity: 1;
+		visibility: visible;
+		pointer-events: auto;
+		/* transform: translateY(0);
+		transition-delay: 0s; */
+	}
+
+	/* Prevent scrolling on the background */
+	body.yak-modal-open {
+		overflow: hidden;
+	}
+
+	/* body.yak-modal-open .site-container {
+		filter: blur(12px);
+	} */
+
+	body.yak-modal-open .site-container,
+	body.yak-modal-closing .site-container {
+		filter: blur(12px);
+		transition: filter 0.3s ease;
+	}
+
+	body.yak-modal-closing .site-container {
+		filter: blur(2px);
+	}
+
+	body:not(.yak-modal-open):not(.yak-modal-closing) .site-container {
+		filter: none;
+	}
+
+	body.yak-modal-closing .yak-modal {
+		pointer-events: none;
+	}
+
+	/* Dialog wrapper — centers modal but allows vertical scroll */
+	.yak-modal-dialog {
+		position: relative;
+		width: auto;
+		margin: 2rem auto;
+		pointer-events: none;
+		max-width: 50vw;
+		width: 90%;
+		max-height: 90vh;
 	}
 
 	button.yak-modal-close {
+		opacity: 0.667;
 		background: transparent;
 		color: red;
 		font-weight: 400;
 		outline: none;
+		transition: all ease-in-out 0.25s;
+		font-size: var(--yak-font-xl);
+		line-height: 0.5;
 	}
 
-	.site-container {
-		/* transition: filter 0.3s ease;
-		will-change: filter; */
-	}
-
-	body.yak-modal-open .site-container {
-		filter: blur(12px);
-	}
-
-	.yak-modal.show {
-		display: flex;
+	button.yak-modal-close:hover {
 		opacity: 1;
-		visibility: visible;
-		transform: translateY(0);
-		transition-delay: 0s;
 	}
 
-	.yak-modal-dialog {
-		background: var(--yak-color-white);
-		border-radius: var(--yak-radius);
-		max-width: 600px;
-		width: 90%;
-		box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.2);
-		overflow: hidden;
-	}
-
+	/* Scroll container — this is the key! */
 	.yak-modal-content {
+		position: relative;
 		display: flex;
 		flex-direction: column;
+		pointer-events: auto;
+		background-color: var(--yak-color-white, #fff);
+		background-clip: padding-box;
+		border-radius: var(--yak-radius, 6px);
+		box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+		outline: 0;
+		max-height: calc(100vh - 3.5rem);
+		overflow-y: auto;
+		max-height: 90vh;
 	}
 
 	.yak-modal-header,
-	.yak-modal-body {
-		padding: var(--yak-padding-block-mobile);
-	}
-
-	.yak-modal-header {
+	.yak-modal-footer {
+		padding: 1rem 2rem;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 		border-bottom: 1px solid #eee;
 	}
 
-	.yak-modal-title {
-		font-size: var(--yak-font-lg);
-		margin: 0;
+	.yak-modal-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		border-bottom: 1px solid #dee2e6;
+		padding-right: 0;
 	}
 
-	.yak-modal-close {
-		background: none;
-		border: none;
-		font-size: 1.5rem;
-		line-height: 1;
-		cursor: pointer;
+	.yak-modal-title {
+		margin-bottom: 0;
+		font-size: 1.25rem;
+		font-weight: 600;
 	}
+
+	.yak-modal-body {
+		position: relative;
+		flex: 1 1 auto;
+		padding: 2rem;
+	}
+
+	.yak-modal-footer {
+		border-top: 1px solid #dee2e6;
+		display: flex;
+		justify-content: flex-end;
+		gap: 0.5rem;
+		padding: 1rem;
+	}
+
+
 
 	/* ----------------------------------------
 		5.3 Collapse

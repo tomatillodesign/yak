@@ -22,13 +22,18 @@
  * 12. SearchWP Integration
  */
 
-
-
-
  /**
  * Yak custom child theme by Chris Liu-Beers, Tomatillo Design.
  * Based on Genesis Sample Theme.
  */
+
+// =============================================================================
+// YAK Configurable Constants
+// =============================================================================
+
+define( 'YAK_PRIMARY_USER_ID', 1 ); // ← Set this to your own admin user ID
+                                    // required to access custom theme panels
+
 
 // =============================================================================
 // 1. ACF Bailout & Safety
@@ -1142,50 +1147,45 @@ add_action( 'acf/init', function () {
 
 
 
+
 // =============================================================================
 // 11. Theme Access Control
 // =============================================================================
 
 /**
- * 🔒 Restrict theme settings access to specific users using ACF `yak_allowed_users` field.
- * Applies to any admin feature requiring `manage_options`.
+ * 🔒 Yak Theme Settings Access Control
+ *
+ * Only allow access to:
+ * - Primary admin user ID (YAK_PRIMARY_USER_ID)
+ * - Users listed in ACF field 'yak_allowed_users' (options page)
+ *
+ * Deny all others, including other administrators.
+ */
+
+/**
+ * Filter capabilities for Yak theme settings access.
  */
 add_filter( 'user_has_cap', 'yak_restrict_theme_settings_capability', 10, 4 );
 function yak_restrict_theme_settings_capability( $all_caps, $caps, $args, $user ) {
-
 	if ( ! in_array( 'manage_options', $caps, true ) ) {
 		return $all_caps;
 	}
 
-	// Always allow Super Admin (user ID #1)
-	if ( $user->ID === 1 ) {
-		$all_caps['manage_options'] = true;
-		return $all_caps;
-	}
-
-	// Always allow site administrators
-	if ( in_array( 'administrator', (array) $user->roles, true ) ) {
-		$all_caps['manage_options'] = true;
-		return $all_caps;
-	}
-
-	$allowed_users = get_field( 'yak_allowed_users', 'option' );
-
-	if ( is_array( $allowed_users ) && in_array( $user->ID, $allowed_users, true ) ) {
+	if ( yak_user_is_yak_authorized( $user ) ) {
 		$all_caps['manage_options'] = true;
 	}
 
 	return $all_caps;
 }
 
-
 /**
- * Block access to theme settings pages if user is not authorized.
+ * Block access to Yak settings pages for unauthorized users.
  */
 add_action( 'admin_init', 'yak_restrict_theme_settings_page_access' );
 function yak_restrict_theme_settings_page_access() {
-
-	if ( ! is_admin() || empty( $_GET['page'] ) ) return;
+	if ( ! is_admin() || empty( $_GET['page'] ) ) {
+		return;
+	}
 
 	$restricted_pages = [
 		'theme-settings',
@@ -1195,19 +1195,11 @@ function yak_restrict_theme_settings_page_access() {
 		'yak-options-login',
 	];
 
-	if ( ! in_array( $_GET['page'], $restricted_pages, true ) ) return;
+	if ( ! in_array( $_GET['page'], $restricted_pages, true ) ) {
+		return;
+	}
 
-	$current_user    = wp_get_current_user();
-	$current_user_id = $current_user->ID;
-	$allowed_users   = get_field( 'yak_allowed_users', 'option' );
-
-	$authorized = (
-		$current_user_id === 1 ||
-		in_array( 'administrator', (array) $current_user->roles, true ) ||
-		( is_array( $allowed_users ) && in_array( $current_user_id, $allowed_users, true ) )
-	);
-
-	if ( ! $authorized ) {
+	if ( ! yak_user_is_yak_authorized() ) {
 		wp_die(
 			__( 'You do not have permission to access this page.', 'yak' ),
 			__( 'Access Denied', 'yak' ),
@@ -1216,39 +1208,54 @@ function yak_restrict_theme_settings_page_access() {
 	}
 }
 
-
 /**
  * Hide the Theme Settings menu from unauthorized users.
  */
 add_action( 'admin_menu', 'yak_hide_theme_settings_menu_for_unauthorized', 99 );
 function yak_hide_theme_settings_menu_for_unauthorized() {
-	$current_user    = wp_get_current_user();
-	$current_user_id = $current_user->ID;
-
-	if ( $current_user_id === 1 || in_array( 'administrator', (array) $current_user->roles, true ) ) return;
-
-	$allowed_users = get_field( 'yak_allowed_users', 'option' );
-
-	if ( empty( $allowed_users ) || ! in_array( $current_user_id, $allowed_users, true ) ) {
-		remove_menu_page( 'theme-settings' );
-		remove_submenu_page( 'theme-settings', 'yak-options-colors' );
-		remove_submenu_page( 'theme-settings', 'yak-options-typography' );
-		remove_submenu_page( 'theme-settings', 'yak-options-layouts' );
-		remove_submenu_page( 'theme-settings', 'yak-options-login' );
+	if ( yak_user_is_yak_authorized() ) {
+		return;
 	}
+
+	remove_menu_page( 'theme-settings' );
+	remove_submenu_page( 'theme-settings', 'yak-options-colors' );
+	remove_submenu_page( 'theme-settings', 'yak-options-typography' );
+	remove_submenu_page( 'theme-settings', 'yak-options-layouts' );
+	remove_submenu_page( 'theme-settings', 'yak-options-login' );
 }
 
-
 /**
- * Hide the Yak Settings Permissions panel from everyone except user ID 1.
+ * Hide the Permissions field group unless user is YAK_PRIMARY_USER_ID.
  */
-add_filter( 'acf/get_field_group', 'yak_hide_permissions_panel_for_non_admin_1' );
-function yak_hide_permissions_panel_for_non_admin_1( $group ) {
-	if ( $group['key'] === 'group_yak_settings_permissions' && get_current_user_id() !== 1 ) {
+add_filter( 'acf/get_field_group', 'yak_hide_permissions_panel_for_non_primary_admin' );
+function yak_hide_permissions_panel_for_non_primary_admin( $group ) {
+	if ( $group['key'] === 'group_yak_settings_permissions' && get_current_user_id() !== YAK_PRIMARY_USER_ID ) {
 		$group['active'] = false;
 	}
 	return $group;
 }
+
+/**
+ * Helper: Check if user is authorized for Yak Theme settings.
+ *
+ * @param WP_User|int|null $user Optional. Defaults to current user.
+ * @return bool
+ */
+function yak_user_is_yak_authorized( $user = null ) {
+	$user = $user ? ( is_object( $user ) ? $user : get_user_by( 'id', $user ) ) : wp_get_current_user();
+
+	if ( ! $user instanceof WP_User ) {
+		return false;
+	}
+
+	if ( $user->ID === YAK_PRIMARY_USER_ID ) {
+		return true;
+	}
+
+	$allowed_users = get_field( 'yak_allowed_users', 'option' );
+	return is_array( $allowed_users ) && in_array( $user->ID, $allowed_users, true );
+}
+
 
 
 
