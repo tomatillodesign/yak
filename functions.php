@@ -88,10 +88,16 @@ require_once get_template_directory() . '/lib/init.php';
  */
 unregister_sidebar( 'header-right' );
 unregister_sidebar( 'sidebar-alt' );
+unregister_sidebar( 'sidebar' ); // 'sidebar' is the ID for Primary Sidebar in Genesis
 
 genesis_unregister_layout( 'content-sidebar-sidebar' );
 genesis_unregister_layout( 'sidebar-content-sidebar' );
 genesis_unregister_layout( 'sidebar-sidebar-content' );
+
+add_action( 'widgets_init', 'yak_unregister_sidebars', 11 );
+function yak_unregister_sidebars() {
+	remove_action( 'genesis_sidebar', 'genesis_do_sidebar' );
+}
 
 /**
  * Reposition primary and secondary navigation menus.
