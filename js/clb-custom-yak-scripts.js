@@ -283,3 +283,25 @@ window.addEventListener('load', () => {
 		}
 	});
 });
+
+
+
+
+// Create CSS variable for the page content width: `--yak-content-width`
+(function() {
+	function updateYakContentWidth() {
+		const el = document.querySelector('.site-inner .content');
+		if (!el) return;
+
+		const width = el.getBoundingClientRect().width;
+		document.documentElement.style.setProperty('--yak-content-width', `${Math.round(width)}px`);
+	}
+
+	window.addEventListener('load', () => {
+		updateYakContentWidth();
+
+		const debouncedUpdate = debounce(updateYakContentWidth, 150);
+		window.addEventListener('resize', debouncedUpdate);
+	});
+})();
+
