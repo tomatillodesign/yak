@@ -310,6 +310,13 @@ h1.wp-block-post-title:empty::before {
   background: var(--yak-admin-main);
 }
 
+body :where(.editor-styles-wrapper) {
+    font-family: var(--yak-primary-font, sans-serif) !important;
+    font-size: var(--yak-font-base) !important;
+    line-height: 1.5;
+    --wp--style--block-gap: 2em;
+}
+
 
 /* =MISC FIXES / OVERRIDES
   -------------------------------------------------------------------------- */
