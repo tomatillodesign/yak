@@ -377,8 +377,10 @@ function yak_output_editor_palette_css_vars() {
 
 	// Fallback core theme vars referencing ACF-based generated color vars
 	$base   = get_field('yak_base_color', 'option');
+	$accent   = get_field('yak_accent_color', 'option');
 	$core_colors = [
 		'yak-color-primary' => $base,       // base color
+		'yak-color-accent' => $accent,       // base color
 		'yak-color-black'   => 'var(--yak-base-12)',    // dark shade
 		'yak-color-muted'   => 'var(--yak-base-2)',     // lightest shade
 		'yak-color-white'   => '#ffffff',               // hard-coded white
