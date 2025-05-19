@@ -2,7 +2,7 @@
    Yak Theme - Main Stylesheet
    ==========================================================================
 
-   Theme Name: Yak
+   Theme Name: You Quit Two Quit
    Theme URI: http://www.tomatillodesign.com/yak
    Author: Tomatillo Design
    Description: Custom Genesis child theme with modern CSS architecture and full block editor support.
@@ -1111,6 +1111,8 @@
 	.yak-main-nav a:hover,
 	.yak-main-nav a:focus {
 		background-color: var(--yak-color-muted);
+		border-top-left-radius: var(--yak-radius);
+		border-top-right-radius: var(--yak-radius);
 		outline: none;
 	}
 
@@ -1623,6 +1625,27 @@
 		width: 100%;
 	}
 
+	.yak-featured-image-top-wrapper::before {
+		/* Create a dark gradient overlay */
+		content: '';
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 60%);
+		z-index: 1;
+	}
+
+	.yak-featured-img-max-width--content .yak-featured-image-top-wrapper {
+		width: var(--yak-content-max-width);
+		margin: 0 auto;
+		margin-bottom: -4rem;
+	}
+
+	.yak-featured-img-max-width--content .yak-featured-image-top-wrapper img {
+		border-bottom-left-radius: var(--yak-radius);
+		border-bottom-right-radius: var(--yak-radius);
+	}
+
 	.yak-featured-image-bg {
 		width: 100%;
 		height: 100%;
@@ -1639,6 +1662,7 @@
 		text-align: center;
 		color: white;
 		text-shadow: 0 0px 20px rgba(0,0,0,0.8);
+		z-index: 2; /* Ensure it's above the gradient */
 	}
 
 	.yak-featured-image-title h1 {
