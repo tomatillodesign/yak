@@ -42,12 +42,12 @@ h2.ctd-tab-heading {
 .ctd-tabs__toc [role="tab"][aria-selected="true"],
 .ctd-tabs__toc [role="tab"]:hover {
     border-left: 4px solid var(--yak-color-primary) !important;
+    background: var(--yak-color-muted);
 }
 
 .ctd-single-tab button:focus {
     outline: none;
     box-shadow: none;
-    background: yellow !important;
     font-weight: 700;
     text-decoration: underline;
     text-underline-offset: 4px;
@@ -56,7 +56,6 @@ h2.ctd-tab-heading {
 .ctd-single-tab button:focus:not(:focus-visible) {
     outline: none;
     box-shadow: none;
-	background: none !important;
 }
 
       
