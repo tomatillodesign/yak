@@ -251,13 +251,35 @@ window.addEventListener('DOMContentLoaded', setTitleAreaWidthVariable);
 // Run on resize (debounced)
 window.addEventListener('resize', debounce(setTitleAreaWidthVariable, 100));
 
-
-
 // Move all modal wrappers to website footer for best compatibility & function
 document.addEventListener('DOMContentLoaded', function () {
 	const modalWrappers = document.querySelectorAll('.clb-move-modals');
 
 	modalWrappers.forEach(function(wrapper) {
 		document.body.appendChild(wrapper);
+	});
+});
+
+// after page is fully loaded and rendered, add correct "target=" to all links inside entry content
+window.addEventListener('load', () => {
+	// Get current site origin (e.g., https://example.com)
+	const siteOrigin = window.location.origin;
+
+	document.querySelectorAll('.entry-content a[href]').forEach(link => {
+		const href = link.getAttribute('href');
+		if (!href) return;
+
+		const isPDF = href.toLowerCase().endsWith('.pdf');
+
+		// Create absolute URL for comparison
+		const url = new URL(href, siteOrigin);
+		const isSameOrigin = url.origin === siteOrigin;
+
+		if (isPDF || !isSameOrigin) {
+			link.setAttribute('target', '_blank');
+			link.setAttribute('rel', 'noopener noreferrer');
+		} else {
+			link.setAttribute('target', '_self');
+		}
 	});
 });
