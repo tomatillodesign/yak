@@ -1327,3 +1327,22 @@ function clb_searchwp_custom_excerpt() {
 	}
 	echo '</div>';
 }
+
+
+
+
+
+
+// Properly unregister Genesis sidebars and prevent rendering.
+add_action( 'after_setup_theme', function() {
+	// Remove sidebar output early in Genesis setup.
+	remove_action( 'genesis_sidebar', 'genesis_do_sidebar' );
+}, 15 );
+
+// Unregister the actual sidebar widget area.
+add_action( 'widgets_init', function() {
+	unregister_sidebar( 'sidebar' );
+}, 11 );
+
+// Force full-width layout (optional but recommended).
+add_filter( 'genesis_pre_get_option_site_layout', '__genesis_return_full_width_content' );
