@@ -56,6 +56,7 @@ h2.ctd-tab-heading {
 .ctd-single-tab button:focus:not(:focus-visible) {
     outline: none;
     box-shadow: none;
+	background: none !important;
 }
 
       
