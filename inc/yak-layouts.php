@@ -124,6 +124,34 @@ acf_add_local_field_group(array(
 			'instructions' => 'If enabled, by default the featured image will appear at the top of single posts and pages.',
 			'default_value' => 1,
 			'ui' => 1,
+			'wrapper' => [
+                    'width' => '50',
+                ],
+		),
+		array(
+			'key' => 'field_yak_featured_image_max_width',
+			'label' => 'Featured Image Max Width (Desktop)',
+			'name' => 'yak_featured_image_max_width',
+			'type' => 'radio',
+			'instructions' => 'Controls how wide the featured image appears on desktop.',
+			'choices' => array(
+				'full' => '100% Width',
+				'content' => 'Content Width',
+			),
+			'default_value' => 'full',
+			'layout' => 'vertical',
+			'conditional_logic' => array(
+				array(
+					array(
+						'field' => 'field_yak_show_featured_image',
+						'operator' => '==',
+						'value' => '1',
+					),
+				),
+			),
+			'wrapper' => [
+                    'width' => '50',
+                ],
 		),
 	),
 	'location' => array(
@@ -141,6 +169,7 @@ acf_add_local_field_group(array(
 	'instruction_placement' => 'label',
 	'active' => true,
 ));
+
 
 
 
@@ -182,6 +211,27 @@ function yak_add_sticky_header_body_class($classes) {
 	if ($enabled) {
 		$classes[] = 'yak-has-sticky-header';
 	}
+	return $classes;
+}
+
+
+
+add_filter('body_class', 'yak_add_featured_image_width_body_class');
+function yak_add_featured_image_width_body_class($classes) {
+	if (is_admin()) {
+		return $classes;
+	}
+
+	// Only add if featured image is enabled
+	if (!get_field('yak_show_featured_image', 'option')) {
+		return $classes;
+	}
+
+	$width = get_field('yak_featured_image_max_width', 'option');
+	if ($width) {
+		$classes[] = 'yak-featured-img-max-width--' . sanitize_html_class($width);
+	}
+
 	return $classes;
 }
 
@@ -258,6 +308,7 @@ add_filter('acf/prepare_field/key=field_yak_featured_image_height', function($fi
 
 
 add_action('admin_head', function () {
+	
 	if (!is_admin() || get_current_screen()?->base !== 'post') {
 		return;
 	}
@@ -265,4 +316,5 @@ add_action('admin_head', function () {
 	if (!get_field('yak_show_featured_image', 'option')) {
 		echo '<style>#acf-group_yak_post_featured_image_settings { display: none !important; }</style>';
 	}
+
 });
