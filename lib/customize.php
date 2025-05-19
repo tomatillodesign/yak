@@ -10,7 +10,7 @@
  * @link    https://www.studiopress.com/
  */
 
-add_action( 'customize_register', 'genesis_sample_customizer_register' );
+// add_action( 'customize_register', 'genesis_sample_customizer_register' );
 /**
  * Registers settings and controls with the Customizer.
  *
