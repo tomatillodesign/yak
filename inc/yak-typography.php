@@ -124,6 +124,16 @@ add_action('wp_head', function () {
     }
 }, 5); // output early for max performance
 
+// Admin
+add_action('admin_head', function () {
+    if (function_exists('get_field')) {
+        $embed_code = get_field('yak_font_embed_code', 'option');
+        if ($embed_code) {
+            echo $embed_code;
+        }
+    }
+}, 5);
+
 
 // -----------------------------------------------------------------------------
 // Output dynamic font CSS variables in both frontend and admin
