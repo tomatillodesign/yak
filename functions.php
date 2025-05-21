@@ -764,7 +764,7 @@ remove_action( 'genesis_footer', 'genesis_do_footer' );
 add_action( 'genesis_footer', 'yak_custom_site_footer' );
 function yak_custom_site_footer() {
 	$site_title = get_bloginfo( 'name' );
-	echo '&copy; ' . date( 'Y' ) . ' &middot; <a href="/">' . esc_html( $site_title ) . '</a> &middot; All rights reserved &middot; Website by <a href="http://www.tomatillodesign.com" title="Amazing, Affordable Websites for Nonprofits" target="_blank">Tomatillo Design</a>';
+	echo '&copy; ' . date( 'Y' ) . ' <a href="/">' . esc_html( $site_title ) . '</a> &middot; All rights reserved &middot; Website by <a href="http://www.tomatillodesign.com" title="Amazing, Affordable Websites for Nonprofits" target="_blank">Tomatillo Design</a>';
 }
 
 
