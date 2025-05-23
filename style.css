@@ -862,6 +862,8 @@
 		cursor: pointer;
 		transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 		text-align: center;
+		text-transform: uppercase;
+    	letter-spacing: 0.1em;
 	}
 
 	.button:hover,

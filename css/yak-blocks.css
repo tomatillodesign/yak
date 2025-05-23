@@ -91,6 +91,26 @@
 		color: var(--yak-accent, #000);
 	}
 
+	/* Buttons group layout (block wrapper) */
+	.wp-block-buttons {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5em;
+		margin-bottom: 1.5em;
+	}
+
+	/* Button block item */
+	.wp-block-button {
+		margin: 0;
+	}
+
+	/* Color style variants (if block uses .has-background) */
+	.wp-block-button__link.has-background {
+		color: inherit;
+	}
+
+
 	/* --- Groups --- */
 	.wp-block-group {
 		margin-bottom: 2em;

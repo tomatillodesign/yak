@@ -268,20 +268,53 @@ function yak_output_admin_theme_css_vars() {
 
 	list($palette) = yak_generate_color_palette($base, 'yak-admin');
 
-	$vars = [
-		'--yak-admin-main'       => $palette['yak-admin-main'] ?? '#23282d',
-		'--yak-admin-hover'      => $palette['yak-admin-hover'] ?? '#2c3338',
-		'--yak-admin-subtle-bg'  => $palette['yak-admin-subtle-bg'] ?? '#f1f2f3',
-		'--yak-admin-border'     => $palette['yak-admin-border'] ?? '#e1e2e4',
-		'--yak-admin-text'       => $palette['yak-admin-text'] ?? '#ffffff',
-	];
+	$main       = $palette['yak-admin-main'] ?? '#007cba';
+	$darker10   = yak_hsl_to_hex(yak_darken_hex($main, 0.1));
+	$darker20   = yak_hsl_to_hex(yak_darken_hex($main, 0.2));
+	$synced     = $palette['yak-admin-hover'] ?? $main;
+
+	// Convert to RGB strings
+	$main_rgb     = yak_hex_to_rgb_string($main);
+	$darker10_rgb = yak_hex_to_rgb_string($darker10);
+	$darker20_rgb = yak_hex_to_rgb_string($darker20);
+	$synced_rgb   = yak_hex_to_rgb_string($synced);
 
 	echo '<style>:root {';
-	foreach ($vars as $key => $val) {
-		echo "{$key}: {$val};";
-	}
+	echo "--yak-admin-main: {$main};";
+	echo "--yak-color-primary: {$base};";
+	echo "--yak-admin-hover: {$synced};";
+	echo "--yak-admin-subtle-bg: " . ($palette['yak-admin-subtle-bg'] ?? '#f1f2f3') . ';';
+	echo "--yak-admin-border: " . ($palette['yak-admin-border'] ?? '#e1e2e4') . ';';
+	echo "--yak-admin-text: " . ($palette['yak-admin-text'] ?? '#ffffff') . ';';
+
+	// Core WP admin color replacements
+	echo "--wp-admin-theme-color: {$main};";
+	echo "--wp-admin-theme-color--rgb: {$main_rgb};";
+	echo "--wp-admin-theme-color-darker-10: {$darker10};";
+	echo "--wp-admin-theme-color-darker-10--rgb: {$darker10_rgb};";
+	echo "--wp-admin-theme-color-darker-20: {$darker20};";
+	echo "--wp-admin-theme-color-darker-20--rgb: {$darker20_rgb};";
+	echo "--wp-block-synced-color: {$synced};";
+	echo "--wp-block-synced-color--rgb: {$synced_rgb};";
+
+	echo '#wpbody a, #wpbody a:link, #wpbody a:visited { color: #444 !important; }';
+	echo '#wpbody a:hover, #wpbody a:focus { color: #000 !important; }';
+
+	echo ".wrap .add-new-h2, 
+			.wrap .add-new-h2:active, 
+			.wrap .page-title-action, 
+			.wrap .page-title-action:active,
+			.wp-core-ui .button, 
+			.wp-core-ui .button-secondary { 
+				color: #444;
+				border: 1px solid #444;
+			}";
+
 	echo '}</style>';
+
+
 }
+
 
 
 add_action('after_setup_theme', 'yak_register_editor_color_palette');
@@ -845,4 +878,19 @@ function yak_output_gradient_styles() {
 	}
 
 	echo "</style>\n";
+}
+
+
+
+function yak_hex_to_rgb_string($hex) {
+	$rgb = yak_hex_to_rgb($hex);
+	return "{$rgb[0]}, {$rgb[1]}, {$rgb[2]}";
+}
+
+
+function yak_darken_hex($hex, $amount = 0.1) {
+	$rgb = yak_hex_to_rgb($hex);
+	$hsl = yak_rgb_to_hsl($rgb[0], $rgb[1], $rgb[2]);
+	$hsl[2] = max(0, $hsl[2] - $amount);
+	return $hsl;
 }
