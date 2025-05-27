@@ -133,3 +133,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	
 });
+
+
+
+
+
+// Move modals as needed outside the genesis container
+document.addEventListener('DOMContentLoaded', function () {
+	setTimeout(() => {
+		const modalMount = document.getElementById('yak-info-cards-modal-slot');
+		if (!modalMount) return;
+
+		document.querySelectorAll('.yak-modal').forEach(modal => {
+			modalMount.appendChild(modal);
+		});
+	}, 100);
+});
