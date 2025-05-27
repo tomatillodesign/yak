@@ -1170,19 +1170,26 @@ add_action( 'acf/init', function () {
 
 /**
  * Filter capabilities for Yak theme settings access.
+ * Ensures user #1 always gets full access, and allows additional users via ACF field.
  */
 add_filter( 'user_has_cap', 'yak_restrict_theme_settings_capability', 10, 4 );
 function yak_restrict_theme_settings_capability( $all_caps, $caps, $args, $user ) {
-	if ( ! in_array( 'manage_options', $caps, true ) ) {
+	// 🚨 ABSOLUTE FAILSAFE OVERRIDE FOR USER ID 1
+	if ( isset( $user->ID ) && (int) $user->ID === 1 ) {
+		foreach ( $caps as $cap ) {
+			$all_caps[ $cap ] = true;
+		}
 		return $all_caps;
 	}
 
-	if ( yak_user_is_yak_authorized( $user ) ) {
+	// Allow additional authorized users (for specific Yak pages)
+	if ( in_array( 'manage_options', $caps, true ) && yak_user_is_yak_authorized( $user ) ) {
 		$all_caps['manage_options'] = true;
 	}
 
 	return $all_caps;
 }
+
 
 /**
  * Block access to Yak settings pages for unauthorized users.
@@ -1205,7 +1212,7 @@ function yak_restrict_theme_settings_page_access() {
 		return;
 	}
 
-	if ( ! yak_user_is_yak_authorized() ) {
+	if ( get_current_user_id() !== 1 && ! yak_user_is_yak_authorized() ) {
 		wp_die(
 			__( 'You do not have permission to access this page.', 'yak' ),
 			__( 'Access Denied', 'yak' ),
@@ -1219,7 +1226,7 @@ function yak_restrict_theme_settings_page_access() {
  */
 add_action( 'admin_menu', 'yak_hide_theme_settings_menu_for_unauthorized', 99 );
 function yak_hide_theme_settings_menu_for_unauthorized() {
-	if ( yak_user_is_yak_authorized() ) {
+	if ( get_current_user_id() === 1 || yak_user_is_yak_authorized() ) {
 		return;
 	}
 
@@ -1254,13 +1261,25 @@ function yak_user_is_yak_authorized( $user = null ) {
 		return false;
 	}
 
-	if ( $user->ID === YAK_PRIMARY_USER_ID ) {
+	// ✅ Absolute override: User ID 1 always has access
+	if ( (int) $user->ID === 1 ) {
 		return true;
+	}
+
+	// ✅ If defined, allow access to primary user
+	if ( defined( 'YAK_PRIMARY_USER_ID' ) && $user->ID === (int) YAK_PRIMARY_USER_ID ) {
+		return true;
+	}
+
+	// ✅ If ACF isn't loaded, skip gracefully
+	if ( ! function_exists( 'get_field' ) ) {
+		return false;
 	}
 
 	$allowed_users = get_field( 'yak_allowed_users', 'option' );
 	return is_array( $allowed_users ) && in_array( $user->ID, $allowed_users, true );
 }
+
 
 
 

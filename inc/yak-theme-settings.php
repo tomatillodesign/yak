@@ -41,6 +41,16 @@ if ( function_exists( 'acf_add_local_field_group' ) ) :
 				'role' => [ 'administrator', 'site-manager', 'editor' ],
 				'return_format' => 'id',
 			],
+			[
+				'key' => 'field_yak_dev_mode',
+				'label' => 'Enable Developer Mode',
+				'name' => 'yak_dev_mode',
+				'type' => 'true_false',
+				'instructions' => 'When enabled, developer tools and debugging output will be available throughout the theme.',
+				'message' => 'Developer Mode',
+				'default_value' => 0,
+				'ui' => 1,
+			],
 		],
 		'location' => [
 			[
@@ -295,3 +305,68 @@ function yak_add_sticky_header_class( $classes ) {
 	$classes[] = $enabled ? 'yak-sticky-header-enabled' : 'yak-sticky-header-disabled';
 	return $classes;
 }
+
+
+// DEV Mode
+
+add_filter( 'body_class', 'yak_add_dev_mode_body_class_admin_only_9991' );
+function yak_add_dev_mode_body_class_admin_only_9991( $classes ) {
+	if (
+		function_exists( 'get_field' ) &&
+		get_field( 'yak_dev_mode', 'option' ) &&
+		current_user_can( 'manage_options' )
+	) {
+		$classes[] = 'yak-dev-mode-95ac0a';
+	}
+	return $classes;
+}
+
+
+
+function yak_is_dev_mode_enabled() {
+	if ( is_user_logged_in() && get_current_user_id() === 1 ) {
+		return true;
+	}
+
+	// Use raw option if ACF isn't ready yet
+	if ( ! function_exists( 'get_field' ) ) {
+		return get_option( 'options_yak_dev_mode' ) ? true : false;
+	}
+
+	return get_field( 'yak_dev_mode', 'option' ) ? true : false;
+}
+
+
+
+if ( yak_is_dev_mode_enabled() ) {
+
+	$genesis_hooks_to_expose = [
+		'genesis_before',
+		'genesis_before_header',
+		'genesis_header',
+		'genesis_header_right',
+		'genesis_after_header',
+		'genesis_before_content_sidebar_wrap',
+		'genesis_before_content',
+		'genesis_before_loop',
+		'genesis_loop',
+		'genesis_before_entry',
+		'genesis_entry_header',
+		'genesis_entry_content',
+		'genesis_entry_footer',
+		'genesis_after_entry',
+		'genesis_after_loop',
+		'genesis_after_content',
+		'genesis_sidebar',
+		'genesis_before_footer',
+		'genesis_footer',
+		'genesis_after_footer',
+	];
+
+	foreach ( $genesis_hooks_to_expose as $hook_name ) {
+		add_action( $hook_name, function() use ( $hook_name ) {
+			echo '<div class="yak-genesis-hook" data-hook="' . esc_attr( $hook_name ) . '"></div>';
+		}, 1 ); // early priority to avoid overlap
+	}
+}
+

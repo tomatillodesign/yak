@@ -93,18 +93,25 @@ document.addEventListener('DOMContentLoaded', () => {
  
 
 
- 
-
- (function () {
+(function () {
 
 	const REQUIRED_MARGIN = 20;    // Minimum visible padding
 	const MIN_VISIBLE_WIDTH = 320;
 	const DEFAULT_PULL = 150;
 
 	function evaluateYakPulls() {
-		const pulledItems = document.querySelectorAll('.yak-pull-left, .yak-pull-right');
+		const pulledItems = document.querySelectorAll('[data-yak-pull]');
 
 		pulledItems.forEach(el => {
+			const isLeft = el.classList.contains('yak-pull-left');
+			const isRight = el.classList.contains('yak-pull-right');
+
+			// If no pull class is present, remove the attribute and skip
+			if (!isLeft && !isRight) {
+				el.removeAttribute('data-yak-pull');
+				return;
+			}
+
 			const raw = el.getAttribute('data-yak-pull');
 			const pullAmount = parseInt(raw || DEFAULT_PULL, 10);
 
@@ -120,12 +127,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			let safe = false;
 
-			if (el.classList.contains('yak-pull-left')) {
+			if (isLeft) {
 				const leftAfterPull = rect.left - pullAmount;
 				safe = leftAfterPull >= REQUIRED_MARGIN && width >= MIN_VISIBLE_WIDTH;
 			}
 
-			if (el.classList.contains('yak-pull-right')) {
+			if (isRight) {
 				const rightAfterPull = rect.right + pullAmount;
 				safe = rightAfterPull <= window.innerWidth - REQUIRED_MARGIN && width >= MIN_VISIBLE_WIDTH;
 			}
@@ -135,12 +142,12 @@ document.addEventListener('DOMContentLoaded', () => {
 			if (safe) {
 				el.classList.add('yak-pull-active');
 
-				if (el.classList.contains('yak-pull-left')) {
+				if (isLeft) {
 					el.style.marginInlineStart = `-${pullAmount}px`;
 					el.style.marginInlineEnd = '2em';
 				}
 
-				if (el.classList.contains('yak-pull-right')) {
+				if (isRight) {
 					el.style.marginInlineEnd = `-${pullAmount}px`;
 					el.style.marginInlineStart = '2em';
 				}
@@ -151,7 +158,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	window.addEventListener('resize', evaluateYakPulls);
 	window.addEventListener('DOMContentLoaded', evaluateYakPulls);
 })();
-
 
 
 
@@ -305,3 +311,141 @@ window.addEventListener('load', () => {
 	});
 })();
 
+
+
+
+
+
+
+// DEV MODE WORK
+(function () {
+	if (!document.body.classList.contains('yak-dev-mode-95ac0a')) return;
+
+	document.querySelectorAll('.yak-genesis-hook').forEach(el => {
+		const hook = el.dataset.hook;
+		if (!hook) return;
+
+		const label = document.createElement('div');
+		label.textContent = hook;
+		label.style.position = 'absolute';
+		label.style.top = '0';
+		label.style.left = '0';
+		label.style.background = '#f90';
+		label.style.color = '#000';
+		label.style.fontSize = '10px';
+		label.style.padding = '2px 4px';
+		label.style.zIndex = '99999';
+		label.style.pointerEvents = 'none';
+		label.style.fontFamily = 'monospace';
+
+		el.style.position = 'relative';
+		el.style.minHeight = '1em';
+		el.style.outline = '2px dashed orange';
+
+		el.appendChild(label);
+	});
+})();
+
+
+
+(function () {
+	if (!document.body.classList.contains('yak-dev-mode-95ac0a')) return;
+
+	// Create tooltip
+	const tooltip = document.createElement('div');
+	tooltip.id = 'yak-font-tooltip';
+	tooltip.style.position = 'fixed';
+	tooltip.style.zIndex = '99999';
+	tooltip.style.pointerEvents = 'none';
+	tooltip.style.background = 'rgba(0,0,0,0.85)';
+	tooltip.style.color = '#fff';
+	tooltip.style.padding = '6px 8px';
+	tooltip.style.borderRadius = '4px';
+	tooltip.style.fontSize = '12px';
+	tooltip.style.fontFamily = 'monospace';
+	tooltip.style.lineHeight = '1.4';
+	tooltip.style.maxWidth = '400px';
+	tooltip.style.whiteSpace = 'pre-wrap';
+	tooltip.style.display = 'none';
+	document.body.appendChild(tooltip);
+
+	let currentTarget = null;
+
+	// Convert rgb to hex
+	function rgbToHex(rgb) {
+		const result = rgb.match(/\d+/g);
+		if (!result) return rgb;
+		return (
+			'#' +
+			result
+				.slice(0, 3)
+				.map(x => parseInt(x).toString(16).padStart(2, '0'))
+				.join('')
+		);
+	}
+
+	// Try to find which variable maps to the given value
+	function resolveCSSVar(el, property, value) {
+		let match = null;
+
+		// Traverse up and collect all CSS variables
+		while (el && el !== document.documentElement) {
+			const styles = getComputedStyle(el);
+			for (let i = 0; i < styles.length; i++) {
+				const name = styles[i];
+				if (!name.startsWith('--yak-')) continue;
+
+				const resolved = styles.getPropertyValue(name).trim();
+				if (resolved === value) {
+					match = `var(${name})`;
+					return match;
+				}
+			}
+			el = el.parentElement;
+		}
+
+		return null;
+	}
+
+	document.addEventListener('mouseover', function (e) {
+		const target = e.target;
+		if (target === tooltip || tooltip.contains(target)) return;
+		if (!target.innerText?.trim()) return;
+
+		currentTarget = target;
+		const styles = getComputedStyle(target);
+
+		const fontSize = styles.fontSize;
+		const fontColor = styles.color;
+
+		const fontSizeVar = resolveCSSVar(target, 'font-size', fontSize);
+		const colorVar = resolveCSSVar(target, 'color', fontColor);
+
+		const content = [
+			`font-size: ${fontSize}${fontSizeVar ? `  ← ${fontSizeVar}` : ''}`,
+			`font-family: ${styles.fontFamily}`,
+			`font-weight: ${styles.fontWeight}`,
+			`line-height: ${styles.lineHeight}`,
+			`letter-spacing: ${styles.letterSpacing}`,
+			`text-transform: ${styles.textTransform}`,
+			`color: ${fontColor}${colorVar ? `  ← ${colorVar}` : ''}`,
+			`        ${rgbToHex(fontColor)}`
+		].join('\n');
+
+		tooltip.textContent = content;
+		tooltip.style.display = 'block';
+	});
+
+	document.addEventListener('mousemove', function (e) {
+		if (!currentTarget) return;
+		tooltip.style.top = `${e.clientY + 12}px`;
+		tooltip.style.left = `${e.clientX + 12}px`;
+	});
+
+	document.addEventListener('mouseout', function (e) {
+		if (e.target === currentTarget) {
+			currentTarget = null;
+			tooltip.style.display = 'none';
+		}
+	});
+})();
