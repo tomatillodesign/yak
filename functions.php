@@ -1365,3 +1365,19 @@ add_action( 'widgets_init', function() {
 
 // Force full-width layout (optional but recommended).
 add_filter( 'genesis_pre_get_option_site_layout', '__genesis_return_full_width_content' );
+
+
+
+
+
+
+
+/**
+ * Yak Info Cards – Global Modal Relocation Target
+ *
+ * Outputs a bare container for modal relocation.
+ */
+add_action( 'wp_footer', 'yak_info_cards_modal_mount_point', 99 );
+function yak_info_cards_modal_mount_point() {
+	echo '<div id="yak-info-cards-modal-slot" class="yak-info-cards-modal-slot"></div>';
+}
