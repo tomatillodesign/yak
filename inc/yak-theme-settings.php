@@ -324,9 +324,9 @@ function yak_add_dev_mode_body_class_admin_only_9991( $classes ) {
 
 
 function yak_is_dev_mode_enabled() {
-	if ( is_user_logged_in() && get_current_user_id() === 1 ) {
-		return true;
-	}
+	// if ( is_user_logged_in() && get_current_user_id() === 1 ) {
+	// 	return true;
+	// }
 
 	// Use raw option if ACF isn't ready yet
 	if ( ! function_exists( 'get_field' ) ) {
@@ -337,8 +337,10 @@ function yak_is_dev_mode_enabled() {
 }
 
 
-
-if ( yak_is_dev_mode_enabled() ) {
+add_action('genesis_before', 'clb_yak_dev_mode_genesis_markup');
+function clb_yak_dev_mode_genesis_markup() {
+	
+	if ( yak_is_dev_mode_enabled() ) {
 
 	$genesis_hooks_to_expose = [
 		'genesis_before',
@@ -367,6 +369,7 @@ if ( yak_is_dev_mode_enabled() ) {
 		add_action( $hook_name, function() use ( $hook_name ) {
 			echo '<div class="yak-genesis-hook" data-hook="' . esc_attr( $hook_name ) . '"></div>';
 		}, 1 ); // early priority to avoid overlap
+	}
 	}
 }
 
