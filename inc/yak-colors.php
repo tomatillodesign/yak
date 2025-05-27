@@ -297,18 +297,18 @@ function yak_output_admin_theme_css_vars() {
 	echo "--wp-block-synced-color: {$synced};";
 	echo "--wp-block-synced-color--rgb: {$synced_rgb};";
 
-	echo '#wpbody a, #wpbody a:link, #wpbody a:visited { color: #444 !important; }';
-	echo '#wpbody a:hover, #wpbody a:focus { color: #000 !important; }';
+	// echo '#wpbody a, #wpbody a:link, #wpbody a:visited { color: #444 !important; }';
+	// echo '#wpbody a:hover, #wpbody a:focus { color: #000 !important; }';
 
-	echo ".wrap .add-new-h2, 
-			.wrap .add-new-h2:active, 
-			.wrap .page-title-action, 
-			.wrap .page-title-action:active,
-			.wp-core-ui .button, 
-			.wp-core-ui .button-secondary { 
-				color: #444;
-				border: 1px solid #444;
-			}";
+	// echo ".wrap .add-new-h2, 
+	// 		.wrap .add-new-h2:active, 
+	// 		.wrap .page-title-action, 
+	// 		.wrap .page-title-action:active,
+	// 		.wp-core-ui .button, 
+	// 		.wp-core-ui .button-secondary { 
+	// 			color: #444;
+	// 			border: 1px solid #444;
+	// 		}";
 
 	echo '}</style>';
 
