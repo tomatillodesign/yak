@@ -8,10 +8,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 	// ===== MODAL OPEN =====
-	document.querySelectorAll('[data-bs-toggle="modal"]').forEach(trigger => {
+	document.querySelectorAll('[data-bs-toggle="modal"], [data-yak-modal]').forEach(trigger => {
 		trigger.addEventListener('click', e => {
 			e.preventDefault();
-			const targetSelector = trigger.getAttribute('data-bs-target');
+
+			// Prefer Bootstrap's data-bs-target if present
+			let targetSelector = trigger.getAttribute('data-bs-target');
+
+			// Fallback to custom yak-style attribute
+			if (!targetSelector) {
+				const yakTarget = trigger.getAttribute('data-yak-modal');
+				if (yakTarget) {
+					targetSelector = `#${yakTarget}`;
+				}
+			}
+
+			if (!targetSelector) return;
+
 			const modal = document.querySelector(targetSelector);
 			if (!modal) return;
 
@@ -23,9 +36,9 @@ document.addEventListener('DOMContentLoaded', () => {
 				modal.classList.add('show');
 				document.body.classList.add('yak-modal-open');
 
-				// Optional: autofocus input inside modal
+				// Autofocus
 				setTimeout(() => {
-					let focusTarget = modal.querySelector('[autofocus], input[type="search"], input, button, [tabindex]:not([tabindex="-1"])');
+					let focusTarget = modal.querySelector('[autofocus], input, button, [tabindex]:not([tabindex="-1"])');
 					if (modal.id === 'yak-search-modal') {
 						focusTarget = modal.querySelector('input[type="search"]') || focusTarget;
 					}
@@ -34,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			});
 		});
 	});
+
 
 
 	// ===== MODAL CLOSE (via button) =====
