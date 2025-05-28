@@ -49,6 +49,53 @@ document.addEventListener('DOMContentLoaded', () => {
 	});
 
 
+	// ===== MODAL TRIGGER ACCESSIBILITY (Enter / Space) =====
+		document.querySelectorAll('[role="button"][tabindex="0"]').forEach(el => {
+			const isYakModal = el.hasAttribute('data-yak-modal');
+			const isBSModal = el.getAttribute('data-bs-toggle') === 'modal' && el.hasAttribute('data-bs-target');
+
+			if (!isYakModal && !isBSModal) return;
+
+			el.addEventListener('keydown', e => {
+				if (e.key === 'Enter' || e.key === ' ') {
+					e.preventDefault();
+
+					if (isBSModal) {
+						const modal = document.querySelector(el.dataset.bsTarget);
+						if (modal && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+							const instance = bootstrap.Modal.getOrCreateInstance(modal);
+							instance.show();
+							return;
+						}
+					}
+
+					if (isYakModal) {
+						const modal = document.getElementById(el.dataset.yakModal);
+						if (modal) {
+							modal.style.display = 'flex';
+
+							requestAnimationFrame(() => {
+								modal.removeAttribute('aria-hidden');
+								modal.removeAttribute('inert');
+								modal.classList.add('show');
+								document.body.classList.add('yak-modal-open');
+
+								setTimeout(() => {
+									const focusTarget = modal.querySelector('[autofocus], input, button, [tabindex]:not([tabindex="-1"])');
+									if (focusTarget) focusTarget.focus();
+								}, 16);
+							});
+						}
+						return;
+					}
+
+					// Fallback if needed
+					el.click();
+				}
+			});
+		});
+
+
 
 	// ===== MODAL CLOSE (via button) =====
 	document.querySelectorAll('[data-bs-dismiss="modal"]').forEach(closeBtn => {
