@@ -100,6 +100,16 @@ if (function_exists('acf_add_local_field_group')) {
                 'append' => 'px',
                 'wrapper' => ['width' => '33%'],
             ],
+            [
+                'key' => 'field_yak_allow_core_font_sizes',
+                'label' => 'Allow WP Core Font Sizes',
+                'name' => 'yak_allow_core_font_sizes',
+                'type' => 'true_false',
+                'instructions' => 'Enable WordPress’s built-in & custom font size options in the editor.',
+                'default_value' => 0,
+                'ui' => 1,
+            ],
+
         ],
         'location' => [
             [[
@@ -179,7 +189,36 @@ CSS;
 }
 
 
-// -----------------------------------------------------------------------------
-// Disable WordPress default custom font size UI in block editor
-// -----------------------------------------------------------------------------
-add_theme_support('disable-custom-font-sizes');
+
+
+add_action( 'after_setup_theme', 'yak_theme_font_size_support', 20 );
+function yak_theme_font_size_support() {
+    if ( function_exists( 'get_field' ) && get_field( 'yak_allow_core_font_sizes', 'option' ) ) {
+        add_theme_support( 'editor-font-sizes', [
+            [
+                'name' => __( 'Small', 'yak' ),
+                'slug' => 'small',
+                'size' => 14,
+            ],
+            [
+                'name' => __( 'Medium', 'yak' ),
+                'slug' => 'medium',
+                'size' => 18,
+            ],
+            [
+                'name' => __( 'Large', 'yak' ),
+                'slug' => 'large',
+                'size' => 22,
+            ],
+            [
+                'name' => __( 'X-Large', 'yak' ),
+                'slug' => 'x-large',
+                'size' => 28,
+            ],
+        ] );
+    } else {
+        // Disable all font size options
+        add_theme_support( 'editor-font-sizes', [] );
+        add_theme_support( 'disable-custom-font-sizes' );
+    }
+}
