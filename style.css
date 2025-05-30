@@ -1120,6 +1120,10 @@
 		outline: none;
 	}
 
+	.yak-main-nav .sub-menu a {
+		padding: 0.75rem;
+	}
+
 	.yak-main-nav > li.menu-item-has-children > a::after {
 		content: '';
 		display: inline-block;
