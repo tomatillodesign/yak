@@ -1040,14 +1040,7 @@ add_action( 'acf/init', function () {
 	}
 } );
 
-/**
- * Set the Google Maps API key for ACF map fields.
- * Note: This is a global ACF setting.
- */
-function my_acf_init() {
-	acf_update_setting( 'google_api_key', 'AIzaSyD-kMkqmuRLsPQe88VLRf6Xwoy_cCelJdQ' );
-}
-add_action( 'acf/init', 'my_acf_init' );
+
 
 /**
  * Register ACF fields for the homepage notice/alert bar.
