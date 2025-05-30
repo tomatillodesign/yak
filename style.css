@@ -1621,38 +1621,47 @@
 		text-decoration: underline;
 	}
 
-	.yak-featured-image-top-wrapper {
+        .yak-featured-image-top-wrapper {
 		position: relative;
-		overflow: hidden;
-		width: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		background: var(--yak-color-primary);
+		background: radial-gradient(var(--yak-color-primary), #6e174c);
+		height: var(--yak-featured-img-height, 400px);
+		padding: 0;
+		margin-bottom: -4rem;
+		overflow: visible;
+		z-index: 0;
 	}
 
-	.yak-featured-image-top-wrapper::before {
-		/* Create a dark gradient overlay */
+	.yak-featured-image-img-wrapper {
+		position: relative;
+		width: var(--yak-content-max-width);
+		height: 100%;
+		overflow: hidden;
+		z-index: 1;
+		/* border-radius: 0 0 var(--yak-radius) var(--yak-radius); */
+		box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+	}
+
+	.yak-featured-image-img-wrapper::before {
 		content: '';
 		position: absolute;
 		inset: 0;
 		pointer-events: none;
-		background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 60%);
+		background: linear-gradient(to top, rgba(0, 0, 0, 0.65) 0%, transparent 60%);
 		z-index: 1;
 	}
 
-	.yak-featured-img-max-width--content .yak-featured-image-top-wrapper {
-		width: var(--yak-content-max-width);
-		margin: 0 auto;
-		margin-bottom: -4rem;
-	}
-
-	.yak-featured-img-max-width--content .yak-featured-image-top-wrapper img {
-		border-bottom-left-radius: var(--yak-radius);
-		border-bottom-right-radius: var(--yak-radius);
-	}
-
 	.yak-featured-image-bg {
+		display: block;
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
-		display: block;
+		/* border-radius: 0 0 var(--yak-radius) var(--yak-radius); */
+		position: relative;
+		z-index: 0;
 	}
 
 	.yak-featured-image-title {
@@ -1663,8 +1672,8 @@
 		padding: 0 2rem;
 		text-align: center;
 		color: white;
-		text-shadow: 0 0px 20px rgba(0,0,0,0.8);
-		z-index: 2; /* Ensure it's above the gradient */
+		text-shadow: 0 0px 20px rgba(0, 0, 0, 0.8);
+		z-index: 2;
 	}
 
 	.yak-featured-image-title h1 {
@@ -1672,7 +1681,6 @@
 		line-height: var(--yak-lh-3xl);
 		margin: 0;
 	}
-
 	.wp-block-separator.has-alpha-channel-opacity {
 		display: block;
 		width: 100%;
