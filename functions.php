@@ -498,12 +498,15 @@ function yak_output_featured_image_top() {
 	$custom_height = get_field( 'yak_featured_image_height' );
 	$custom_height = is_numeric( $custom_height ) ? max( 100, min( $custom_height, 800 ) ) : 400;
 
-	echo '<div class="yak-featured-image-top-wrapper" style="height: ' . esc_attr( $custom_height ) . 'px;">';
-	echo '  <img class="yak-featured-image-bg" src="' . esc_url( $image_url ) . '" alt="' . esc_attr( get_the_title() ) . '" />';
-	echo '  <div class="yak-featured-image-title">';
-	echo '    <h1>' . esc_html( get_the_title() ) . '</h1>';
-	echo '  </div>';
+	echo '<div class="yak-featured-image-top-wrapper" style="--yak-featured-img-height: ' . esc_attr( $custom_height ) . 'px;">';
+		echo '  <div class="yak-featured-image-img-wrapper">';
+		echo '    <img class="yak-featured-image-bg" src="' . esc_url( $image_url ) . '" alt="' . esc_attr( get_the_title() ) . '" />';
+		echo '  </div>';
+		echo '  <div class="yak-featured-image-title">';
+		echo '    <h1>' . esc_html( get_the_title() ) . '</h1>';
+		echo '  </div>';
 	echo '</div>';
+
 }
 
 
