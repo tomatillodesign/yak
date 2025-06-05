@@ -1377,3 +1377,14 @@ add_action( 'wp_footer', 'yak_info_cards_modal_mount_point', 99 );
 function yak_info_cards_modal_mount_point() {
 	echo '<div id="yak-info-cards-modal-slot" class="yak-info-cards-modal-slot"></div>';
 }
+
+
+// Compatibility with Site Manager notice (after deactivation)
+add_action( 'admin_notices', function () {
+	if ( get_option( 'smr_downgraded_users' ) ) {
+		echo '<div class="notice notice-warning is-dismissible"><p>';
+		echo esc_html__( 'All Site Manager users have been reassigned to Editor after plugin deactivation.', 'your-text-domain' );
+		echo '</p></div>';
+		delete_option( 'smr_downgraded_users' );
+	}
+});
