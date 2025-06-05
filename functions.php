@@ -1172,10 +1172,12 @@ add_filter( 'user_has_cap', 'yak_restrict_theme_settings_capability', 10, 4 );
 function yak_restrict_theme_settings_capability( $all_caps, $caps, $args, $user ) {
 	// 🚨 ABSOLUTE FAILSAFE OVERRIDE FOR USER ID 1
 	if ( isset( $user->ID ) && (int) $user->ID === 1 ) {
+		$allowed = [ 'edit_theme_options', 'manage_options' ]; // add only what you need
 		foreach ( $caps as $cap ) {
-			$all_caps[ $cap ] = true;
+			if ( in_array( $cap, $allowed, true ) ) {
+				$all_caps[ $cap ] = true;
+			}
 		}
-		return $all_caps;
 	}
 
 	// Allow additional authorized users (for specific Yak pages)
