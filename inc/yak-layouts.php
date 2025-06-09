@@ -135,8 +135,9 @@ acf_add_local_field_group(array(
 			'type' => 'radio',
 			'instructions' => 'Controls how wide the featured image appears on desktop.',
 			'choices' => array(
-				'full' => '100% Width',
+				'full' => 'Full Width',
 				'content' => 'Content Width',
+				'title_left' => 'Full Width + Title Left',
 			),
 			'default_value' => 'full',
 			'layout' => 'vertical',
@@ -240,9 +241,18 @@ function yak_add_featured_image_width_body_class($classes) {
 
 acf_add_local_field_group(array(
 	'key' => 'group_yak_post_featured_image_settings',
-	'title' => 'Featured Image Display',
+	'title' => 'Additional Page Settings',
 	'fields' => array(
 
+		array(
+			'key' => 'field_yak_page_subtitle',
+			'label' => 'Page Subtitle',
+			'name' => 'yak_page_subtitle',
+			'type' => 'text',
+			'wrapper' => [
+				'width' => '100',
+			],
+		),
 		array(
 			'key' => 'field_yak_remove_featured_image',
 			'label' => 'Remove Top Featured Image?',
@@ -254,19 +264,52 @@ acf_add_local_field_group(array(
 				'width' => '100',
 			],
 		),
-
 		array(
 			'key' => 'field_yak_featured_image_height',
 			'label' => 'Featured Image Height',
 			'name' => 'yak_featured_image_height',
 			'type' => 'number',
-			'default_value' => 400,
+			'default_value' => 480,
 			'append' => 'px',
 			'min' => 100,
             'max' => 800,
             'step' => 1,
 			'wrapper' => [
 				'width' => '100',
+			],
+			'conditional_logic' => [
+				[
+					[
+						'field' => 'field_yak_remove_featured_image', // Adjust to match actual key
+						'operator' => '!=',
+						'value' => '1',
+					],
+				],
+			],
+		),
+		array(
+			'key' => 'field_yak_featured_image_align',
+			'label' => 'Featured Image Vertical Align',
+			'name' => 'yak_featured_image_align',
+			'type' => 'radio',
+			'choices' => [
+				'top'    => 'Top',
+				'middle' => 'Middle',
+				'bottom' => 'Bottom',
+			],
+			'default_value' => 'middle',
+			'layout' => 'vertical', // or 'horizontal' if you prefer side-by-side
+			'wrapper' => [
+				'width' => '100',
+			],
+			'conditional_logic' => [
+				[
+					[
+						'field' => 'field_yak_remove_featured_image', // must match the field *key*
+						'operator' => '!=',
+						'value' => '1',
+					],
+				],
 			],
 		),
 
@@ -300,6 +343,14 @@ add_filter('acf/prepare_field/key=field_yak_remove_featured_image', function($fi
 
 // Hide "Featured Image Height" field if global option is off
 add_filter('acf/prepare_field/key=field_yak_featured_image_height', function($field) {
+	if (!get_field('yak_show_featured_image', 'option')) {
+		return false;
+	}
+	return $field;
+});
+
+// Hide "Featured Image Vertical Alignment" field if global option is off
+add_filter('acf/prepare_field/key=field_yak_featured_image_align', function($field) {
 	if (!get_field('yak_show_featured_image', 'option')) {
 		return false;
 	}
