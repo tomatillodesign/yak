@@ -2,7 +2,7 @@
    Yak Theme - Main Stylesheet
    ==========================================================================
 
-   Theme Name: Yak by Chris Liu-Beers
+   Theme Name: NC Folk by Chris Liu-Beers
    Theme URI: http://www.tomatillodesign.com/yak
    Author: Tomatillo Design
    Description: Custom Genesis child theme with modern CSS architecture and full block editor support.
@@ -588,7 +588,7 @@
 	}
 
 	.yak-entry-excerpt {
-		display: none;
+		/* display: none; */
 	}
 
 	.yak-archive-card {
@@ -1105,8 +1105,6 @@
 		padding: 0.75rem 0.5rem;
 		text-decoration: none;
 		color: var(--yak-color-black);
-		border-top-left-radius: var(--yak-radius);
-                border-top-right-radius: var(--yak-radius);
 		font-weight: 500;
 		background: transparent;
 		transition: background-color 0.2s ease;
@@ -1627,7 +1625,7 @@
 		text-decoration: underline;
 	}
 
-        .yak-featured-image-top-wrapper {
+	.yak-featured-image-top-wrapper {
 		position: relative;
 		display: flex;
 		justify-content: center;
@@ -1680,6 +1678,9 @@
 		color: white;
 		text-shadow: 0 0px 20px rgba(0, 0, 0, 0.8);
 		z-index: 2;
+		max-width: var(--yak-content-max-width);
+		left: 50%;
+		transform: translateX(-50%);
 	}
 
 	.yak-featured-image-title h1 {
@@ -1687,6 +1688,7 @@
 		line-height: var(--yak-lh-3xl);
 		margin: 0;
 	}
+
 	.wp-block-separator.has-alpha-channel-opacity {
 		display: block;
 		width: 100%;
@@ -1697,6 +1699,20 @@
 		background: linear-gradient(to right, #ddd, #999, #ddd);
 		border-radius: 999px;
 		opacity: 1;
+	}
+
+	.yak-pull-right p:last-of-type,
+	.yak-pull-left p:last-of-type,
+	.entry-content .has-background p:last-of-type {
+		margin-bottom: 0;
+	}
+
+	.yak-group-has-background-first-item {
+		margin-top: 0 !important;
+	}
+
+	.yak-group-has-background-last-item {
+		margin-bottom: 0 !important;
 	}
 
 }
