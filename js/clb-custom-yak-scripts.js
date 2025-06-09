@@ -449,3 +449,29 @@ window.addEventListener('load', () => {
 		}
 	});
 })();
+
+
+
+
+
+// adds new custom class to first, last item in group has-background for CSS targeting
+document.addEventListener('DOMContentLoaded', () => {
+	const container = document.querySelector('.entry-content');
+	if (!container) return;
+
+	const groups = container.querySelectorAll('.wp-block-group.has-background');
+
+	groups.forEach(group => {
+		const inner = group.querySelector('.wp-block-group__inner-container');
+		if (!inner) return;
+
+		// Filter to only element nodes (skip text/comment/etc.)
+		const children = Array.from(inner.childNodes).filter(node => node.nodeType === 1);
+
+		if (children.length > 0) {
+			children[0].classList.add('yak-group-has-background-first-item');
+			children[children.length - 1].classList.add('yak-group-has-background-last-item');
+		}
+	});
+});
+
