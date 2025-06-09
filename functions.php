@@ -482,31 +482,81 @@ function yak_display_hello_bar() {
  * Output a featured image banner above the content area.
  * Only displays if ACF toggle is enabled and post has a thumbnail.
  */
-add_action( 'genesis_after_header', 'yak_output_featured_image_top' );
-function yak_output_featured_image_top() {
-	if (
-		! is_singular() ||
-		! get_field( 'yak_show_featured_image', 'option' ) ||
-		get_field( 'yak_remove_featured_image' )
-	) {
-		return;
+
+// add custom page class for vertical alignment
+add_filter( 'body_class', 'yak_add_featured_image_align_body_class' );
+function yak_add_featured_image_align_body_class( $classes ) {
+	if ( ! is_singular() ) {
+		return $classes;
 	}
 
-	$image_url = get_the_post_thumbnail_url( get_the_ID(), 'full' );
-	if ( ! $image_url ) return;
+	// Check if global option is enabled
+	if ( ! get_field( 'yak_show_featured_image', 'option' ) ) {
+		return $classes;
+	}
+
+	$post_id = get_the_ID();
+
+	// Skip if "Remove Top Featured Image" is enabled
+	if ( get_field( 'yak_remove_featured_image', $post_id ) ) {
+		return $classes;
+	}
+
+	// Get vertical alignment
+	$align = get_field( 'yak_featured_image_align', $post_id );
+
+	if ( in_array( $align, [ 'top', 'middle', 'bottom' ], true ) ) {
+		$classes[] = 'yak-featured-image-align-' . sanitize_html_class( $align );
+	}
+
+	return $classes;
+}
+
+add_action( 'genesis_after_header', 'yak_output_featured_image_banner' );
+function yak_output_featured_image_banner() {
+	if ( ! is_singular() ) return;
+
+	$post_id      = get_the_ID();
+	$image_url    = get_the_post_thumbnail_url( $post_id, 'full' );
+	$show_image   = get_field( 'yak_show_featured_image', 'option' );
+	$remove_image = get_field( 'yak_remove_featured_image' );
+	$subtitle     = trim( get_field( 'yak_page_subtitle', $post_id ) );
+
+	if ( ! $show_image || $remove_image || ! $image_url ) return;
 
 	$custom_height = get_field( 'yak_featured_image_height' );
 	$custom_height = is_numeric( $custom_height ) ? max( 100, min( $custom_height, 800 ) ) : 400;
 
 	echo '<div class="yak-featured-image-top-wrapper" style="--yak-featured-img-height: ' . esc_attr( $custom_height ) . 'px;">';
-		echo '  <div class="yak-featured-image-img-wrapper">';
-		echo '    <img class="yak-featured-image-bg" src="' . esc_url( $image_url ) . '" alt="' . esc_attr( get_the_title() ) . '" />';
-		echo '  </div>';
-		echo '  <div class="yak-featured-image-title">';
-		echo '    <h1>' . esc_html( get_the_title() ) . '</h1>';
-		echo '  </div>';
+		echo '<div class="yak-featured-image-img-wrapper">';
+			echo '<img class="yak-featured-image-bg" src="' . esc_url( $image_url ) . '" alt="' . esc_attr( get_the_title() ) . '" />';
+		echo '</div>';
+		echo '<div class="yak-featured-image-title">';
+			echo '<h1>' . esc_html( get_the_title() ) . '</h1>';
+			if ( $subtitle ) {
+				echo '<div class="yak-page-subtitle">' . esc_html( $subtitle ) . '</div>';
+			}
+		echo '</div>';
 	echo '</div>';
+}
 
+add_filter( 'genesis_post_title_output', 'yak_append_subtitle_below_title', 15, 2 );
+function yak_append_subtitle_below_title( $title, $inside ) {
+	if ( ! is_singular() ) return $title;
+
+	$show_image   = get_field( 'yak_show_featured_image', 'option' );
+	$remove_image = get_field( 'yak_remove_featured_image' );
+	$image_url    = get_the_post_thumbnail_url( get_the_ID(), 'full' );
+	$subtitle     = trim( get_field( 'yak_page_subtitle' ) );
+
+	$has_featured_image = $show_image && ! $remove_image && $image_url;
+
+	if ( $has_featured_image || ! $subtitle ) {
+		return $title; // Let featured image banner handle it or skip if no subtitle
+	}
+
+	$subtitle_html = '<div class="yak-page-subtitle">' . esc_html( $subtitle ) . '</div>';
+	return $title . $subtitle_html;
 }
 
 
