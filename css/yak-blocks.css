@@ -149,6 +149,29 @@
         min-width: 200px;
     }
 
+	/* Core WordPress block layout support */
+	body .is-layout-flex {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--wp--style--block-gap, 1.5rem); /* spacing between items */
+	}
+	
+	body .is-layout-flex.is-horizontal,
+	body .is-layout-flex:not(.is-vertical) {
+		flex-direction: row;
+	}
+	
+	body .is-layout-flex.is-vertical {
+		flex-direction: column;
+	}
+	
+	@media (max-width: 600px) {
+		body .is-layout-flex.is-horizontal, body .is-layout-flex:not(.is-vertical) {
+			flex-direction: column;
+		}
+	}
+
+
     /* Optional: narrow columns get stacked on small screens */
     @media (max-width: 768px) {
         .wp-block-columns {
