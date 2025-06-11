@@ -1672,15 +1672,18 @@
 		z-index: 0;
 	}
 
-	.yak-featured-img-max-width--full.yak-featured-image-align-top .yak-featured-image-bg {
+	.yak-featured-img-max-width--full.yak-featured-image-align-top .yak-featured-image-bg,
+	.yak-featured-img-max-width--title_left.yak-featured-image-align-top .yak-featured-image-bg {
 		object-position: center top;
 	}
 
-	.yak-featured-img-max-width--full.yak-featured-image-align-middle .yak-featured-image-bg {
+	.yak-featured-img-max-width--full.yak-featured-image-align-middle .yak-featured-image-bg,
+	.yak-featured-img-max-width--title-left.yak-featured-image-align-middle .yak-featured-image-bg {
 		object-position: center;
 	}
 
-	.yak-featured-img-max-width--full.yak-featured-image-align-bottom .yak-featured-image-bg {
+	.yak-featured-img-max-width--full.yak-featured-image-align-bottom .yak-featured-image-bg,
+	.yak-featured-img-max-width--title-left.yak-featured-image-align-bottom .yak-featured-image-bg {
 		object-position: center bottom;
 	}
 
