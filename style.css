@@ -1764,6 +1764,26 @@
 		margin-top: 1rem;
 	}
 
+   @media (max-width: 960px) {
+
+	body.yak-featured-img-max-width--title_left .yak-featured-image-title {
+		background: transparent;
+		padding: 2rem;
+		position: absolute;
+		left: 0;
+		width: 80%;
+	}
+
+	body.yak-featured-img-max-width--title_left .yak-featured-image-img-wrapper {
+		width: 100%;
+	}
+
+	body.yak-featured-img-max-width--title_left .yak-featured-image-top-wrapper {
+		position: relative;
+	}
+
+}
+
 	.wp-block-separator.has-alpha-channel-opacity {
 		display: block;
 		width: 100%;
