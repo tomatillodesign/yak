@@ -92,9 +92,12 @@ function yak_get_recommended_plugins_message() {
 	if ( ! function_exists( 'is_plugin_active' ) ) {
 		require_once ABSPATH . 'wp-admin/includes/plugin.php';
 	}
+	if ( ! function_exists( 'get_plugins' ) ) {
+		require_once ABSPATH . 'wp-admin/includes/plugin.php';
+	}
 
+	// List of recommended plugins with possible slugs
 	$plugins = [
-		// Core plugin dependencies
 		[ 'slugs' => ['acf/acf.php', 'advanced-custom-fields-pro/acf.php'], 'label' => 'ACF or ACF Pro (required)', 'link' => 'https://www.advancedcustomfields.com/' ],
 		[ 'slugs' => ['tomatillo-design-yak-info-cards/yak-card-deck.php'], 'label' => 'Tomatillo Design ~ Info Cards', 'link' => 'https://github.com/tomatillodesign/tomatillo-design-yak-info-cards' ],
 		[ 'slugs' => ['tomatillo-design-yak-events-calendar/yak-events-calendar.php'], 'label' => 'Tomatillo Design ~ Events Calendar (if applicable)', 'link' => 'https://github.com/tomatillodesign/tomatillo-design-yak-events-calendar' ],
@@ -104,21 +107,32 @@ function yak_get_recommended_plugins_message() {
 		[ 'slugs' => ['tomatillo-design-yakstretch-cover-block/yakstretch-cover-block.php'], 'label' => 'Tomatillo Design ~ Yakstretch Cover Block', 'link' => 'https://github.com/tomatillodesign/tomatillo-design-yakstretch-cover-block' ],
 	];
 
+	// Get list of all installed plugins
+	$all_plugins = get_plugins();
+
 	ob_start();
 	echo '<p><strong>Yak recommends the following custom plugins, optimized for this theme:</strong></p><ul>';
 
 	foreach ( $plugins as $plugin ) {
 		$active = false;
-		foreach ( $plugin['slugs'] as $slug ) {
-			if ( is_plugin_active( $slug ) ) {
-				$active = true;
-				break;
+
+		foreach ( $plugin['slugs'] as $expected_slug ) {
+			$expected_filename = basename( $expected_slug );
+
+			foreach ( $all_plugins as $installed_path => $plugin_data ) {
+				if ( str_ends_with( $installed_path, $expected_filename ) ) {
+					if ( is_plugin_active( $installed_path ) ) {
+						$active = true;
+						break 2; // Break both loops
+					}
+				}
 			}
 		}
+
 		$status = $active ? '✅' : '📦';
-		$label = esc_html( $plugin['label'] );
+		$label  = esc_html( $plugin['label'] );
 		if ( ! empty( $plugin['link'] ) ) {
-			$url = esc_url( $plugin['link'] );
+			$url   = esc_url( $plugin['link'] );
 			$label = "<a href=\"{$url}\" target=\"_blank\" rel=\"noopener noreferrer\">{$label}</a>";
 		}
 		echo "<li>{$status} {$label}</li>";
@@ -127,6 +141,7 @@ function yak_get_recommended_plugins_message() {
 	echo '</ul>';
 	return ob_get_clean();
 }
+
 
 
 

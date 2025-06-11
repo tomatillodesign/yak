@@ -1,52 +1,114 @@
-# Genesis Sample Theme
+=== Yak Theme ===
+Contributors: tomatillodesign  
+Tags: genesis, custom-theme, block-editor, accessibility-ready, developer-friendly  
+Requires at least: 6.0  
+Tested up to: 6.5  
+Requires PHP: 7.4  
+Version: 1.0.1  
+License: GNU General Public License v2 or later  
+License URI: https://www.gnu.org/licenses/gpl-2.0.html  
 
-GitHub project link: https://github.com/studiopress/genesis-sample/.
+A fast, modern, developer-focused child theme built on the Genesis Framework — perfect for custom client builds with ACF Pro, advanced block styling, and powerful layout tools.
+
+== Description ==
+
+**Yak** is a lightweight, highly customized Genesis child theme created for modern WordPress development workflows. Built with accessibility, performance, and flexibility in mind, it serves as a rock-solid foundation for custom projects, particularly when paired with **Advanced Custom Fields Pro** and the **Genesis Framework**.
+
+Yak includes carefully layered CSS architecture, robust block editor support, and a growing ecosystem of companion plugins (all GitHub-based). The theme is intended for developers and agencies who want full control over design systems, layout tooling, and editor behavior without bloated features or opinionated design defaults.
+
+---
+
+== Features ==
+
+- 🔧 **Genesis Framework** child theme (Genesis must be installed)
+- ⚙️ **ACF Pro Required** (for theme options, blocks, and layout control)
+- 🌈 Custom editor color palette + typography options
+- 💅 Modern CSS using cascade layers (`reset`, `yak-base`, `yak-layout`, `yak-components`, `yak-blocks`, `yak-utilities`, `yak-overrides`)
+- 🧱 Fully customized Gutenberg block support with refined editor styles
+- 🧭 Mobile-first layout system with container queries and layout helpers
+- 🧩 Custom components: modals, mega menus, collapsible panels, featured image overlays
+- ♿️ Accessibility-conscious design (skip links, screen reader text, etc.)
+- 🧰 Developer-first utilities: font scaling, alignment, visibility, spacing
+- 🛠 Optional companion plugins for cards, events, media protection, login UI, and more
+
+---
+
+== Installation ==
+
+1. Make sure the [Genesis Framework](https://my.studiopress.com/themes/genesis/) is installed and activated.
+2. Make sure [Advanced Custom Fields Pro](https://www.advancedcustomfields.com/pro/) is installed and active.
+3. Install and activate the Yak theme.
+4. (Optional) Install recommended Yak companion plugins (listed in Appearance → Theme Settings → Plugins tab).
+
+---
+
+== Theme Settings ==
+
+Yak uses ACF Pro to define a fully customizable **Theme Settings Panel**, accessible via `Appearance → Theme Settings`. Sections include:
+
+- **Brand Colors** — Choose a base color and auto-generate accessible variants
+- **Editor Color Palette** — Select which swatches should appear in the block editor
+- **Typography** — Set base font size, ratio, line height system, and typefaces
+- **Login Screen** — Customize background image or gradient, logo, and button style
+- **Layout & Display Options** — Control featured image overlays, search UI, etc.
+- **Plugin Recommendations** — Quick links and install status for Yak-compatible plugins
+
+---
+
+== CSS Architecture ==
+
+Yak's CSS uses cascade layers and a clear file structure for maintainability and extensibility. See the `style.css` file for a detailed Table of Contents.
+
+- RESET — Normalize browser defaults
+- BASE — Root variables, typography, spacing, accessibility
+- BLOCKS — Gutenberg block styles
+- LAYOUT — Page structure, containers, breakpoints, featured overlays
+- COMPONENTS — UI elements (buttons, modals, navigation, etc.)
+- UTILITIES — Reusable utility classes
+- OVERRIDES — Optional last-layer tweaks
 
 
-## Installation Instructions
+CSS variables are declared globally and drive the entire design system, including spacing, typography scales, and color tokens (`--yak-color-*`, `--yak-font-*`, etc).
 
-1. Upload the Genesis Sample theme folder via FTP to your wp-content/themes/ directory. (The Genesis parent theme needs to be in the wp-content/themes/ directory as well.)
-2. Go to your WordPress dashboard and select Appearance.
-3. Activate the Genesis Sample theme.
-4. Inside your WordPress dashboard, go to Genesis > Theme Settings and configure them to your liking.
+---
 
-## Theme Support
+== Recommended Plugins ==
 
-Please visit https://my.studiopress.com/help/ for theme support.
+Yak is optimized to work with a growing suite of optional companion plugins:
 
-## For Developers
+- **Tomatillo Design ~ Info Cards**  
+- **Tomatillo Design ~ Events Calendar**  
+- **Tomatillo Design ~ AVIF Everywhere**  
+- **Tomatillo Design ~ Site Manager Role**  
+- **Tomatillo Design ~ Yakstretch Cover Block**  
+- **Tomatillo Design ~ Simple Collapse**  
 
-The version of [Genesis Sample on GitHub](https://github.com/studiopress/genesis-sample/) includes tooling to check code against WordPress standards. To use it:
+These plugins are listed and checked in the Yak Theme Settings under the Plugins tab, and can be installed directly via GitHub.
 
-1. Install Composer globally on your development machine. [See Composer setup steps](https://getcomposer.org/doc/00-intro.md#downloading-the-composer-executable).
-2. In the command line, change directory to the Genesis Sample folder.
-3. Type the command `composer install` to install PHP development dependencies.
-4. Type `composer phpcs` to run coding standards checks.
+---
 
-You'll see output highlighting issues with PHP files that do not conform to Genesis Sample coding standards.
+== Development Notes ==
 
-Run `composer phpcbf` if you see “phpcbf can fix the x marked sniff violations automatically” in the output of `composer phpcs`.
+Yak is built for serious WordPress developers who want full control:
 
-### npm scripts
+- Modular PHP architecture for theme functions and editor logic
+- ACF-based blocks and options pages with custom styling wrappers
+- Accessible JavaScript enhancements via `yakstrap.js`
+- Sensible defaults with minimal bloat
+- GitHub-first plugin ecosystem
 
-Scripts are also provided to help with CSS linting, CSS autoprefixing, and creation of pot language files. To use them:
+---
 
-1. Install [Node.js](https://nodejs.org/), which also gives you the Node Package Manager (npm).
-2. In the command line, change directory to the Genesis Sample folder.
-3. Type the command `npm install` to install dependencies.
+== Support ==
 
-You can then type any of these commands:
+Yak is not a commercial product and does not include end-user support. Developers are encouraged to fork, extend, and customize as needed.
 
-- `npm run autoprefixer` to add and remove vendor prefixes in `style.css`.
-- `npm run makepot` to regenerate the `languages/genesis-sample.pot` file.
-- `npm run lint:css` to generate a report of style violations for `style.css`.
-- `npm run lint:js` to generate a report of style violations for JavaScript files.
-- `npm run fix:js` to fix any JavaScript style violations that can be corrected automatically.
-- `npm run zip` to create a genesis-sample.zip. Files in the `excludes` array in `scripts/makezip.js` are omitted.
+---
 
-### Packaging for distribution
+== License ==
 
-1. Follow the install instructions for npm scripts above.
-2. Switch to the git branch you plan to distribute.
-3. Bump version numbers manually and commit those changes.
-4. Type `npm run zip` to create `genesis-sample.zip`. Files in the `excludes` array in `scripts/makezip.js` are omitted from the zip. `filename.md` files will be renamed to `filename.txt`.
+This theme, like WordPress itself, is licensed under the GPL v2 or later.
+
+---
+
+
