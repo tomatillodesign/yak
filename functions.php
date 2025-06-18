@@ -786,7 +786,7 @@ function yak_custom_archive_entry_markup() {
 	if ( has_post_thumbnail() ) {
 		echo '<div class="yak-archive-image">';
 		echo '<a href="' . esc_url( get_permalink() ) . '">';
-		the_post_thumbnail( 'full', [ 'loading' => 'lazy' ] );
+			yak_render_post_thumbnail_picture();
 		echo '</a>';
 		echo '</div>';
 	}
