@@ -561,6 +561,10 @@
 		height: 100%;
 	}
 
+   	.yak-archive-image picture {
+		height: 100%;
+	}
+
 	.yak-archive-wrapper.yak-blog-format-cards {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
