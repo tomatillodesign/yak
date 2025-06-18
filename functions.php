@@ -1440,3 +1440,31 @@ add_action( 'admin_notices', function () {
 		delete_option( 'smr_downgraded_users' );
 	}
 });
+
+
+
+
+
+
+
+// Compatibility with AVIF Everywhere Plugin
+function yak_render_post_thumbnail_picture( $post_id = null, $size = 'full' ) {
+	$post_id = $post_id ?: get_the_ID();
+	$thumb_id = get_post_thumbnail_id( $post_id );
+	if ( ! $thumb_id ) return;
+
+	$avif = get_post_meta( $thumb_id, '_avif_url', true );
+	$webp = get_post_meta( $thumb_id, '_webp_url', true );
+	$jpeg = wp_get_attachment_image_url( $thumb_id, $size );
+	$alt = get_post_meta( $thumb_id, '_wp_attachment_image_alt', true );
+
+	echo '<picture>';
+	if ( $avif ) echo '<source srcset="' . esc_url( $avif ) . '" type="image/avif">';
+	if ( $webp ) echo '<source srcset="' . esc_url( $webp ) . '" type="image/webp">';
+	echo '<img src="' . esc_url( $jpeg ) . '" alt="' . esc_attr( $alt ) . '" loading="lazy" decoding="async">';
+	echo '</picture>';
+}
+
+
+
+
