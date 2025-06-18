@@ -520,21 +520,31 @@ function yak_output_featured_image_banner() {
 	$image_url    = get_the_post_thumbnail_url( $post_id, 'full' );
 	$show_image   = get_field( 'yak_show_featured_image', 'option' );
 	$remove_image = get_field( 'yak_remove_featured_image' );
-	$subtitle     = trim( get_field( 'yak_page_subtitle', $post_id ) );
+	$subtitle     = get_field( 'yak_page_subtitle', $post_id );
 
 	if ( ! $show_image || $remove_image || ! $image_url ) return;
 
 	$custom_height = get_field( 'yak_featured_image_height' );
 	$custom_height = is_numeric( $custom_height ) ? max( 100, min( $custom_height, 800 ) ) : 400;
 
+	$image_id = attachment_url_to_postid( $image_url );
+	$avif = $image_id ? get_post_meta( $image_id, '_avif_url', true ) : '';
+	$webp = $image_id ? get_post_meta( $image_id, '_webp_url', true ) : '';
+	$jpeg = $image_url;
+	
 	echo '<div class="yak-featured-image-top-wrapper" style="--yak-featured-img-height: ' . esc_attr( $custom_height ) . 'px;">';
 		echo '<div class="yak-featured-image-img-wrapper">';
-			echo '<img class="yak-featured-image-bg" src="' . esc_url( $image_url ) . '" alt="' . esc_attr( get_the_title() ) . '" />';
+			// echo '<img class="yak-featured-image-bg" src="' . esc_url( $image_url ) . '" alt="' . esc_attr( get_the_title() ) . '" />';
+			echo '<picture class="yak-featured-image-bg">';
+				if ( $avif ) echo '<source srcset="' . esc_url( $avif ) . '" type="image/avif">';
+				if ( $webp ) echo '<source srcset="' . esc_url( $webp ) . '" type="image/webp">';
+				echo '<img class="yak-featured-image-bg" src="' . esc_url( $jpeg ) . '" alt="' . esc_attr( get_the_title() ) . '" loading="lazy" decoding="async">';
+			echo '</picture>';
 		echo '</div>';
 		echo '<div class="yak-featured-image-title">';
 			echo '<h1>' . esc_html( get_the_title() ) . '</h1>';
 			if ( $subtitle ) {
-				echo '<div class="yak-page-subtitle">' . esc_html( $subtitle ) . '</div>';
+				echo '<div class="yak-page-subtitle">' . $subtitle . '</div>';
 			}
 		echo '</div>';
 	echo '</div>';
