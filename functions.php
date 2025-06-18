@@ -1368,7 +1368,7 @@ function clb_searchwp_custom_excerpt() {
 	// Title
 	$title     = get_the_title();
 	$permalink = get_permalink();
-	echo '<div class="yak-search-results-title-wrapper"><h2 class="search-result-title"><a href="' . esc_url( $permalink ) . '">' . esc_html( $title ) . '</a></h2>' . $post_type_badge . '</div>';
+	echo '<div class="yak-search-results-title-wrapper"><h2 class="search-result-title"><a href="' . esc_url( $permalink ) . '">' . $title . '</a></h2>' . $post_type_badge . '</div>';
 
 	// Permalink (clean format)
 	$parsed = wp_parse_url( $permalink );
