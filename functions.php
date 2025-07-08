@@ -1225,32 +1225,66 @@ add_action( 'acf/init', function () {
  */
 
 /**
+ * ➕ Add "User ID" column to the Users admin table (far right).
+ */
+add_filter( 'manage_users_columns', 'yak_add_user_id_column' );
+function yak_add_user_id_column( $columns ) {
+	$columns['user_id'] = __( 'User ID', 'yak' );
+	return $columns;
+}
+
+/**
+ * 🔢 Display the actual user ID in the "User ID" column.
+ */
+add_filter( 'manage_users_custom_column', 'yak_show_user_id_column_content', 10, 3 );
+function yak_show_user_id_column_content( $value, $column_name, $user_id ) {
+	if ( $column_name === 'user_id' ) {
+		return (int) $user_id;
+	}
+	return $value;
+}
+
+/**
+ * 🟰 Make "User ID" column sortable.
+ */
+add_filter( 'manage_users_sortable_columns', 'yak_make_user_id_column_sortable' );
+function yak_make_user_id_column_sortable( $columns ) {
+	$columns['user_id'] = 'ID';
+	return $columns;
+}
+
+
+
+/**
+ * Manual override list: User IDs always allowed Yak access.
+ */
+function yak_get_manual_allowed_user_ids() {
+	return [ 2, 3 ]; // ← ← Add your user ID and others here
+}
+
+/**
  * Filter capabilities for Yak theme settings access.
- * Ensures user #1 always gets full access, and allows additional users via ACF field.
  */
 add_filter( 'user_has_cap', 'yak_restrict_theme_settings_capability', 10, 4 );
 function yak_restrict_theme_settings_capability( $all_caps, $caps, $args, $user ) {
-	// 🚨 ABSOLUTE FAILSAFE OVERRIDE FOR USER ID 1
-	if ( isset( $user->ID ) && (int) $user->ID === 1 ) {
-		$allowed = [ 'edit_theme_options', 'manage_options' ]; // add only what you need
-		foreach ( $caps as $cap ) {
-			if ( in_array( $cap, $allowed, true ) ) {
-				$all_caps[ $cap ] = true;
-			}
-		}
+	if ( ! isset( $user->ID ) ) {
+		return $all_caps;
 	}
 
-	// Allow additional authorized users (for specific Yak pages)
-	if ( in_array( 'manage_options', $caps, true ) && yak_user_is_yak_authorized( $user ) ) {
+	// Skip if no Yak-sensitive caps requested
+	if ( ! in_array( 'manage_options', $caps, true ) ) {
+		return $all_caps;
+	}
+
+	if ( yak_user_is_yak_authorized( $user ) ) {
 		$all_caps['manage_options'] = true;
 	}
 
 	return $all_caps;
 }
 
-
 /**
- * Block access to Yak settings pages for unauthorized users.
+ * Restrict access to Yak settings pages.
  */
 add_action( 'admin_init', 'yak_restrict_theme_settings_page_access' );
 function yak_restrict_theme_settings_page_access() {
@@ -1266,11 +1300,7 @@ function yak_restrict_theme_settings_page_access() {
 		'yak-options-login',
 	];
 
-	if ( ! in_array( $_GET['page'], $restricted_pages, true ) ) {
-		return;
-	}
-
-	if ( get_current_user_id() !== 1 && ! yak_user_is_yak_authorized() ) {
+	if ( in_array( $_GET['page'], $restricted_pages, true ) && ! yak_user_is_yak_authorized() ) {
 		wp_die(
 			__( 'You do not have permission to access this page.', 'yak' ),
 			__( 'Access Denied', 'yak' ),
@@ -1280,11 +1310,11 @@ function yak_restrict_theme_settings_page_access() {
 }
 
 /**
- * Hide the Theme Settings menu from unauthorized users.
+ * Hide Yak settings menu from unauthorized users.
  */
 add_action( 'admin_menu', 'yak_hide_theme_settings_menu_for_unauthorized', 99 );
 function yak_hide_theme_settings_menu_for_unauthorized() {
-	if ( get_current_user_id() === 1 || yak_user_is_yak_authorized() ) {
+	if ( yak_user_is_yak_authorized() ) {
 		return;
 	}
 
@@ -1296,18 +1326,18 @@ function yak_hide_theme_settings_menu_for_unauthorized() {
 }
 
 /**
- * Hide the Permissions field group unless user is YAK_PRIMARY_USER_ID.
+ * Hide the ACF permissions group unless user is authorized.
  */
-add_filter( 'acf/get_field_group', 'yak_hide_permissions_panel_for_non_primary_admin' );
-function yak_hide_permissions_panel_for_non_primary_admin( $group ) {
-	if ( $group['key'] === 'group_yak_settings_permissions' && get_current_user_id() !== YAK_PRIMARY_USER_ID ) {
+add_filter( 'acf/get_field_group', 'yak_hide_permissions_panel_for_non_authorized_user' );
+function yak_hide_permissions_panel_for_non_authorized_user( $group ) {
+	if ( $group['key'] === 'group_yak_settings_permissions' && ! yak_user_is_yak_authorized() ) {
 		$group['active'] = false;
 	}
 	return $group;
 }
 
 /**
- * Helper: Check if user is authorized for Yak Theme settings.
+ * Determine whether the given user is authorized to access Yak settings.
  *
  * @param WP_User|int|null $user Optional. Defaults to current user.
  * @return bool
@@ -1319,23 +1349,27 @@ function yak_user_is_yak_authorized( $user = null ) {
 		return false;
 	}
 
-	// ✅ Absolute override: User ID 1 always has access
-	if ( (int) $user->ID === 1 ) {
+	$user_id = (int) $user->ID;
+
+	// ✅ Manual list override
+	if ( in_array( $user_id, yak_get_manual_allowed_user_ids(), true ) ) {
 		return true;
 	}
 
-	// ✅ If defined, allow access to primary user
-	if ( defined( 'YAK_PRIMARY_USER_ID' ) && $user->ID === (int) YAK_PRIMARY_USER_ID ) {
+	// ✅ Primary Yak admin constant
+	if ( defined( 'YAK_PRIMARY_USER_ID' ) && $user_id === (int) YAK_PRIMARY_USER_ID ) {
 		return true;
 	}
 
-	// ✅ If ACF isn't loaded, skip gracefully
-	if ( ! function_exists( 'get_field' ) ) {
-		return false;
+	// ✅ ACF-based user list (optional)
+	if ( function_exists( 'get_field' ) ) {
+		$allowed_users = get_field( 'yak_allowed_users', 'option' );
+		if ( is_array( $allowed_users ) && in_array( $user_id, $allowed_users, true ) ) {
+			return true;
+		}
 	}
 
-	$allowed_users = get_field( 'yak_allowed_users', 'option' );
-	return is_array( $allowed_users ) && in_array( $user->ID, $allowed_users, true );
+	return false;
 }
 
 
