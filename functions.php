@@ -176,6 +176,7 @@ require_once get_stylesheet_directory() . '/inc/yak-custom-login.php';
 require_once get_stylesheet_directory() . '/inc/yak-colors.php';
 require_once get_stylesheet_directory() . '/inc/yak-typography.php';
 require_once get_stylesheet_directory() . '/inc/yak-layouts.php';
+require_once get_stylesheet_directory() . '/inc/yak-performance.php';
 
 
 // =============================================================================
@@ -277,7 +278,7 @@ add_action( 'admin_enqueue_scripts', 'yak_enqueue_fontawesome' );
 function yak_enqueue_fontawesome() {
 	wp_enqueue_script(
 		'yak-fontawesome',
-		'https://kit.fontawesome.com/9d148ae9d1.js',
+		'https://kit.fontawesome.com/7b7df58627.js',
 		[],
 		null,
 		false // Load in <head>
@@ -1093,6 +1094,15 @@ add_action( 'acf/init', function () {
 			'menu_slug'   => 'yak-options-layouts',
 			'parent_slug' => 'theme-settings',
 		] );
+
+		acf_add_options_sub_page( [
+			'page_title'  => 'Performance & Optimization',
+			'menu_title'  => 'Performance',
+			'parent_slug' => 'theme-settings', // adjust to match your parent Yak settings menu
+			'menu_slug'   => 'yak-options-performance',
+			'capability'  => 'manage_options',
+			'redirect'    => false,
+    	] );
 
 		acf_add_options_sub_page( [
 			'page_title'  => 'Login Screen',

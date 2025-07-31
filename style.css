@@ -589,6 +589,7 @@
 		object-fit: cover;
 		border-bottom-left-radius: 0;
 		border-bottom-right-radius: 0;
+		border-top-right-radius: var(--yak-radius);
 	}
 
 	.yak-entry-excerpt {

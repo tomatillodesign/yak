@@ -98,10 +98,10 @@ function yak_get_recommended_plugins_message() {
 
 	// List of recommended plugins with possible slugs
 	$plugins = [
-		[ 'slugs' => ['acf/acf.php', 'advanced-custom-fields-pro/acf.php'], 'label' => 'ACF or ACF Pro (required)', 'link' => 'https://www.advancedcustomfields.com/' ],
+		[ 'slugs' => ['advanced-custom-fields-pro/acf.php'], 'label' => 'ACF Pro (required)', 'link' => 'https://www.advancedcustomfields.com/' ],
 		[ 'slugs' => ['tomatillo-design-yak-info-cards/yak-card-deck.php'], 'label' => 'Tomatillo Design ~ Info Cards', 'link' => 'https://github.com/tomatillodesign/tomatillo-design-yak-info-cards' ],
 		[ 'slugs' => ['tomatillo-design-yak-events-calendar/yak-events-calendar.php'], 'label' => 'Tomatillo Design ~ Events Calendar (if applicable)', 'link' => 'https://github.com/tomatillodesign/tomatillo-design-yak-events-calendar' ],
-		[ 'slugs' => ['tomatillo-design-avif-everywhere/tomatillo-design-avif-everywhere.php'], 'label' => 'Tomatillo Design ~ AVIF Everywhere', 'link' => 'https://github.com/tomatillodesign/tomatillo-design-avif-everywhere' ],
+		[ 'slugs' => ['tomatillo-design-avif-everywhere/tomatillo-avif-everywhere.php'], 'label' => 'Tomatillo Design ~ AVIF Everywhere', 'link' => 'https://github.com/tomatillodesign/tomatillo-design-avif-everywhere' ],
 		[ 'slugs' => ['tomatillo-design-simple-collapse/tomatillo-design-simple-collapse.php'], 'label' => 'Tomatillo Design ~ Simple Collapse', 'link' => 'https://github.com/tomatillodesign/tomatillo-design-simple-collapse' ],
 		[ 'slugs' => ['tomatillo-design-site-manager-role/tomatillo-design-site-manager.php'], 'label' => 'Tomatillo Design ~ Site Manager', 'link' => 'https://github.com/tomatillodesign/tomatillo-design-site-manager-role' ],
 		[ 'slugs' => ['tomatillo-design-yakstretch-cover-block/yakstretch-cover-block.php'], 'label' => 'Tomatillo Design ~ Yakstretch Cover Block', 'link' => 'https://github.com/tomatillodesign/tomatillo-design-yakstretch-cover-block' ],
