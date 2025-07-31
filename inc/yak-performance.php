@@ -7,7 +7,7 @@
 if ( function_exists( 'acf_add_local_field_group' ) ) {
     acf_add_local_field_group( [
         'key' => 'group_yak_performance_settings',
-        'title' => 'Performance & Optimization',
+        'title' => 'Performance & Optimization (BETA)',
         'fields' => [
 
             [
