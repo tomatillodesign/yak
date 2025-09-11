@@ -1520,5 +1520,14 @@ function yak_render_post_thumbnail_picture( $post_id = null, $size = 'full' ) {
 }
 
 
+// Compatibility with Tracklight
+// functions.php
+require_once __DIR__ . '/inc/class-tracklight-integration.php';
+\Yak\Tracklight\Integration::boot();
+
+// Optional: if your settings option key differs
+add_filter( 'yak/tracklight/option_names', function( $names ) {
+	return [ 'yak_theme_settings' ]; // ← replace with your real option(s)
+});
 
 
