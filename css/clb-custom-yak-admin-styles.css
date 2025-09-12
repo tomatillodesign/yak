@@ -447,3 +447,23 @@ body :where(.editor-styles-wrapper) {
 .components-panel__body .components-base-control:first-of-type {
 	margin-top: 20px;
 }
+
+
+
+
+/* Yak: tame Flex in the editor sidebar so taxonomy panels don't stretch forever */
+
+/* Safest selector: scope to block editor sidebar and target WP's Flex component */
+.block-editor-page .interface-interface-skeleton__sidebar [data-wp-component="Flex"] {
+	justify-content: flex-start !important; /* undo space-between */
+	height: auto !important;               /* undo height: 100% */
+	align-items: stretch;                  /* sane defaults */
+}
+
+/* Optional: keep long term lists usable */
+.block-editor-page .interface-interface-skeleton__sidebar
+	.editor-post-taxonomies__hierarchical-terms-list {
+	max-height: 40vh;
+	overflow: auto;
+}
+
