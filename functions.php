@@ -910,6 +910,79 @@ function gutenberg_sections_register_acf_color_palette() {
 // =============================================================================
 
 /**
+ * Add optional "ID" column to all post type admin tables (pages, posts, CPTs).
+ * Can be toggled on/off via Screen Options.
+ */
+add_action( 'admin_init', 'yak_add_id_column_to_all_post_types' );
+function yak_add_id_column_to_all_post_types() {
+	// Get all registered post types (excluding built-in ones we don't want)
+	$post_types = get_post_types( [ 'public' => true ], 'names' );
+	
+	foreach ( $post_types as $post_type ) {
+		// Skip attachment post type
+		if ( $post_type === 'attachment' ) continue;
+		
+		// Add ID column
+		add_filter( "manage_{$post_type}_posts_columns", 'yak_add_id_column_header' );
+		add_action( "manage_{$post_type}_posts_custom_column", 'yak_show_id_column_content', 10, 2 );
+		add_filter( "manage_edit-{$post_type}_sortable_columns", 'yak_make_id_column_sortable' );
+	}
+}
+
+/**
+ * Add "ID" column header to post type admin tables.
+ */
+function yak_add_id_column_header( $columns ) {
+	// Add ID column as the very last column
+	$columns['post_id'] = __( 'ID', 'yak' );
+	return $columns;
+}
+
+/**
+ * Display the post ID in the ID column.
+ */
+function yak_show_id_column_content( $column_name, $post_id ) {
+	if ( $column_name === 'post_id' ) {
+		echo '<pre style="margin: 0; font-family: monospace; font-size: 11px; background: #f1f1f1; padding: 2px 4px; border-radius: 2px; display: inline-block;">' . esc_html( $post_id ) . '</pre>';
+	}
+}
+
+/**
+ * Add CSS to fix admin table styling for ID column.
+ */
+add_action( 'admin_head', 'yak_admin_table_id_column_styles' );
+function yak_admin_table_id_column_styles() {
+	$screen = get_current_screen();
+	if ( ! $screen || strpos( $screen->id, 'edit-' ) !== 0 ) return;
+	?>
+	<style>
+		.wp-list-table .column-post_id {
+			width: 60px;
+			text-align: center;
+		}
+		.wp-list-table .column-post_id pre {
+			margin: 0;
+			font-family: monospace;
+			font-size: 11px;
+			background: #f1f1f1;
+			padding: 2px 4px;
+			border-radius: 2px;
+			display: inline-block;
+			min-width: 20px;
+		}
+	</style>
+	<?php
+}
+
+/**
+ * Make the ID column sortable.
+ */
+function yak_make_id_column_sortable( $columns ) {
+	$columns['post_id'] = 'ID';
+	return $columns;
+}
+
+/**
  * Add a branded custom dashboard widget with welcome message.
  * Includes a photo, contact info, and custom greeting.
  */
