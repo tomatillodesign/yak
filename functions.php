@@ -480,6 +480,68 @@ function yak_display_hello_bar() {
 // =============================================================================
 
 /**
+ * PHP-based wrapper system for alignwide/alignfull blocks
+ * Replaces JavaScript implementation with server-side rendering
+ */
+add_filter( 'render_block', 'yak_wrap_align_blocks', 10, 2 );
+function yak_wrap_align_blocks( $block_content, $block ) {
+	// Skip if content is empty
+	if ( empty( $block_content ) || trim( $block_content ) === '' ) {
+		return $block_content;
+	}
+
+	// Skip if already wrapped (safety check)
+	if ( strpos( $block_content, 'yak-align' ) !== false ) {
+		return $block_content;
+	}
+
+	// SUPER ROBUST: Check for alignment in multiple ways
+	$alignment = null;
+	
+	// Method 1: Check block attributes (standard WordPress)
+	if ( ! empty( $block['attrs']['align'] ) && in_array( $block['attrs']['align'], [ 'wide', 'full' ], true ) ) {
+		$alignment = $block['attrs']['align'];
+	}
+	
+	// Method 2: Check rendered HTML for alignwide/alignfull classes (covers plugin blocks)
+	if ( ! $alignment ) {
+		if ( strpos( $block_content, 'alignwide' ) !== false ) {
+			$alignment = 'wide';
+		} elseif ( strpos( $block_content, 'alignfull' ) !== false ) {
+			$alignment = 'full';
+		}
+	}
+	
+	// Method 3: Check for CSS classes in the HTML (extra safety for edge cases)
+	if ( ! $alignment ) {
+		if ( preg_match( '/class="[^"]*\balignwide\b[^"]*"/', $block_content ) ) {
+			$alignment = 'wide';
+		} elseif ( preg_match( '/class="[^"]*\balignfull\b[^"]*"/', $block_content ) ) {
+			$alignment = 'full';
+		}
+	}
+
+	// If no alignment found, return original content
+	if ( ! $alignment ) {
+		return $block_content;
+	}
+
+	// Define wrapper classes based on alignment
+	$wrapper_class = 'yak-align' . $alignment . '-wrapper';
+	$inner_class = 'yak-align' . $alignment . '-inner';
+
+	// Wrap the block content
+	$wrapped_content = sprintf(
+		'<div class="%s"><div class="%s">%s</div></div>',
+		esc_attr( $wrapper_class ),
+		esc_attr( $inner_class ),
+		$block_content
+	);
+
+	return $wrapped_content;
+}
+
+/**
  * Output a featured image banner above the content area.
  * Only displays if ACF toggle is enabled and post has a thumbnail.
  */

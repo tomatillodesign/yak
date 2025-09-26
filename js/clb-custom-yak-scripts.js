@@ -10,8 +10,8 @@
  * Included Features:
  *
  * 1. ✅ Alignwide/Alignfull Wrappers:
- *    - Dynamically wraps `.alignwide` and `.alignfull` blocks in structural divs
- *    - Enables consistent horizontal padding and alignment control across devices
+ *    - Now handled by PHP in functions.php (yak_wrap_align_blocks function)
+ *    - Server-side rendering provides better performance and reliability
  *
  * 2. ✅ Dim Opacity Fix for WP Cover Block:
  *    - Applies precise opacity to `.has-background-dim-*` cover blocks
@@ -40,40 +40,14 @@
  * - Works alongside Yak’s CSS layers and block-enhancements.js for full effect
  *
  * Location: /js/clb-custom-yak-scripts.js
+ * Version: 1.0.4
  */
 
 
 
 ////////////////////////////////////////////////////////////
-// *** Add custom wrappers around alignwide, alignfull
-////////////////////////////////////////////////////////////
-document.addEventListener('DOMContentLoaded', function () {
-  const blocks = [
-       { selector: '.alignwide', wrapperClass: 'yak-alignwide-wrapper', innerClass: 'yak-alignwide-inner' },
-       { selector: '.alignfull', wrapperClass: 'yak-alignfull-wrapper', innerClass: 'yak-alignfull-inner' }
-  ];
-
-  blocks.forEach(({ selector, wrapperClass, innerClass }) => {
-       document.querySelectorAll('.entry-content ' + selector).forEach(function (el) {
-            // Skip if already wrapped
-            if (el.closest(`.${wrapperClass}`)) return;
-
-            // Create wrapper and inner
-            const wrapper = document.createElement('div');
-            wrapper.className = wrapperClass;
-
-            const inner = document.createElement('div');
-            inner.className = innerClass;
-
-            // Move the align block into inner, then inner into wrapper
-            el.parentNode.insertBefore(wrapper, el);
-            inner.appendChild(el);
-            wrapper.appendChild(inner);
-       });
-  });
-});
-////////////////////////////////////////////////////////////
-// END Add custom wrappers around alignwide, alignfull
+// *** Alignwide/Alignfull wrappers now handled by PHP
+// See functions.php yak_wrap_align_blocks() function
 ////////////////////////////////////////////////////////////
 
 

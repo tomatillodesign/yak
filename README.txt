@@ -4,11 +4,33 @@ Tags: genesis, custom-theme, block-editor, accessibility-ready, developer-friend
 Requires at least: 6.0  
 Tested up to: 6.5  
 Requires PHP: 7.4  
-Version: 1.0.3  
+Version: 1.0.4  
 License: GNU General Public License v2 or later  
 License URI: https://www.gnu.org/licenses/gpl-2.0.html  
 
 A fast, modern, developer-focused child theme built on the Genesis Framework — perfect for custom client builds with ACF Pro, advanced block styling, and powerful layout tools.
+
+== Changelog ==
+
+= Version 1.0.4 =
+* MAJOR: Migrated alignwide/alignfull wrapping from JavaScript to PHP
+  - Replaced client-side DOM manipulation with server-side render_block filter
+  - Improved performance and reliability (no JavaScript dependency)
+  - Enhanced SEO compatibility (wrappers generated server-side)
+  - Added triple-detection system for robust block alignment detection
+* Fixed horizontal scroll issues on mobile and desktop
+  - Added responsive max-width constraints using min() CSS function
+  - Implemented smart margin system that prevents content overflow
+  - Enhanced mobile responsiveness for featured image titles
+* Improved mobile responsiveness
+  - Reduced padding and font sizes for featured image titles on mobile
+  - Added responsive breakpoints for better mobile experience
+* Enhanced code safety and maintainability
+  - Added comprehensive safety checks to prevent double-wrapping
+  - Improved error handling and edge case coverage
+  - Updated documentation and code comments
+
+---
 
 == Description ==
 

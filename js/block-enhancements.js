@@ -28,6 +28,7 @@
  * - Styling for these features should live in yak-blocks.css and yak-overrides.css
  *
  * Location: /js/block-enhancements.js
+ * Version: 1.0.4
  */
 
 
