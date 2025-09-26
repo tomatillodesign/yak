@@ -522,8 +522,11 @@ function yak_output_featured_image_banner() {
 	$show_image   = get_field( 'yak_show_featured_image', 'option' );
 	$remove_image = get_field( 'yak_remove_featured_image' );
 	$subtitle     = get_field( 'yak_page_subtitle', $post_id );
+	
+	// Check if Genesis "Hide Title" is enabled for this post/page
+	$genesis_hide_title = get_post_meta( $post_id, '_genesis_hide_title', true );
 
-	if ( ! $show_image || $remove_image || ! $image_url ) return;
+	if ( ! $show_image || $remove_image || ! $image_url || $genesis_hide_title ) return;
 
 	$custom_height = get_field( 'yak_featured_image_height' );
 	$custom_height = is_numeric( $custom_height ) ? max( 100, min( $custom_height, 800 ) ) : 400;
@@ -574,12 +577,21 @@ function yak_append_subtitle_below_title( $title, $inside ) {
 /**
  * Remove default post title output inside the loop if featured image is enabled.
  * This prevents the same title from appearing twice when featured image is active.
+ * Also respects Genesis "Hide Title" setting.
  */
 add_action( 'genesis_before', function() {
 	if (
 		! is_singular() ||
 		get_field( 'yak_remove_featured_image' )
 	) {
+		return;
+	}
+
+	// Check if Genesis "Hide Title" is enabled for this post/page
+	$genesis_hide_title = get_post_meta( get_the_ID(), '_genesis_hide_title', true );
+	
+	// If Genesis hide title is enabled, don't remove the title action (let Genesis handle it)
+	if ( $genesis_hide_title ) {
 		return;
 	}
 
