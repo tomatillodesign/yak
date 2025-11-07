@@ -177,6 +177,7 @@ require_once get_stylesheet_directory() . '/inc/yak-colors.php';
 require_once get_stylesheet_directory() . '/inc/yak-typography.php';
 require_once get_stylesheet_directory() . '/inc/yak-layouts.php';
 require_once get_stylesheet_directory() . '/inc/yak-performance.php';
+require_once get_stylesheet_directory() . '/inc/yak-import-export.php';
 
 
 // =============================================================================
@@ -1242,14 +1243,14 @@ add_action( 'acf/init', function () {
 			'parent_slug' => 'theme-settings',
 		] );
 
-		acf_add_options_sub_page( [
-			'page_title'  => 'Performance & Optimization',
-			'menu_title'  => 'Performance',
-			'parent_slug' => 'theme-settings', // adjust to match your parent Yak settings menu
-			'menu_slug'   => 'yak-options-performance',
-			'capability'  => 'manage_options',
-			'redirect'    => false,
-    	] );
+	acf_add_options_sub_page( [
+		'page_title'  => 'Performance & Tools',
+		'menu_title'  => 'Performance & Tools',
+		'parent_slug' => 'theme-settings',
+		'menu_slug'   => 'yak-options-performance',
+		'capability'  => 'manage_options',
+		'redirect'    => false,
+   	] );
 
 		acf_add_options_sub_page( [
 			'page_title'  => 'Login Screen',
