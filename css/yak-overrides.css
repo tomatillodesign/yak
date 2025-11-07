@@ -58,5 +58,16 @@ h2.ctd-tab-heading {
     box-shadow: none;
 }
 
+
+
+@media (min-width: 960px) {
+
+    .page-template-wide-page-content .content-sidebar-wrap {
+        width: 100%;
+        max-width: 1200px;
+        box-sizing: border-box;
+        padding-inline: 0;
+    }
+}
       
   

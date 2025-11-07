@@ -240,26 +240,37 @@ document.addEventListener('DOMContentLoaded', function () {
 	});
 });
 
-// after page is fully loaded and rendered, add correct "target=" to all links inside entry content
-window.addEventListener('load', () => {
-	// Get current site origin (e.g., https://example.com)
-	const siteOrigin = window.location.origin;
+// after page is fully loaded and rendered, add correct "target=" to all links
+document.addEventListener('DOMContentLoaded', () => {
+	const links = document.querySelectorAll('a[href]');
+	const host = window.location.hostname;
 
-	document.querySelectorAll('.entry-content a[href]').forEach(link => {
+	links.forEach(link => {
 		const href = link.getAttribute('href');
 		if (!href) return;
 
-		const isPDF = href.toLowerCase().endsWith('.pdf');
+		// Ignore pure hashes (#, #section, etc.)
+		if (href.startsWith('#')) return;
 
-		// Create absolute URL for comparison
-		const url = new URL(href, siteOrigin);
-		const isSameOrigin = url.origin === siteOrigin;
+		let url;
+		try {
+			url = new URL(href, window.location.origin);
+		} catch (e) {
+			return;
+		}
 
-		if (isPDF || !isSameOrigin) {
+		const isExternal = url.hostname !== host;
+		const isPDF = url.pathname.toLowerCase().endsWith('.pdf');
+		const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(url.pathname);
+		const isHashOnly = url.hash && url.origin === window.location.origin && url.pathname === window.location.pathname;
+
+		// Open external links, PDFs, and images in new tabs (but not hash-only links)
+		if ((isExternal || isPDF || isImage) && !isHashOnly) {
 			link.setAttribute('target', '_blank');
 			link.setAttribute('rel', 'noopener noreferrer');
 		} else {
-			link.setAttribute('target', '_self');
+			// Same-site, not PDF/image, not hash-only → remove target (use default behavior)
+			link.removeAttribute('target');
 		}
 	});
 });

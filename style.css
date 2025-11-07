@@ -1480,36 +1480,38 @@
 			background: transparent !important;
 		}
 
-		
-		.yak-submenu-toggle {
-			background: none;
-			border: none;
-			cursor: pointer;
-			position: absolute;
-			right: 0;
-			top: 0.5rem;
-			padding: 0.25rem;
-			font-size: 1.25rem;
-			color: currentColor;
-			line-height: 1;
-			z-index: 1;
-		}
+	
+	.yak-submenu-toggle {
+		all: unset;
+		position: absolute;
+		right: 0.25rem;
+		top: 0;
+		margin-top: 0.25rem;
+		width: 2rem;
+		height: 2rem;
+		display: grid;
+		place-items: center;
+		cursor: pointer;
+		color: currentColor;
+		z-index: 1;
+		transition: transform 0.2s ease;
+		transform-origin: 50% 50%;
+	}
 
-		.yak-submenu-caret {
-			display: block;
-			width: 1em;
-			height: 1em;
-			transition: transform 0.2s ease;
-			pointer-events: none;
-		}
+	.yak-submenu-toggle .yak-icon {
+		width: 1.25rem;
+		height: 1.25rem;
+		display: block;
+	}
+
+	.yak-submenu-toggle[aria-expanded="true"] {
+		transform: rotate(45deg);
+	}
 
 		.yak-main-nav li.menu-item-has-children > a::after {
 			display: none;
 		}
 
-		.yak-submenu-toggle[aria-expanded="true"] .yak-submenu-caret {
-			transform: rotate(45deg);
-		}
 
 		/* ===== Submenu (Accordion) ===== */
 		.yak-mobile-menu .sub-menu {

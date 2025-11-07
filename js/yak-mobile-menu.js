@@ -130,12 +130,12 @@
 			const link = li.querySelector('a');
 			const labelText = link?.textContent?.trim() || 'submenu';
 
-			const btn = document.createElement('button');
-			btn.className = 'yak-submenu-toggle';
-			btn.setAttribute('aria-expanded', 'false');
-			btn.setAttribute('aria-controls', submenuId);
-			btn.setAttribute('aria-label', `Expand submenu for ${labelText}`);
-			btn.innerHTML = '<span class="yak-submenu-caret" aria-hidden="true">+</span>';
+		const btn = document.createElement('button');
+		btn.className = 'yak-submenu-toggle';
+		btn.setAttribute('aria-expanded', 'false');
+		btn.setAttribute('aria-controls', submenuId);
+		btn.setAttribute('aria-label', `Expand submenu for ${labelText}`);
+		btn.innerHTML = '<svg class="yak-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>';
 
 			li.insertBefore(btn, submenu);
 		});
