@@ -367,6 +367,8 @@
 	.site-inner {
 		flex-grow: 1;
 		padding-block: 2rem;
+		position: relative;
+		z-index: 1;
 	}
 
 	.content-sidebar-wrap {
@@ -1704,7 +1706,7 @@
 		background: radial-gradient(var(--yak-color-primary), #6e174c);
 		height: var(--yak-featured-img-height, 400px);
 		padding: 0;
-		margin-bottom: -4rem;
+		margin-bottom: 0;
 		overflow: visible;
 		z-index: 0;
 	}

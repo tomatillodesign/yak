@@ -460,3 +460,88 @@ document.addEventListener('DOMContentLoaded', () => {
 	});
 });
 
+
+// ============================================================================
+// Enhanced Desktop Keyboard Navigation for Main Menu
+// ============================================================================
+// Adds arrow key navigation to desktop menu for improved accessibility
+// Only active on desktop (>= 960px) to avoid conflicts with mobile menu
+document.addEventListener('DOMContentLoaded', () => {
+	// Only enhance desktop navigation
+	function enhanceDesktopNav() {
+		if (window.innerWidth < 960) return;
+
+		const mainNav = document.querySelector('.yak-main-nav');
+		if (!mainNav) return;
+
+		// Add keyboard navigation to parent menu items with children
+		mainNav.querySelectorAll('li.menu-item-has-children > a').forEach(parentLink => {
+			parentLink.addEventListener('keydown', (e) => {
+				const menuItem = parentLink.closest('li.menu-item-has-children');
+				if (!menuItem) return;
+
+				// Arrow Down: Jump into submenu
+				if (e.key === 'ArrowDown') {
+					e.preventDefault();
+					const submenu = menuItem.querySelector('.sub-menu');
+					const firstChild = submenu?.querySelector('a');
+					if (firstChild) firstChild.focus();
+				}
+
+				// Arrow Up: Close submenu (if open) and stay on parent
+				if (e.key === 'ArrowUp') {
+					e.preventDefault();
+					parentLink.blur();
+					setTimeout(() => parentLink.focus(), 10);
+				}
+			});
+		});
+
+		// Add keyboard navigation within submenus
+		mainNav.querySelectorAll('.sub-menu a').forEach((link, index, allLinks) => {
+			link.addEventListener('keydown', (e) => {
+				// Arrow Down: Move to next item in submenu
+				if (e.key === 'ArrowDown') {
+					e.preventDefault();
+					const nextLink = allLinks[index + 1];
+					if (nextLink) nextLink.focus();
+				}
+
+				// Arrow Up: Move to previous item or back to parent
+				if (e.key === 'ArrowUp') {
+					e.preventDefault();
+					if (index === 0) {
+						// First item: go back to parent link
+						const parentItem = link.closest('li.menu-item-has-children');
+						const parentLink = parentItem?.querySelector(':scope > a');
+						if (parentLink) parentLink.focus();
+					} else {
+						// Not first: go to previous item
+						const prevLink = allLinks[index - 1];
+						if (prevLink) prevLink.focus();
+					}
+				}
+
+				// Escape: Close submenu and return focus to parent
+				if (e.key === 'Escape') {
+					const parentItem = link.closest('li.menu-item-has-children');
+					const parentLink = parentItem?.querySelector(':scope > a');
+					if (parentLink) {
+						parentLink.focus();
+					}
+				}
+			});
+		});
+	}
+
+	// Initialize on load
+	enhanceDesktopNav();
+
+	// Re-initialize on resize (with debounce)
+	let resizeTimer;
+	window.addEventListener('resize', () => {
+		clearTimeout(resizeTimer);
+		resizeTimer = setTimeout(enhanceDesktopNav, 250);
+	});
+});
+

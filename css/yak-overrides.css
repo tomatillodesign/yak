@@ -31,6 +31,21 @@
 
     /* put one-off overrides here */
 
+/* Remove spacing from empty entry-header when featured image is shown */
+.entry-header:empty {
+    display: none;
+}
+
+/* Fallback for when entry-header has only whitespace or hidden elements */
+.entry-header:not(:has(*:not(.screen-reader-text))) {
+    display: none;
+}
+
+/* Increase top padding on pages with featured images */
+body[class*="yak-featured-img-max-width"] .site-inner {
+    padding-top: 3rem;
+}
+
 .ctd-tabs {
     margin-top: 3rem;
 }
