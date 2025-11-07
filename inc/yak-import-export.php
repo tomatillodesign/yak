@@ -391,7 +391,15 @@ function yak_ajax_import_settings() {
 		}
 
 		// Check for image fields that might be missing
-		if ( is_numeric( $option_value ) && ( strpos( $option_name, 'logo' ) !== false || strpos( $option_name, 'favicon' ) !== false || strpos( $option_name, 'image' ) !== false ) ) {
+		// Only check actual image field names, not settings that contain these words
+		$is_image_field = is_numeric( $option_value ) && (
+			$option_name === 'options_yak_logo_image' ||
+			$option_name === 'options_yak_favicon' ||
+			strpos( $option_name, '_image' ) !== false ||
+			strpos( $option_name, 'favicon' ) !== false
+		);
+		
+		if ( $is_image_field ) {
 			// Check if attachment exists
 			if ( ! get_post( $option_value ) ) {
 				$warnings[] = "Image/attachment #{$option_value} not found for setting: {$option_name}";
