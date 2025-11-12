@@ -197,8 +197,29 @@
         direction: rtl;
     }
 
+    .wp-block-media-text.has-media-on-the-right .wp-block-media-text__content {
+        direction: ltr;
+        grid-column: 2; /* With RTL, column 2 appears on left */
+        grid-row: 1; /* Ensure same row */
+    }
+
+    .wp-block-media-text.has-media-on-the-right .wp-block-media-text__media {
+        grid-column: 1; /* With RTL, column 1 appears on right */
+        grid-row: 1; /* Ensure same row */
+    }
+
+    /* Ensure content is LTR for text direction in all cases */
     .wp-block-media-text .wp-block-media-text__content {
         direction: ltr;
+    }
+
+    /* Media container */
+    .wp-block-media-text__media {
+        margin: 0;
+        position: relative;
+        display: flex;
+        align-items: center;
+        min-height: 0; /* Allow grid to control height */
     }
 
     .wp-block-media-text__media img,
@@ -208,11 +229,137 @@
         display: block;
     }
 
+    /* Image fill element - makes image fill the entire media container */
+    .wp-block-media-text.is-image-fill-element .wp-block-media-text__media {
+        min-height: 250px;
+        background-size: cover;
+        background-position: center;
+        display: block; /* Override flex for image fill */
+        height: 100%; /* Fill grid row height */
+    }
+
+    .wp-block-media-text.is-image-fill-element .wp-block-media-text__media img {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .wp-block-media-text.is-image-fill-element .wp-block-media-text__media picture {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+    }
+
+    .wp-block-media-text.is-image-fill-element .wp-block-media-text__media picture img {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* Content area styling */
+    .wp-block-media-text__content {
+        padding: 0;
+        word-break: break-word;
+    }
+
+    /* When parent has background, add padding to content area */
+    .wp-block-media-text.has-background .wp-block-media-text__content {
+        padding: var(--yak-padding-block, 2rem);
+    }
+
+    /* Desktop: Remove border-radius on inner-facing edges */
+    @media (min-width: 769px) {
+        /* Parent block with background: no border-radius (children handle it) */
+        .wp-block-media-text.has-background {
+            border-radius: 0;
+            overflow: hidden;
+        }
+        
+        /* Image on left: rounded left corners, flat right (inner) edge */
+        .wp-block-media-text:not(.has-media-on-the-right) .wp-block-media-text__media,
+        .wp-block-media-text:not(.has-media-on-the-right) .wp-block-media-text__media img,
+        .wp-block-media-text:not(.has-media-on-the-right) .wp-block-media-text__media picture {
+            border-radius: var(--yak-radius, 4px) 0 0 var(--yak-radius, 4px);
+        }
+        
+        /* Image on right: rounded right corners, flat left (inner) edge */
+        .wp-block-media-text.has-media-on-the-right .wp-block-media-text__media,
+        .wp-block-media-text.has-media-on-the-right .wp-block-media-text__media img,
+        .wp-block-media-text.has-media-on-the-right .wp-block-media-text__media picture {
+            border-radius: 0 var(--yak-radius, 4px) var(--yak-radius, 4px) 0;
+        }
+        
+        /* Content on right: rounded right corners, flat left (inner) edge */
+        .wp-block-media-text:not(.has-media-on-the-right) .wp-block-media-text__content {
+            border-radius: 0 var(--yak-radius, 4px) var(--yak-radius, 4px) 0;
+        }
+        
+        /* Content on left: rounded left corners, flat right (inner) edge */
+        .wp-block-media-text.has-media-on-the-right .wp-block-media-text__content {
+            border-radius: var(--yak-radius, 4px) 0 0 var(--yak-radius, 4px);
+        }
+        
+        /* Handle image fill element - ensure overflow hidden on container */
+        .wp-block-media-text.is-image-fill-element .wp-block-media-text__media {
+            overflow: hidden;
+        }
+    }
+
+    /* Mobile: Stacked layout with card-like styling */
     @media (max-width: 768px) {
         .wp-block-media-text,
         .wp-block-media-text.has-media-on-the-right {
             grid-template-columns: 1fr;
             direction: ltr;
+        }
+        
+        /* Reset grid column assignments for mobile stacking */
+        .wp-block-media-text.has-media-on-the-right .wp-block-media-text__content,
+        .wp-block-media-text.has-media-on-the-right .wp-block-media-text__media {
+            grid-column: auto;
+            grid-row: auto;
+        }
+        
+        /* Ensure media appears on top in mobile (content is first in HTML when has-media-on-the-right) */
+        .wp-block-media-text.has-media-on-the-right .wp-block-media-text__media {
+            order: -1; /* Move media before content in visual order */
+        }
+        
+        /* Parent block with background: rounded top AND bottom corners */
+        .wp-block-media-text.has-background {
+            border-radius: var(--yak-radius, 4px) !important;
+            overflow: hidden; /* Ensure content respects border-radius */
+        }
+        
+        /* Image on top: only top corners have radius, bottom corners flat */
+        /* Use universal selector to override ALL desktop rules regardless of image position */
+        .wp-block-media-text .wp-block-media-text__media {
+            border-radius: var(--yak-radius, 4px) var(--yak-radius, 4px) 0 0 !important;
+            overflow: hidden;
+        }
+        
+        /* Images inside media container: only top corners, override desktop and global img rules */
+        /* Use universal selector to catch all cases */
+        .wp-block-media-text .wp-block-media-text__media img,
+        .wp-block-media-text .wp-block-media-text__media video,
+        .wp-block-media-text .wp-block-media-text__media picture {
+            border-radius: var(--yak-radius, 4px) var(--yak-radius, 4px) 0 0 !important;
+        }
+        
+        /* Content on bottom: no border-radius at all, add padding */
+        /* Use universal selector to override ALL desktop rules */
+        .wp-block-media-text .wp-block-media-text__content {
+            border-radius: 0 !important;
+            padding: var(--yak-padding-block-mobile, 1.5rem) !important;
+        }
+        
+        /* Override any border-radius that might be applied to content from has-background */
+        .wp-block-media-text.has-background .wp-block-media-text__content {
+            border-radius: 0 !important;
         }
     }
 
@@ -222,9 +369,17 @@
 		height: var(--wp--preset--spacing--40, 2rem);
 	}	
 
-	.entry-content .has-background,
+	.entry-content .has-background {
+		border-radius: var(--yak-radius);
+	}
+	
 	.entry-content img {
 		border-radius: var(--yak-radius);
+	}
+	
+	/* Media + Text block images handled separately */
+	.entry-content .wp-block-media-text__media img {
+		border-radius: inherit; /* Let the media container control border-radius */
 	}
 
 	/* Base: behaves like normal content on small screens */
