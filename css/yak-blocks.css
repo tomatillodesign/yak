@@ -110,6 +110,47 @@
 		color: inherit;
 	}
 
+	/* Button width overrides (manual width settings) */
+	.wp-block-button.has-custom-width.wp-block-button__width-25 {
+		width: 25%;
+		flex-basis: 25%;
+	}
+
+	.wp-block-button.has-custom-width.wp-block-button__width-25 .wp-block-button__link {
+		width: 100%;
+		display: block;
+	}
+
+	.wp-block-button.has-custom-width.wp-block-button__width-50 {
+		width: 50%;
+		flex-basis: 50%;
+	}
+
+	.wp-block-button.has-custom-width.wp-block-button__width-50 .wp-block-button__link {
+		width: 100%;
+		display: block;
+	}
+
+	.wp-block-button.has-custom-width.wp-block-button__width-75 {
+		width: 75%;
+		flex-basis: 75%;
+	}
+
+	.wp-block-button.has-custom-width.wp-block-button__width-75 .wp-block-button__link {
+		width: 100%;
+		display: block;
+	}
+
+	.wp-block-button.has-custom-width.wp-block-button__width-100 {
+		width: 100%;
+		flex-basis: 100%;
+	}
+
+	.wp-block-button.has-custom-width.wp-block-button__width-100 .wp-block-button__link {
+		width: 100%;
+		display: block;
+	}
+
 
 	/* --- Groups --- */
 	.wp-block-group {
@@ -453,6 +494,8 @@
 	color: #fff;
 	text-align: center;
 	box-sizing: border-box;
+	/* Ensure cover block has height context for absolutely positioned children */
+	height: auto;
 }
 
 .wp-block-cover__inner-container {
@@ -462,6 +505,7 @@
 	max-width: 1000px;
 	padding: 1rem;
 	color: inherit;
+	text-align: inherit;
 }
 
 /* ===============================
@@ -474,15 +518,145 @@
 	left: 0;
 	width: 100%;
 	height: 100%;
-	object-fit: cover;
-	z-index: 1;
+	z-index: 0;
 	pointer-events: none;
+	/* Ensure visibility */
+	opacity: 1;
+	visibility: visible;
+}
+
+/* Image background when used as background-image (not img tag) */
+.wp-block-cover__image-background[role="img"] {
+	background-size: cover !important;
+	background-repeat: no-repeat !important;
+	background-position: center center;
+	display: block;
+	/* Ensure it fills the entire parent container */
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	/* Force rendering of background */
+	min-height: 100%;
+}
+
+/* Image background as img tag */
+.wp-block-cover__image-background img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+/* Video background */
+.wp-block-cover__video-background {
+	object-fit: cover;
+}
+
+/* Parallax/Fixed background effect */
+.wp-block-cover.has-parallax .wp-block-cover__image-background {
+	background-attachment: fixed;
+}
+
+/* Mobile: Disable fixed background (doesn't work well on mobile) */
+@media (max-width: 768px) {
+	.wp-block-cover.has-parallax .wp-block-cover__image-background {
+		background-attachment: scroll;
+	}
+}
+
+/* Duotone filter support */
+.wp-block-cover.wp-duotone-grayscale .wp-block-cover__image-background,
+.wp-block-cover[class*="wp-duotone-"] .wp-block-cover__image-background {
+	filter: url('#wp-duotone-grayscale');
+}
+
+/* Fallback for browsers that don't support SVG filters */
+@supports not (filter: url('#wp-duotone-grayscale')) {
+	.wp-block-cover.wp-duotone-grayscale .wp-block-cover__image-background {
+		filter: grayscale(100%) contrast(1.2);
+	}
 }
 
 /* ===============================
    Dim Overlay Logic
    =============================== */
-.wp-block-cover.has-background-dim::before {
+/* Overlay span element (WordPress uses <span> not ::before for overlays) */
+.wp-block-cover .wp-block-cover__background,
+.wp-block-cover .wp-block-cover__gradient-background {
+	position: absolute;
+	inset: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	top: 0;
+	z-index: 1;
+	pointer-events: none;
+	/* Default opacity - will be overridden by specific dim classes */
+	opacity: 0.5;
+}
+
+/* Default opacity for overlay - target both parent class and span class */
+.wp-block-cover.has-background-dim .wp-block-cover__background:not(.has-background-gradient),
+.wp-block-cover.has-background-dim:not(.has-background-gradient)::before,
+.wp-block-cover .wp-block-cover__background.has-background-dim:not(.has-background-gradient) {
+	opacity: 0.5;
+}
+
+/* Specific opacity levels - handle both parent and span having the class */
+.wp-block-cover.has-background-dim-10 .wp-block-cover__background,
+.wp-block-cover.has-background-dim-10::before,
+.wp-block-cover .wp-block-cover__background.has-background-dim-10 { opacity: 0.1; }
+.wp-block-cover.has-background-dim-20 .wp-block-cover__background,
+.wp-block-cover.has-background-dim-20::before,
+.wp-block-cover .wp-block-cover__background.has-background-dim-20 { opacity: 0.2; }
+.wp-block-cover.has-background-dim-30 .wp-block-cover__background,
+.wp-block-cover.has-background-dim-30::before,
+.wp-block-cover .wp-block-cover__background.has-background-dim-30 { opacity: 0.3; }
+.wp-block-cover.has-background-dim-40 .wp-block-cover__background,
+.wp-block-cover.has-background-dim-40::before,
+.wp-block-cover .wp-block-cover__background.has-background-dim-40 { opacity: 0.4; }
+.wp-block-cover.has-background-dim-50 .wp-block-cover__background,
+.wp-block-cover.has-background-dim-50::before,
+.wp-block-cover .wp-block-cover__background.has-background-dim-50 { opacity: 0.5; }
+.wp-block-cover.has-background-dim-60 .wp-block-cover__background,
+.wp-block-cover.has-background-dim-60::before,
+.wp-block-cover .wp-block-cover__background.has-background-dim-60 { opacity: 0.6; }
+.wp-block-cover.has-background-dim-70 .wp-block-cover__background,
+.wp-block-cover.has-background-dim-70::before,
+.wp-block-cover .wp-block-cover__background.has-background-dim-70 { opacity: 0.7; }
+.wp-block-cover.has-background-dim-80 .wp-block-cover__background,
+.wp-block-cover.has-background-dim-80::before,
+.wp-block-cover .wp-block-cover__background.has-background-dim-80 { opacity: 0.8; }
+.wp-block-cover.has-background-dim-90 .wp-block-cover__background,
+.wp-block-cover.has-background-dim-90::before,
+.wp-block-cover .wp-block-cover__background.has-background-dim-90 { opacity: 0.9; }
+.wp-block-cover.has-background-dim-100 .wp-block-cover__background,
+.wp-block-cover.has-background-dim-100::before,
+.wp-block-cover .wp-block-cover__background.has-background-dim-100 { opacity: 1; }
+
+/* Gradient backgrounds don't use opacity on the overlay */
+.wp-block-cover.has-background-gradient .wp-block-cover__background,
+.wp-block-cover.has-background-gradient .wp-block-cover__gradient-background,
+.wp-block-cover.has-background-gradient.has-background-dim::before {
+	opacity: 1;
+	background-color: transparent;
+}
+
+/* Legacy support for ::before pseudo-element overlays */
+.wp-block-cover.has-background-dim:not(.has-background-gradient)::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background-color: inherit;
+	z-index: 1;
+	pointer-events: none;
+}
+
+/* Legacy cover-image class support */
+.wp-block-cover-image.has-background-dim:not(.has-background-gradient)::before {
 	content: '';
 	position: absolute;
 	inset: 0;
@@ -490,34 +664,6 @@
 	opacity: 0.5;
 	z-index: 1;
 	pointer-events: none;
-}
-
-.wp-block-cover.has-background-dim-10::before { opacity: 0.1; }
-.wp-block-cover.has-background-dim-20::before { opacity: 0.2; }
-.wp-block-cover.has-background-dim-30::before { opacity: 0.3; }
-.wp-block-cover.has-background-dim-40::before { opacity: 0.4; }
-.wp-block-cover.has-background-dim-50::before { opacity: 0.5; }
-.wp-block-cover.has-background-dim-60::before { opacity: 0.6; }
-.wp-block-cover.has-background-dim-70::before { opacity: 0.7; }
-.wp-block-cover.has-background-dim-80::before { opacity: 0.8; }
-.wp-block-cover.has-background-dim-90::before { opacity: 0.9; }
-.wp-block-cover.has-background-dim-100::before { opacity: 1; }
-
-.wp-block-cover.has-background-gradient.has-background-dim::before {
-	background-color: transparent;
-}
-
-.wp-block-cover .wp-block-cover__background, .wp-block-cover .wp-block-cover__gradient-background, .wp-block-cover-image .wp-block-cover__background, .wp-block-cover-image .wp-block-cover__gradient-background, .wp-block-cover-image.has-background-dim:not(.has-background-gradient):before, .wp-block-cover.has-background-dim:not(.has-background-gradient):before {
-    bottom: 0;
-    left: 0;
-    opacity: .5;
-    position: absolute;
-    right: 0;
-    top: 0;
-}
-
-.wp-block-cover .wp-block-cover__background.has-background-dim.has-background-dim-100, .wp-block-cover .wp-block-cover__gradient-background.has-background-dim.has-background-dim-100, .wp-block-cover-image .wp-block-cover__background.has-background-dim.has-background-dim-100, .wp-block-cover-image .wp-block-cover__gradient-background.has-background-dim.has-background-dim-100 {
-    opacity: 1;
 }
 
 /* ===============================
