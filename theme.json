@@ -1,0 +1,63 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/theme.json",
+	"version": 3,
+	"settings": {
+		"layout": {
+			"contentSize": "75ch",
+			"wideSize": "90rem"
+		},
+		"spacing": {
+			"spacingSizes": [
+				{ "name": "10", "slug": "10", "size": "0.625rem" },
+				{ "name": "20", "slug": "20", "size": "1rem" },
+				{ "name": "30", "slug": "30", "size": "1.5rem" },
+				{ "name": "40", "slug": "40", "size": "2rem" },
+				{ "name": "50", "slug": "50", "size": "3rem" },
+				{ "name": "60", "slug": "60", "size": "4rem" },
+				{ "name": "70", "slug": "70", "size": "6rem" },
+				{ "name": "80", "slug": "80", "size": "8rem" },
+				{ "name": "90", "slug": "90", "size": "12rem" },
+				{ "name": "100", "slug": "100", "size": "16rem" }
+			]
+		},
+		"typography": {
+			"fontFamilies": [
+				{
+					"fontFamily": "system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
+					"name": "System",
+					"slug": "system-font"
+				},
+				{
+					"fontFamily": "Georgia, serif",
+					"name": "Serif",
+					"slug": "serif"
+				},
+				{
+					"fontFamily": "Menlo, Consolas, monospace",
+					"name": "Monospace",
+					"slug": "monospace"
+				}
+			],
+			"fontSizes": [
+				{ "name": "Small", "slug": "small", "size": "0.875rem" },
+				{ "name": "Medium", "slug": "medium", "size": "1.125rem" },
+				{ "name": "Large", "slug": "large", "size": "1.40625rem" },
+				{ "name": "Extra Large", "slug": "x-large", "size": "1.7578125rem" },
+				{ "name": "Extra Extra Large", "slug": "xx-large", "size": "2.197rem" }
+			]
+		}
+	},
+	"styles": {
+		"color": {
+			"background": "#ffffff",
+			"text": "#000000"
+		},
+		"typography": {
+			"fontFamily": "var(--wp--preset--font-family--system-font)",
+			"fontSize": "var(--wp--preset--font-size--medium)"
+		},
+		"spacing": {
+			"blockGap": "var(--wp--preset--spacing--30)"
+		}
+	}
+}

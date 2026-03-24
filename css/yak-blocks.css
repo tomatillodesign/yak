@@ -1,0 +1,771 @@
+/* ========================================================================== */
+/* 🧱 yak-blocks — Reproduction of Core Gutenberg Block Styles
+/* ========================================================================== */
+
+/**
+ * This layer re-implements baseline Gutenberg block styles (e.g., images, buttons, headings)
+ * using our own cascade layer system. It mirrors core defaults for layout, spacing, and structure
+ * to ensure predictable styling across both front-end and editor environments.
+ *
+ * Why:
+ * - Avoids relying on WordPress-injected styles
+ * - Keeps styling under full theme control
+ * - Forms the base for later project-specific adjustments in yak-gutenberg-overrides.css
+ *
+ * To make global changes to block styling, edit this file.
+ * For site- or project-specific tweaks, use yak-gutenberg-overrides.css instead.
+ *
+ * This file should closely match unopinionated core Gutenberg output.
+ * Included blocks: image, paragraph, heading, list, buttons, quote, pullquote, table, separator, columns, group.
+ *
+ * CSS Cascade Layer Loading Order:
+ *   1. reset
+ *   2. yak-base
+ *   3. yak-layout
+ *   4. yak-components
+ *   5. yak-blocks  ← (this file)
+ *   6. yak-utilities
+ *   7. yak-overrides
+ */
+
+
+
+
+
+
+@layer yak-blocks {
+
+	/* 🧱 WordPress Core Block Replacements */
+	
+	/* --- Images --- */
+	.wp-block-image {
+		margin: 0;
+		max-width: 100%;
+		height: auto;
+		display: block;
+	}
+
+	.wp-block-image img {
+		max-width: 100%;
+		height: auto;
+		display: block;
+	}
+
+	.wp-block-image figcaption {
+		font-size: 0.875rem;
+		color: #666;
+		text-align: center;
+		margin-top: 0.5em;
+	}
+
+	/* --- Quotes --- */
+	.wp-block-quote {
+		border-left: 4px solid var(--yak-color-black);
+		padding-left: 1.25em;
+		margin: 2em 0;
+		font-style: italic;
+	}
+
+	.wp-block-quote cite {
+		display: block;
+		margin-top: 0.5em;
+		font-style: normal;
+		font-size: 0.9em;
+		color: #555;
+	}
+
+	/* --- Buttons --- */
+	/* .wp-block-button a {
+		display: inline-block;
+		background-color: var(--yak-accent, #000);
+		color: #fff;
+		padding: 0.75em 1.25em;
+		text-decoration: none;
+		font-weight: bold;
+		border-radius: 4px;
+	} */
+
+	.wp-block-button.is-style-outline a {
+		background: transparent;
+		border: 2px solid var(--yak-accent, #000);
+		color: var(--yak-accent, #000);
+	}
+
+	/* Buttons group layout (block wrapper) */
+	.wp-block-buttons {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5em;
+		margin-bottom: 1.5em;
+	}
+
+	/* Button block item */
+	.wp-block-button {
+		margin: 0;
+	}
+
+	/* Color style variants (if block uses .has-background) */
+	.wp-block-button__link.has-background {
+		color: inherit;
+	}
+
+	/* Button width overrides (manual width settings) */
+	.wp-block-button.has-custom-width.wp-block-button__width-25 {
+		width: 25%;
+		flex-basis: 25%;
+	}
+
+	.wp-block-button.has-custom-width.wp-block-button__width-25 .wp-block-button__link {
+		width: 100%;
+		display: block;
+	}
+
+	.wp-block-button.has-custom-width.wp-block-button__width-50 {
+		width: 50%;
+		flex-basis: 50%;
+	}
+
+	.wp-block-button.has-custom-width.wp-block-button__width-50 .wp-block-button__link {
+		width: 100%;
+		display: block;
+	}
+
+	.wp-block-button.has-custom-width.wp-block-button__width-75 {
+		width: 75%;
+		flex-basis: 75%;
+	}
+
+	.wp-block-button.has-custom-width.wp-block-button__width-75 .wp-block-button__link {
+		width: 100%;
+		display: block;
+	}
+
+	.wp-block-button.has-custom-width.wp-block-button__width-100 {
+		width: 100%;
+		flex-basis: 100%;
+	}
+
+	.wp-block-button.has-custom-width.wp-block-button__width-100 .wp-block-button__link {
+		width: 100%;
+		display: block;
+	}
+
+
+	/* --- Groups --- */
+	.wp-block-group {
+		margin-bottom: 2em;
+	}
+
+	/* --- Alignments --- */
+	.alignleft {
+		float: left;
+		margin-right: 2em;
+		margin-bottom: 1em;
+	}
+
+	.alignright {
+		float: right;
+		margin-left: 2em;
+		margin-bottom: 1em;
+	}
+
+	.aligncenter {
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	/* --- Columns Layout --- */
+    .wp-block-columns {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--yak-gap, 2rem);
+        margin-bottom: 2rem;
+    }
+
+    .wp-block-column {
+        flex-grow: 1;
+        flex-basis: 0;
+        min-width: 200px;
+    }
+
+	/* Core WordPress block layout support */
+	body .is-layout-flex {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--wp--style--block-gap, 1.5rem); /* spacing between items */
+	}
+	
+	body .is-layout-flex.is-horizontal,
+	body .is-layout-flex:not(.is-vertical) {
+		flex-direction: row;
+	}
+	
+	body .is-layout-flex.is-vertical {
+		flex-direction: column;
+	}
+	
+	@media (max-width: 600px) {
+		body .is-layout-flex.is-horizontal, body .is-layout-flex:not(.is-vertical) {
+			flex-direction: column;
+		}
+	}
+
+
+    /* Optional: narrow columns get stacked on small screens */
+    @media (max-width: 768px) {
+        .wp-block-columns {
+            flex-direction: column;
+        }
+
+        .wp-block-column {
+            width: 100%;
+        }
+    }
+
+    /* --- Media & Text Block --- */
+    .wp-block-media-text {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--yak-gap, 2rem);
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .wp-block-media-text.has-media-on-the-right {
+        grid-template-columns: 1fr 1fr;
+        direction: rtl;
+    }
+
+    .wp-block-media-text.has-media-on-the-right .wp-block-media-text__content {
+        direction: ltr;
+        grid-column: 2; /* With RTL, column 2 appears on left */
+        grid-row: 1; /* Ensure same row */
+    }
+
+    .wp-block-media-text.has-media-on-the-right .wp-block-media-text__media {
+        grid-column: 1; /* With RTL, column 1 appears on right */
+        grid-row: 1; /* Ensure same row */
+    }
+
+    /* Ensure content is LTR for text direction in all cases */
+    .wp-block-media-text .wp-block-media-text__content {
+        direction: ltr;
+    }
+
+    /* Media container */
+    .wp-block-media-text__media {
+        margin: 0;
+        position: relative;
+        display: flex;
+        align-items: center;
+        min-height: 0; /* Allow grid to control height */
+    }
+
+    .wp-block-media-text__media img,
+    .wp-block-media-text__media video {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    /* Image fill element - makes image fill the entire media container */
+    .wp-block-media-text.is-image-fill-element .wp-block-media-text__media {
+        min-height: 250px;
+        background-size: cover;
+        background-position: center;
+        display: block; /* Override flex for image fill */
+        height: 100%; /* Fill grid row height */
+    }
+
+    .wp-block-media-text.is-image-fill-element .wp-block-media-text__media img {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .wp-block-media-text.is-image-fill-element .wp-block-media-text__media picture {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+    }
+
+    .wp-block-media-text.is-image-fill-element .wp-block-media-text__media picture img {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* Content area styling */
+    .wp-block-media-text__content {
+        padding: 0;
+        word-break: break-word;
+    }
+
+    /* When parent has background, add padding to content area */
+    .wp-block-media-text.has-background .wp-block-media-text__content {
+        padding: var(--yak-padding-block, 2rem);
+    }
+
+    /* Desktop: Remove border-radius on inner-facing edges */
+    @media (min-width: 769px) {
+        /* Parent block with background: no border-radius (children handle it) */
+        .wp-block-media-text.has-background {
+            border-radius: 0;
+            overflow: hidden;
+        }
+        
+        /* Image on left: rounded left corners, flat right (inner) edge */
+        .wp-block-media-text:not(.has-media-on-the-right) .wp-block-media-text__media,
+        .wp-block-media-text:not(.has-media-on-the-right) .wp-block-media-text__media img,
+        .wp-block-media-text:not(.has-media-on-the-right) .wp-block-media-text__media picture {
+            border-radius: var(--yak-radius, 4px) 0 0 var(--yak-radius, 4px);
+        }
+        
+        /* Image on right: rounded right corners, flat left (inner) edge */
+        .wp-block-media-text.has-media-on-the-right .wp-block-media-text__media,
+        .wp-block-media-text.has-media-on-the-right .wp-block-media-text__media img,
+        .wp-block-media-text.has-media-on-the-right .wp-block-media-text__media picture {
+            border-radius: 0 var(--yak-radius, 4px) var(--yak-radius, 4px) 0;
+        }
+        
+        /* Content on right: rounded right corners, flat left (inner) edge */
+        .wp-block-media-text:not(.has-media-on-the-right) .wp-block-media-text__content {
+            border-radius: 0 var(--yak-radius, 4px) var(--yak-radius, 4px) 0;
+        }
+        
+        /* Content on left: rounded left corners, flat right (inner) edge */
+        .wp-block-media-text.has-media-on-the-right .wp-block-media-text__content {
+            border-radius: var(--yak-radius, 4px) 0 0 var(--yak-radius, 4px);
+        }
+        
+        /* Handle image fill element - ensure overflow hidden on container */
+        .wp-block-media-text.is-image-fill-element .wp-block-media-text__media {
+            overflow: hidden;
+        }
+    }
+
+    /* Mobile: Stacked layout with card-like styling */
+    @media (max-width: 768px) {
+        .wp-block-media-text,
+        .wp-block-media-text.has-media-on-the-right {
+            grid-template-columns: 1fr;
+            direction: ltr;
+        }
+        
+        /* Reset grid column assignments for mobile stacking */
+        .wp-block-media-text.has-media-on-the-right .wp-block-media-text__content,
+        .wp-block-media-text.has-media-on-the-right .wp-block-media-text__media {
+            grid-column: auto;
+            grid-row: auto;
+        }
+        
+        /* Ensure media appears on top in mobile (content is first in HTML when has-media-on-the-right) */
+        .wp-block-media-text.has-media-on-the-right .wp-block-media-text__media {
+            order: -1; /* Move media before content in visual order */
+        }
+        
+        /* Parent block with background: rounded top AND bottom corners */
+        .wp-block-media-text.has-background {
+            border-radius: var(--yak-radius, 4px) !important;
+            overflow: hidden; /* Ensure content respects border-radius */
+        }
+        
+        /* Image on top: only top corners have radius, bottom corners flat */
+        /* Use universal selector to override ALL desktop rules regardless of image position */
+        .wp-block-media-text .wp-block-media-text__media {
+            border-radius: var(--yak-radius, 4px) var(--yak-radius, 4px) 0 0 !important;
+            overflow: hidden;
+        }
+        
+        /* Images inside media container: only top corners, override desktop and global img rules */
+        /* Use universal selector to catch all cases */
+        .wp-block-media-text .wp-block-media-text__media img,
+        .wp-block-media-text .wp-block-media-text__media video,
+        .wp-block-media-text .wp-block-media-text__media picture {
+            border-radius: var(--yak-radius, 4px) var(--yak-radius, 4px) 0 0 !important;
+        }
+        
+        /* Content on bottom: no border-radius at all, add padding */
+        /* Use universal selector to override ALL desktop rules */
+        .wp-block-media-text .wp-block-media-text__content {
+            border-radius: 0 !important;
+            padding: var(--yak-padding-block-mobile, 1.5rem) !important;
+        }
+        
+        /* Override any border-radius that might be applied to content from has-background */
+        .wp-block-media-text.has-background .wp-block-media-text__content {
+            border-radius: 0 !important;
+        }
+    }
+
+	/* --- Spacer --- */
+	.wp-block-spacer {
+		display: block;
+		height: var(--wp--preset--spacing--40, 2rem);
+	}	
+
+	.entry-content .has-background {
+		border-radius: var(--yak-radius);
+	}
+	
+	.entry-content img {
+		border-radius: var(--yak-radius);
+	}
+	
+	/* Media + Text block images handled separately */
+	.entry-content .wp-block-media-text__media img {
+		border-radius: inherit; /* Let the media container control border-radius */
+	}
+
+	/* Base: behaves like normal content on small screens */
+	.yak-alignwide-wrapper {
+		width: 100%;
+		margin: 0 auto;
+	}
+
+	.yak-alignfull-inner {
+		width: 100%;
+		box-sizing: border-box;
+	   }
+
+	.yak-alignfull-wrapper {
+		width: 100vw;
+		margin-left: calc(-50vw + 50%);
+		margin-right: calc(-50vw + 50%);
+		display: flex;
+		justify-content: center;
+		padding: 0;
+		box-sizing: content-box; /* important for correct margin math */
+	}
+
+	@media (min-width: 960px) {
+		
+		.yak-alignwide-wrapper {
+			width: 100vw;
+			margin-left: calc(-50vw + 50%);
+			margin-right: calc(-50vw + 50%);
+			display: flex;
+			justify-content: center;
+			padding: 0;
+			box-sizing: content-box; /* important for correct margin math */
+	   }
+	   
+	   .yak-alignwide-inner {
+			width: 100%;
+			max-width: 1200px;
+			box-sizing: border-box;
+	   }
+
+	}
+
+	.has-background {
+		padding: var(--yak-padding-block);
+	}
+	
+	@media (max-width: 768px) {
+		.has-background {
+			padding: var(--yak-padding-block-mobile);
+		}
+
+		.wp-block-image {
+			margin-bottom: 1.75rem;
+		}
+	}
+
+/* ===============================
+   Cover Block Base Styles
+   =============================== */
+   .wp-block-cover {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 430px;
+	padding: 2rem;
+	overflow: hidden;
+	background-position: 50%;
+	background-size: cover;
+	color: #fff;
+	text-align: center;
+	box-sizing: border-box;
+	/* Ensure cover block has height context for absolutely positioned children */
+	height: auto;
+}
+
+.wp-block-cover__inner-container {
+	position: relative;
+	z-index: 2;
+	width: 100%;
+	max-width: 1000px;
+	padding: 1rem;
+	color: inherit;
+	text-align: inherit;
+}
+
+/* ===============================
+   Background Layer and Image/Video
+   =============================== */
+.wp-block-cover__image-background,
+.wp-block-cover__video-background {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 0;
+	pointer-events: none;
+	/* Ensure visibility */
+	opacity: 1;
+	visibility: visible;
+}
+
+/* Image background when used as background-image (not img tag) */
+.wp-block-cover__image-background[role="img"] {
+	background-size: cover !important;
+	background-repeat: no-repeat !important;
+	background-position: center center;
+	display: block;
+	/* Ensure it fills the entire parent container */
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	/* Force rendering of background */
+	min-height: 100%;
+}
+
+/* Image background as img tag */
+.wp-block-cover__image-background img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+/* Video background */
+.wp-block-cover__video-background {
+	object-fit: cover;
+}
+
+/* Parallax/Fixed background effect */
+.wp-block-cover.has-parallax .wp-block-cover__image-background {
+	background-attachment: fixed;
+}
+
+/* Mobile: Disable fixed background (doesn't work well on mobile) */
+@media (max-width: 768px) {
+	.wp-block-cover.has-parallax .wp-block-cover__image-background {
+		background-attachment: scroll;
+	}
+}
+
+/* Duotone filter support */
+.wp-block-cover.wp-duotone-grayscale .wp-block-cover__image-background,
+.wp-block-cover[class*="wp-duotone-"] .wp-block-cover__image-background {
+	filter: url('#wp-duotone-grayscale');
+}
+
+/* Fallback for browsers that don't support SVG filters */
+@supports not (filter: url('#wp-duotone-grayscale')) {
+	.wp-block-cover.wp-duotone-grayscale .wp-block-cover__image-background {
+		filter: grayscale(100%) contrast(1.2);
+	}
+}
+
+/* ===============================
+   Dim Overlay Logic
+   =============================== */
+/* Overlay span element (WordPress uses <span> not ::before for overlays) */
+.wp-block-cover .wp-block-cover__background,
+.wp-block-cover .wp-block-cover__gradient-background {
+	position: absolute;
+	inset: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	top: 0;
+	z-index: 1;
+	pointer-events: none;
+	/* Default opacity - will be overridden by specific dim classes */
+	opacity: 0.5;
+}
+
+/* Default opacity for overlay - target both parent class and span class */
+.wp-block-cover.has-background-dim .wp-block-cover__background:not(.has-background-gradient),
+.wp-block-cover.has-background-dim:not(.has-background-gradient)::before,
+.wp-block-cover .wp-block-cover__background.has-background-dim:not(.has-background-gradient) {
+	opacity: 0.5;
+}
+
+/* Specific opacity levels - handle both parent and span having the class */
+.wp-block-cover.has-background-dim-10 .wp-block-cover__background,
+.wp-block-cover.has-background-dim-10::before,
+.wp-block-cover .wp-block-cover__background.has-background-dim-10 { opacity: 0.1; }
+.wp-block-cover.has-background-dim-20 .wp-block-cover__background,
+.wp-block-cover.has-background-dim-20::before,
+.wp-block-cover .wp-block-cover__background.has-background-dim-20 { opacity: 0.2; }
+.wp-block-cover.has-background-dim-30 .wp-block-cover__background,
+.wp-block-cover.has-background-dim-30::before,
+.wp-block-cover .wp-block-cover__background.has-background-dim-30 { opacity: 0.3; }
+.wp-block-cover.has-background-dim-40 .wp-block-cover__background,
+.wp-block-cover.has-background-dim-40::before,
+.wp-block-cover .wp-block-cover__background.has-background-dim-40 { opacity: 0.4; }
+.wp-block-cover.has-background-dim-50 .wp-block-cover__background,
+.wp-block-cover.has-background-dim-50::before,
+.wp-block-cover .wp-block-cover__background.has-background-dim-50 { opacity: 0.5; }
+.wp-block-cover.has-background-dim-60 .wp-block-cover__background,
+.wp-block-cover.has-background-dim-60::before,
+.wp-block-cover .wp-block-cover__background.has-background-dim-60 { opacity: 0.6; }
+.wp-block-cover.has-background-dim-70 .wp-block-cover__background,
+.wp-block-cover.has-background-dim-70::before,
+.wp-block-cover .wp-block-cover__background.has-background-dim-70 { opacity: 0.7; }
+.wp-block-cover.has-background-dim-80 .wp-block-cover__background,
+.wp-block-cover.has-background-dim-80::before,
+.wp-block-cover .wp-block-cover__background.has-background-dim-80 { opacity: 0.8; }
+.wp-block-cover.has-background-dim-90 .wp-block-cover__background,
+.wp-block-cover.has-background-dim-90::before,
+.wp-block-cover .wp-block-cover__background.has-background-dim-90 { opacity: 0.9; }
+.wp-block-cover.has-background-dim-100 .wp-block-cover__background,
+.wp-block-cover.has-background-dim-100::before,
+.wp-block-cover .wp-block-cover__background.has-background-dim-100 { opacity: 1; }
+
+/* Gradient backgrounds don't use opacity on the overlay */
+.wp-block-cover.has-background-gradient .wp-block-cover__background,
+.wp-block-cover.has-background-gradient .wp-block-cover__gradient-background,
+.wp-block-cover.has-background-gradient.has-background-dim::before {
+	opacity: 1;
+	background-color: transparent;
+}
+
+/* Legacy support for ::before pseudo-element overlays */
+.wp-block-cover.has-background-dim:not(.has-background-gradient)::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background-color: inherit;
+	z-index: 1;
+	pointer-events: none;
+}
+
+/* Legacy cover-image class support */
+.wp-block-cover-image.has-background-dim:not(.has-background-gradient)::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background-color: inherit;
+	opacity: 0.5;
+	z-index: 1;
+	pointer-events: none;
+}
+
+/* ===============================
+   Text Color Fallbacks
+   =============================== */
+:where(.wp-block-cover):not(.has-text-color) {
+	color: #fff;
+}
+:where(.wp-block-cover.is-light):not(.has-text-color) {
+	color: #000;
+}
+
+	.has-yak-black-color {
+		color: var(--yak-color-black);
+	}
+
+	.has-accent-background-color {
+		background-color: var(--yak-color-primary);
+		color: var(--yak-color-white);
+	}
+
+    .wp-block-button .wp-block-button__link {
+        font-family: var(--yak-accent-font);
+        background-color: var(--yak-color-primary);
+        color: var(--yak-color-white);
+        border-radius: var(--yak-radius);
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        box-shadow: none;
+        transition: background-color 0.2s ease;
+    }
+
+    .wp-block-button .wp-block-button__link:hover,
+    .wp-block-button .wp-block-button__link:focus {
+        background-color: var(--yak-color-black);
+    }
+
+
+	.wp-block-gallery[class*="columns-"] {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--wp--style--gallery-gap-default, 1rem);
+		margin: 2rem 0;
+		padding: 0;
+	}
+
+	.wp-block-gallery[class*="columns-"] > figure {
+		margin: 0;
+		padding: 0;
+		flex-grow: 0;
+		flex-shrink: 0;
+	}
+
+	.wp-block-gallery.columns-2 > figure {
+		flex-basis: calc((100% - 1rem) / 2); /* 1 gap */
+	}
+	
+	.wp-block-gallery.columns-3 > figure {
+		flex-basis: calc((100% - 2rem) / 3); /* 2 gaps */
+	}
+	
+	.wp-block-gallery.columns-4 > figure {
+		flex-basis: calc((100% - 3rem) / 4); /* 3 gaps */
+	}
+	
+	.wp-block-gallery.columns-5 > figure {
+		flex-basis: calc((100% - 4rem) / 5);
+	}
+	
+	.wp-block-gallery.columns-6 > figure {
+		flex-basis: calc((100% - 5rem) / 6);
+	}
+
+	/* Columns-2: if last item starts a new row, stretch */
+	.wp-block-gallery.columns-2 > figure:nth-child(2n+1):last-child {
+		flex-basis: 100%;
+	}
+
+	/* Columns-3: 3n+1 = 4th, 7th, 10th, etc. */
+	.wp-block-gallery.columns-3 > figure:nth-child(3n+1):last-child {
+		flex-basis: 100%;
+	}
+
+	/* Columns-4: 4n+1 = 5th, 9th, etc. */
+	.wp-block-gallery.columns-4 > figure:nth-child(4n+1):last-child {
+		flex-basis: 100%;
+	}
+
+
+	/* Optional: cropped image styling */
+	.wp-block-gallery.is-cropped img {
+		width: 100%;
+		height: auto;
+		object-fit: cover;
+		aspect-ratio: 4 / 3;
+		display: block;
+	}
+
+}
