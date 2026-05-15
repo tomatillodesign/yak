@@ -4,18 +4,34 @@ Tags: genesis, custom-theme, block-editor, accessibility-ready, developer-friend
 Requires at least: 6.0  
 Tested up to: 6.5  
 Requires PHP: 7.4  
-Version: 1.0.6  
+Version: 1.0.7  
 License: GNU General Public License v2 or later  
 License URI: https://www.gnu.org/licenses/gpl-2.0.html  
 
 A fast, modern, developer-focused child theme built on the Genesis Framework — perfect for custom client builds with ACF Pro, advanced block styling, and powerful layout tools.
 
+== Agent CLI — Theme Settings ==
+
+Programmatic access (WP-CLI, trusted environments): Appearance → Theme Settings are ACF option fields exposed as JSON.
+
+Quick reference:
+1. wp yak settings schema --path=/path/to/wordpress --pretty  (field names, types, choices, repeaters — always run first)
+2. wp yak settings get --path=/path/to/wordpress --pretty       (current values)
+3. wp yak settings patch file.json --user=USER_ID --path=/path/to/wordpress
+
+Logo/favicon fields expect attachment IDs; brand colors use hex (#rrggbb); repeaters are JSON arrays of row objects matching sub-fields from schema. Full workflows and examples: readme.md (Agent CLI section) and AGENTS.md in the theme directory.
+
 == Changelog ==
+
+= Version 1.0.7 =
+* WP-CLI agent commands for Theme Settings (ACF options only): wp yak settings schema|get|patch — JSON schema derived from registered fields; patch merges top-level keys.
+* Writes require --user=<id> for a Yak-authorized WordPress user; yak_allowed_users and yak_dev_mode are blocked unless YAK_AGENT_ALLOW_PERMISSION_FIELDS is true in wp-config (see readme.md).
+* Documentation: readme.md (Agent CLI section), AGENTS.md — workflows and examples for logo, colors, typography, layouts, login, performance fields.
 
 = Version 1.0.6 =
 * Reversion: theme codebase matches the 1.0.4 release baseline — none of the withdrawn 1.0.5 changes are included.
 * History: the full 1.0.5 development line remains in Git on branch archive/main-through-1.0.5 and annotated tag v1.0.5-archived (GitHub: tomatillodesign/yak).
-* Going forward: treat 1.0.6 as the canonical internal baseline; plan new work for release 1.0.7.
+* Canonical baseline before the 1.0.7 WP-CLI Theme Settings additions.
 
 = Version 1.0.4 =
 * MAJOR: Migrated alignwide/alignfull wrapping from JavaScript to PHP

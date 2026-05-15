@@ -178,6 +178,12 @@ require_once get_stylesheet_directory() . '/inc/yak-typography.php';
 require_once get_stylesheet_directory() . '/inc/yak-layouts.php';
 require_once get_stylesheet_directory() . '/inc/yak-performance.php';
 
+require_once get_stylesheet_directory() . '/inc/class-yak-settings-agent-service.php';
+
+if ( defined( 'WP_CLI' ) && WP_CLI ) {
+	require_once get_stylesheet_directory() . '/inc/class-yak-wp-cli-settings-command.php';
+}
+
 
 // =============================================================================
 // 4. Asset Enqueue – Editor & Frontend Styles
