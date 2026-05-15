@@ -9,12 +9,31 @@ A fast, modern, developer-focused child theme built on the Genesis Framework —
 **Requires at least:** 6.0  
 **Tested up to:** 6.5  
 **Requires PHP:** 7.4  
-**Version:** 1.0.4  
+**Version:** 1.0.6  
 **License:** [GPL v2 or later](https://www.gnu.org/licenses/gpl-2.0.html)
 
 ---
 
+## Repository notes (Tomatillo internal)
+
+**1.0.6** is a deliberate **reversion**: the checked-in theme matches the **1.0.4** codebase. **1.0.5** is **withdrawn**—do not deploy it for new projects.
+
+The **1.0.5 commit history is preserved** for archival review:
+
+- Branch: `archive/main-through-1.0.5`
+- Tag: `v1.0.5-archived`
+
+New features ship on **`main`** starting from **1.0.6**, with **1.0.7** as the next numbered release target.
+
+---
+
 ## Changelog
+
+### Version 1.0.6
+
+- **↩️ Reversion baseline:** Theme files match the **1.0.4** release (no **1.0.5** code).
+- **📚 Archival refs:** Full **1.0.5** development remains reachable via branch **`archive/main-through-1.0.5`** and tag **`v1.0.5-archived`** on GitHub (`tomatillodesign/yak`).
+- **🔭 Next:** Build toward **1.0.7** as the next proper feature release.
 
 ### Version 1.0.4
 - **🚀 MAJOR: Migrated alignwide/alignfull wrapping from JavaScript to PHP**

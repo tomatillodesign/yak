@@ -40,7 +40,7 @@
  * - Works alongside Yak’s CSS layers and block-enhancements.js for full effect
  *
  * Location: /js/clb-custom-yak-scripts.js
- * Version: 1.0.4
+ * Version: 1.0.6
  */
 
 
